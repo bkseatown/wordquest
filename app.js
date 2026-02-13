@@ -1128,7 +1128,8 @@ function normalizePackManifestPath(rawPath = '') {
         return `${base}/${normalized}`;
     }
 
-    return normalized;
+    // All other relative paths (e.g. "en/word/stand.mp3" from manifest) must resolve against base
+    return `${base}/${normalized}`;
 }
 
 function remapPackedPathToBase(rawPath = '', targetBase = PACKED_TTS_BASE_PATH) {
