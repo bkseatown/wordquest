@@ -4388,9 +4388,9 @@ option:checked {
     justify-content: flex-start;
     width: calc(100% - 32px);
     max-width: 680px;
-    margin: 10px 16px 18px;
-    padding: 18px 16px 16px;
-    gap: 16px; /* Intentional: keep Word Quest + keyboard feeling like one board */
+    margin: 6px 16px 12px;
+    padding: 14px 14px 12px;
+    gap: 10px; /* Intentional: keep Word Quest + keyboard feeling like one board */
     background: var(--stage-bg);
     border: 1px solid var(--stage-border);
     border-radius: 28px;
@@ -4443,9 +4443,9 @@ main {
 /* GAME BOARD - Responsive scaling */
 #game-board { 
     display: grid; 
-    gap: 8px; 
+    gap: 6px; 
     justify-content: center; 
-    padding: 14px;
+    padding: 10px;
     border-radius: 22px;
     background: linear-gradient(180deg, rgba(148, 163, 184, 0.16) 0%, rgba(148, 163, 184, 0.08) 100%);
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
@@ -4453,14 +4453,14 @@ main {
 
 /* TILES - Scale with viewport, not fixed */
 .tile {
-    width: min(72px, 12vw, 9.2vh);
-    height: min(72px, 12vw, 9.2vh);
+    width: min(62px, 11vw, 7.6vh);
+    height: min(62px, 11vw, 7.6vh);
     border: 2px solid rgba(100, 116, 139, 0.55);
     display: flex; 
     justify-content: center; 
     align-items: center;
     font-family: var(--font-body); 
-    font-size: min(2.4rem, 5.4vw, 5vh);
+    font-size: min(2rem, 5vw, 4.2vh);
     font-weight: 800;
     border-radius: 14px; 
     background: linear-gradient(180deg, #ffffff 0%, #f1f5ff 100%);
@@ -4615,11 +4615,11 @@ main {
     width: 100%; 
     display: flex; 
     flex-direction: column; 
-    gap: 6px; 
+    gap: 5px; 
     max-width: 600px;
-    margin-bottom: 12px;
+    margin-bottom: 8px;
     padding-bottom: env(safe-area-inset-bottom, 0);
-    padding: 10px 10px 12px;
+    padding: 8px 8px 10px;
     border-radius: 18px;
     background: linear-gradient(180deg, rgba(148, 163, 184, 0.14) 0%, rgba(148, 163, 184, 0.08) 100%);
     border: 1px solid rgba(100, 116, 139, 0.22);
@@ -4632,7 +4632,7 @@ main {
 }
 
 .key { 
-    height: min(58px, 9.6vw, 8.2vh);
+    height: min(50px, 8.6vw, 6.2vh);
     flex: 1; 
     max-width: 64px;
     border-radius: 12px; 
@@ -6935,8 +6935,8 @@ select{
 }
 
 .key{
-  height: clamp(44px, 6vh, 60px);
-  font-size: clamp(1rem, 2.2vw, 1.2rem);
+  height: clamp(42px, 5.8vh, 52px);
+  font-size: clamp(0.95rem, 2vw, 1.15rem);
 }
 
 /* Make header/controls less tall on short screens */
@@ -10295,28 +10295,28 @@ body.word-quest-page #keyboard {
     }
 
     #game-canvas {
-        gap: clamp(6px, 1.1vh, 12px);
+        gap: clamp(4px, 1vh, 8px);
     }
 
     #game-board {
-        gap: 7px;
-        padding: 12px;
+        gap: 5px;
+        padding: 8px;
     }
 
     .tile {
-        width: min(64px, 11.2vw, 8vh);
-        height: min(64px, 11.2vw, 8vh);
-        font-size: min(2.2rem, 5vw, 4.6vh);
+        width: min(56px, 10.5vw, 7vh);
+        height: min(56px, 10.5vw, 7vh);
+        font-size: min(1.9rem, 4.6vw, 4vh);
     }
 
     .key {
-        height: min(50px, 8.6vw, 6.8vh);
-        font-size: min(1.08rem, 3.2vw, 3vh);
+        height: min(46px, 8vw, 5.6vh);
+        font-size: min(1rem, 3vw, 2.8vh);
     }
 
     #keyboard {
-        gap: 5px;
-        padding: 8px 8px 10px;
+        gap: 4px;
+        padding: 6px 8px 8px;
     }
 
     .warmup-panel {
@@ -10330,18 +10330,18 @@ body.word-quest-page #keyboard {
     }
 
     #game-canvas {
-        gap: clamp(5px, 1vh, 10px);
+        gap: clamp(3px, 0.8vh, 6px);
     }
 
     .tile {
-        width: min(58px, 10.5vw, 7.2vh);
-        height: min(58px, 10.5vw, 7.2vh);
-        font-size: min(2rem, 4.6vw, 4.1vh);
+        width: min(48px, 9.5vw, 6.2vh);
+        height: min(48px, 9.5vw, 6.2vh);
+        font-size: min(1.7rem, 4.2vw, 3.6vh);
     }
 
     .key {
-        height: min(46px, 7.8vw, 6vh);
-        font-size: min(1rem, 3vw, 2.8vh);
+        height: min(42px, 7.4vw, 5vh);
+        font-size: min(0.92rem, 2.8vw, 2.5vh);
     }
 
     .warmup-tile {

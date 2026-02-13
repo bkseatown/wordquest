@@ -76,8 +76,8 @@ const PHONEME_VIDEO_LIBRARY_CANDIDATE_DIRS = [
     'public/assets/articulation/clips'
 ]; //
 const PACKED_TTS_BASE_PREF_KEY = 'decode_tts_base_path_v1';
-const PACKED_TTS_BASE_PLAIN = 'https://raw.githubusercontent.com/bkseatown/Cornerstone-MTSS/main/literacy-platform/audio/tts/packs/ava-multi';
-const PACKED_TTS_BASE_SCOPED = 'https://raw.githubusercontent.com/bkseatown/Cornerstone-MTSS/main/literacy-platform/audio/tts/packs/ava-multi';
+const PACKED_TTS_BASE_PLAIN = 'https://raw.githubusercontent.com/bkseatown/Cornerstone-MTSS/main/literacy-platform/audio/tts';
+const PACKED_TTS_BASE_SCOPED = 'https://raw.githubusercontent.com/bkseatown/Cornerstone-MTSS/main/literacy-platform/audio/tts';
 
 const PACKED_TTS_REGISTRY_URL = null;
 const PACKED_TTS_MANIFEST_URL = null;
@@ -1150,7 +1150,7 @@ function remapPackedPathToBase(rawPath = '', targetBase = PACKED_TTS_BASE_PATH) 
 
 function getDefaultTtsPackOption() {
     return {
-        id: 'default',
+        id: 'ava-multi',
         name: 'Default voice pack',
         manifestPath: PACKED_TTS_DEFAULT_MANIFEST_PATH,
         description: 'Uses clips generated into audio/tts.'
@@ -6938,6 +6938,7 @@ function getWordFromDictionary() {
                 .map((word) => normalizeCustomWordInput(word))
                 .filter((word) => !!window.WORD_ENTRIES?.[word]);
             return basePool.filter((word) => {
+                if (/[^a-z]/i.test(word)) return false;
                 if (isBlockedClassSafeWord(word)) return false;
                 return !length || word.length === length;
             });
@@ -6945,6 +6946,7 @@ function getWordFromDictionary() {
 
         const blockedWords = focus === 'all' ? null : FOCUS_TAG_EXCLUSIONS[focus];
         return allWords.filter((word) => {
+            if (/[^a-z]/i.test(word)) return false;
             const entry = window.WORD_ENTRIES[word] || {};
             const lenMatch = !length || word.length === length;
             const focusMatch = focus === 'all' || (Array.isArray(entry.tags) && entry.tags.includes(focus));
