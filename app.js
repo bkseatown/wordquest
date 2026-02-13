@@ -80,8 +80,8 @@ const PHONEME_VIDEO_LIBRARY_CANDIDATE_DIRS = [
 ];
 let activeSoundVideoObjectUrl = '';
 const PACKED_TTS_BASE_PREF_KEY = 'decode_tts_base_path_v1';
-const PACKED_TTS_BASE_PLAIN = 'https://cdn.jsdelivr.net/gh/bkseatown/WordQuest@main/audio/tts';
-const PACKED_TTS_BASE_SCOPED = 'https://cdn.jsdelivr.net/gh/bkseatown/WordQuest@main/audio/tts';
+const PACKED_TTS_BASE_PLAIN = 'https://cdn.jsdelivr.net/gh/bkseatown/Cornerstone-MTSS@main/audio/tts';
+const PACKED_TTS_BASE_SCOPED = 'https://cdn.jsdelivr.net/gh/bkseatown/Cornerstone-MTSS@main/audio/tts';
 function normalizePackedTtsBasePath(value = '') {
     const candidate = String(value || '').trim().replace(/^\/+|\/+$/g, '');
     if (candidate === PACKED_TTS_BASE_PLAIN || candidate === PACKED_TTS_BASE_SCOPED) {
