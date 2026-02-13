@@ -85,6 +85,8 @@ const PACKED_TTS_BASE_SCOPED = 'https://raw.githubusercontent.com/bkseatown/Corn
 
 const PACKED_TTS_REGISTRY_URL = null;
 const PACKED_TTS_MANIFEST_URL = null;
+
+const PACKED_TTS_FORCE_EXTERNAL = true;
 const PACKED_TTS_USE_RAW = true;
 function normalizePackedTtsBasePath(value = '') {
     const candidate = String(value || '').trim().replace(/^\/+|\/+$/g, '');
