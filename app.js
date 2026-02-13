@@ -77,8 +77,6 @@ let activePlaybackSourceId = '';
 const PHONEME_VIDEO_LIBRARY_CANDIDATE_DIRS = [
     'assets/articulation/clips',
     'public/assets/articulation/clips'
-];
-let activeSoundVideoObjectUrl = '';
 const PACKED_TTS_BASE_PREF_KEY = 'decode_tts_base_path_v1';
 const PACKED_TTS_BASE_PLAIN = 'https://raw.githubusercontent.com/bkseatown/Cornerstone-MTSS/main/literacy-platform/audio/tts/packs/ava-multi';
 const PACKED_TTS_BASE_SCOPED = 'https://raw.githubusercontent.com/bkseatown/Cornerstone-MTSS/main/literacy-platform/audio/tts/packs/ava-multi';
@@ -86,14 +84,8 @@ const PACKED_TTS_BASE_SCOPED = 'https://raw.githubusercontent.com/bkseatown/Corn
 const PACKED_TTS_REGISTRY_URL = null;
 const PACKED_TTS_MANIFEST_URL = null;
 
-const PACKED_TTS_FORCE_EXTERNAL = true;
-const PACKED_TTS_USE_RAW = true;
 function normalizePackedTtsBasePath(value = '') {
-    const candidate = String(value || '').trim().replace(/^\/+|\/+$/g, '');
-    if (candidate === PACKED_TTS_BASE_PLAIN || candidate === PACKED_TTS_BASE_SCOPED) {
-        return candidate;
-    }
-    return '';
+    return PACKED_TTS_BASE_PLAIN;
 }
 
 function readPackedTtsBasePathPreference() {
@@ -111,7 +103,6 @@ function rememberPackedTtsBasePathPreference(value = '') {
         localStorage.setItem(PACKED_TTS_BASE_PREF_KEY, normalized);
     } catch (e) {}
 }
-
 function detectPackedTtsBasePathFromAssetPath(value = '') {
     const candidate = String(value || '').trim().replace(/^\/+/, '');
     if (candidate === PACKED_TTS_BASE_PLAIN || candidate.startsWith(`${PACKED_TTS_BASE_PLAIN}/`)) {
