@@ -9837,6 +9837,140 @@ body.word-quest-page .header-row .wq-tools-toggle {
     padding: 4px 12px !important;
     font-size: 0.75rem !important;
     white-space: nowrap !important;
+    cursor: pointer !important;
+}
+
+/* === Tools dropdown overlay === */
+body.word-quest-page .wq-tools-menu {
+    position: relative !important;
+}
+body.word-quest-page .wq-tools-menu[open] > .wq-tools-body {
+    display: block !important;
+    position: absolute !important;
+    top: 100% !important;
+    right: 0 !important;
+    z-index: 1000 !important;
+    min-width: 320px !important;
+    max-width: 420px !important;
+    max-height: 70vh !important;
+    overflow-y: auto !important;
+    background: rgba(255, 255, 255, 0.97) !important;
+    border-radius: 12px !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25), 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+    border: 1px solid rgba(0, 0, 0, 0.12) !important;
+    padding: 8px !important;
+    margin-top: 4px !important;
+}
+body.word-quest-page .wq-tools-menu:not([open]) > .wq-tools-body {
+    display: none !important;
+}
+body.word-quest-page .wq-tools-tabs {
+    display: flex !important;
+    gap: 2px !important;
+    background: rgba(0, 0, 0, 0.06) !important;
+    border-radius: 8px !important;
+    padding: 3px !important;
+    margin-bottom: 8px !important;
+}
+body.word-quest-page .wq-tools-tab {
+    flex: 1 !important;
+    padding: 6px 8px !important;
+    font-size: 0.72rem !important;
+    font-weight: 600 !important;
+    border: none !important;
+    border-radius: 6px !important;
+    background: transparent !important;
+    color: #475569 !important;
+    cursor: pointer !important;
+    white-space: nowrap !important;
+    transition: background 0.15s, color 0.15s !important;
+}
+body.word-quest-page .wq-tools-tab:hover {
+    background: rgba(0, 0, 0, 0.06) !important;
+}
+body.word-quest-page .wq-tools-tab.is-active {
+    background: #fff !important;
+    color: #1e293b !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+}
+body.word-quest-page .wq-tools-panel {
+    color: #1e293b !important;
+    font-size: 0.82rem !important;
+}
+body.word-quest-page .wq-tools-panel.hidden {
+    display: none !important;
+}
+body.word-quest-page .wq-tools-subcard {
+    padding: 8px !important;
+    background: rgba(0, 0, 0, 0.03) !important;
+    border-radius: 8px !important;
+    margin-bottom: 6px !important;
+}
+body.word-quest-page .wq-tools-field {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 8px !important;
+    padding: 4px 0 !important;
+    font-size: 0.8rem !important;
+    color: #334155 !important;
+}
+body.word-quest-page .wq-tools-field select {
+    font-size: 0.78rem !important;
+    padding: 4px 6px !important;
+    border-radius: 6px !important;
+    border: 1px solid rgba(0, 0, 0, 0.15) !important;
+    background: #fff !important;
+    color: #1e293b !important;
+}
+
+/* === ALL text visible on dark themes === */
+body.word-quest-page[data-wq-scene="hero-iron"],
+body.word-quest-page[data-wq-scene="hero-shield"],
+body.word-quest-page[data-wq-scene="hero-spider"],
+body.word-quest-page[data-wq-scene="hero-wonder"],
+body.word-quest-page[data-wq-scene="slate-steel"],
+body.word-quest-page[data-wq-scene="mocha-mousse"],
+body.word-quest-page[data-wq-scene="pro-midnight"] {
+    color: rgba(255, 255, 255, 0.92) !important;
+}
+body.word-quest-page[data-wq-scene="hero-iron"] .header-row,
+body.word-quest-page[data-wq-scene="hero-shield"] .header-row,
+body.word-quest-page[data-wq-scene="hero-spider"] .header-row,
+body.word-quest-page[data-wq-scene="hero-wonder"] .header-row,
+body.word-quest-page[data-wq-scene="slate-steel"] .header-row,
+body.word-quest-page[data-wq-scene="mocha-mousse"] .header-row,
+body.word-quest-page[data-wq-scene="pro-midnight"] .header-row {
+    color: rgba(255, 255, 255, 0.92) !important;
+}
+body.word-quest-page[data-wq-scene="hero-iron"] .header-row h1 a,
+body.word-quest-page[data-wq-scene="hero-shield"] .header-row h1 a,
+body.word-quest-page[data-wq-scene="hero-spider"] .header-row h1 a,
+body.word-quest-page[data-wq-scene="hero-wonder"] .header-row h1 a,
+body.word-quest-page[data-wq-scene="slate-steel"] .header-row h1 a,
+body.word-quest-page[data-wq-scene="mocha-mousse"] .header-row h1 a,
+body.word-quest-page[data-wq-scene="pro-midnight"] .header-row h1 a {
+    color: rgba(255, 255, 255, 0.95) !important;
+}
+body.word-quest-page[data-wq-scene="hero-iron"] .header-row .link-btn,
+body.word-quest-page[data-wq-scene="hero-shield"] .header-row .link-btn,
+body.word-quest-page[data-wq-scene="hero-spider"] .header-row .link-btn,
+body.word-quest-page[data-wq-scene="hero-wonder"] .header-row .link-btn,
+body.word-quest-page[data-wq-scene="slate-steel"] .header-row .link-btn,
+body.word-quest-page[data-wq-scene="mocha-mousse"] .header-row .link-btn,
+body.word-quest-page[data-wq-scene="pro-midnight"] .header-row .link-btn {
+    color: rgba(255, 255, 255, 0.85) !important;
+}
+/* Hint text and focus chip visible on dark */
+body.word-quest-page[data-wq-scene="hero-iron"] .focus-round-chip,
+body.word-quest-page[data-wq-scene="hero-shield"] .focus-round-chip,
+body.word-quest-page[data-wq-scene="hero-spider"] .focus-round-chip,
+body.word-quest-page[data-wq-scene="hero-wonder"] .focus-round-chip,
+body.word-quest-page[data-wq-scene="slate-steel"] .focus-round-chip,
+body.word-quest-page[data-wq-scene="mocha-mousse"] .focus-round-chip,
+body.word-quest-page[data-wq-scene="pro-midnight"] .focus-round-chip {
+    color: rgba(255, 255, 255, 0.9) !important;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5) !important;
 }
 body.word-quest-page .header-row .link-btn {
     padding: 4px 8px !important;
