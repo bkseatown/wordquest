@@ -145,6 +145,11 @@
           </label>
         </div>
 
+        <div class="control-group control-group-subtle wq-control-teacher-quick" style="display:flex; align-items:center; gap:4px;">
+          <input id="quick-teacher-word" type="text" placeholder="Teacher word" class="masked" autocomplete="off" spellcheck="false" maxlength="12" style="width:110px; padding:5px 8px; border-radius:8px; border:1px solid rgba(100,116,139,0.4); font-size:0.82rem; background:rgba(255,255,255,0.9); color:#1e293b;" />
+          <button id="quick-teacher-go" type="button" style="padding:5px 10px; border-radius:8px; border:1px solid rgba(100,116,139,0.4); background:rgba(255,255,255,0.85); font-size:0.78rem; font-weight:700; cursor:pointer; white-space:nowrap;">Go</button>
+        </div>
+
         <div class="control-group control-group-subtle wq-control-new-round">
           <label for="new-word-btn" aria-hidden="true">&nbsp;</label>
           <button id="new-word-btn" type="button" class="case-toggle-btn new-round-btn" aria-label="Start new round">New Round</button>
@@ -379,10 +384,10 @@
 
     <!-- Welcome / Tutorial -->
     <div id="welcome-modal" class="modal hidden welcome-modal" role="dialog" aria-modal="true" aria-label="How to play Word Quest">
-      <div class="modal-content welcome-tutorial-card" style="max-width:480px; padding:28px 32px 24px;">
+      <div class="modal-content welcome-tutorial-card" style="max-width:440px; padding:20px 24px 18px; background:linear-gradient(180deg, #f0f4ff 0%, #e8ecf8 100%); border-radius:20px;">
         <button class="close-btn" type="button" aria-label="Close" onclick="document.getElementById('welcome-modal').classList.add('hidden');document.getElementById('modal-overlay').classList.add('hidden');">✕</button>
-        <h2 style="margin:0 0 4px; font-size:1.5rem; font-weight:800;">How To Play</h2>
-        <p style="margin:0 0 16px; color:#64748b; font-size:0.95rem;">Guess the word in 6 tries.</p>
+        <h2 style="margin:0 0 4px; font-size:1.3rem; font-weight:800; color:#1e293b;">How To Play</h2>
+        <p style="margin:0 0 10px; color:#64748b; font-size:0.85rem;">Guess the word in 6 tries.</p>
 
         <ul style="list-style:none; padding:0; margin:0 0 18px; font-size:0.92rem; color:#334155; line-height:1.6;">
           <li style="margin-bottom:4px;">• Each guess must be a valid word.</li>
@@ -392,31 +397,31 @@
         <p style="margin:0 0 8px; font-weight:700; font-size:0.95rem;">Examples</p>
 
         <div style="display:flex; gap:4px; margin-bottom:6px;">
-          <span class="welcome-tile correct" style="width:44px;height:44px;font-size:1.3rem;">S</span>
-          <span class="welcome-tile" style="width:44px;height:44px;font-size:1.3rem;background:#fff;border:2px solid #d1d5db;">T</span>
-          <span class="welcome-tile" style="width:44px;height:44px;font-size:1.3rem;background:#fff;border:2px solid #d1d5db;">A</span>
-          <span class="welcome-tile" style="width:44px;height:44px;font-size:1.3rem;background:#fff;border:2px solid #d1d5db;">N</span>
-          <span class="welcome-tile" style="width:44px;height:44px;font-size:1.3rem;background:#fff;border:2px solid #d1d5db;">D</span>
+          <span class="welcome-tile correct" style="width:36px;height:36px;font-size:1.1rem;">S</span>
+          <span class="welcome-tile" style="width:36px;height:36px;font-size:1.1rem;background:#fff;border:2px solid #d1d5db;">T</span>
+          <span class="welcome-tile" style="width:36px;height:36px;font-size:1.1rem;background:#fff;border:2px solid #d1d5db;">A</span>
+          <span class="welcome-tile" style="width:36px;height:36px;font-size:1.1rem;background:#fff;border:2px solid #d1d5db;">N</span>
+          <span class="welcome-tile" style="width:36px;height:36px;font-size:1.1rem;background:#fff;border:2px solid #d1d5db;">D</span>
         </div>
-        <p style="margin:0 0 14px; font-size:0.88rem; color:#475569;"><strong>S</strong> is in the word and in the correct spot.</p>
+        <p style="margin:0 0 8px; font-size:0.82rem; color:#475569;"><strong>S</strong> is in the word and in the correct spot.</p>
 
         <div style="display:flex; gap:4px; margin-bottom:6px;">
-          <span class="welcome-tile" style="width:44px;height:44px;font-size:1.3rem;background:#fff;border:2px solid #d1d5db;">B</span>
-          <span class="welcome-tile present" style="width:44px;height:44px;font-size:1.3rem;">R</span>
-          <span class="welcome-tile" style="width:44px;height:44px;font-size:1.3rem;background:#fff;border:2px solid #d1d5db;">I</span>
-          <span class="welcome-tile" style="width:44px;height:44px;font-size:1.3rem;background:#fff;border:2px solid #d1d5db;">C</span>
-          <span class="welcome-tile" style="width:44px;height:44px;font-size:1.3rem;background:#fff;border:2px solid #d1d5db;">K</span>
+          <span class="welcome-tile" style="width:36px;height:36px;font-size:1.1rem;background:#fff;border:2px solid #d1d5db;">B</span>
+          <span class="welcome-tile present" style="width:36px;height:36px;font-size:1.1rem;">R</span>
+          <span class="welcome-tile" style="width:36px;height:36px;font-size:1.1rem;background:#fff;border:2px solid #d1d5db;">I</span>
+          <span class="welcome-tile" style="width:36px;height:36px;font-size:1.1rem;background:#fff;border:2px solid #d1d5db;">C</span>
+          <span class="welcome-tile" style="width:36px;height:36px;font-size:1.1rem;background:#fff;border:2px solid #d1d5db;">K</span>
         </div>
-        <p style="margin:0 0 14px; font-size:0.88rem; color:#475569;"><strong>R</strong> is in the word but in the wrong spot.</p>
+        <p style="margin:0 0 8px; font-size:0.82rem; color:#475569;"><strong>R</strong> is in the word but in the wrong spot.</p>
 
         <div style="display:flex; gap:4px; margin-bottom:6px;">
-          <span class="welcome-tile" style="width:44px;height:44px;font-size:1.3rem;background:#fff;border:2px solid #d1d5db;">P</span>
-          <span class="welcome-tile" style="width:44px;height:44px;font-size:1.3rem;background:#fff;border:2px solid #d1d5db;">L</span>
-          <span class="welcome-tile absent" style="width:44px;height:44px;font-size:1.3rem;">A</span>
-          <span class="welcome-tile" style="width:44px;height:44px;font-size:1.3rem;background:#fff;border:2px solid #d1d5db;">N</span>
-          <span class="welcome-tile" style="width:44px;height:44px;font-size:1.3rem;background:#fff;border:2px solid #d1d5db;">T</span>
+          <span class="welcome-tile" style="width:36px;height:36px;font-size:1.1rem;background:#fff;border:2px solid #d1d5db;">P</span>
+          <span class="welcome-tile" style="width:36px;height:36px;font-size:1.1rem;background:#fff;border:2px solid #d1d5db;">L</span>
+          <span class="welcome-tile absent" style="width:36px;height:36px;font-size:1.1rem;">A</span>
+          <span class="welcome-tile" style="width:36px;height:36px;font-size:1.1rem;background:#fff;border:2px solid #d1d5db;">N</span>
+          <span class="welcome-tile" style="width:36px;height:36px;font-size:1.1rem;background:#fff;border:2px solid #d1d5db;">T</span>
         </div>
-        <p style="margin:0 0 18px; font-size:0.88rem; color:#475569;"><strong>A</strong> is not in the word at all.</p>
+        <p style="margin:0 0 10px; font-size:0.82rem; color:#475569;"><strong>A</strong> is not in the word at all.</p>
 
         <div style="border-top:1px solid #e2e8f0; padding-top:14px; margin-bottom:16px;">
           <p style="margin:0 0 6px; font-weight:700; font-size:0.95rem;">🎧 Listen &amp; Spell Mode</p>

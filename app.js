@@ -2353,6 +2353,7 @@ document.addEventListener("DOMContentLoaded", () => {
     initModalDismissals();
     initPopupWindowInteractions();
     initHowTo();
+    initQuickTeacherWord();
     initAdventureMode();
     if (typeof initAssessmentFlow === 'function') {
         initAssessmentFlow();
@@ -7383,13 +7384,99 @@ function initKeyboard() {
             rowDiv.appendChild(k);
         });
         if (r === "zxcvbnm") {
-            const ent = createKey("ENTER", submitGuess, true);
             const del = createKey("⌫", deleteLetter, true);
+            const ent = createKey("ENTER", submitGuess, true);
             rowDiv.prepend(del);
             rowDiv.append(ent);
         }
         keyboard.appendChild(rowDiv);
     });
+
+    // Add mic button row
+    const micRow = document.createElement("div");
+    micRow.className = "keyboard-row keyboard-mic-row";
+    micRow.style.cssText = "justify-content:center; gap:8px; margin-top:2px;";
+    const micBtn = document.createElement("button");
+    micBtn.id = "keyboard-mic-btn";
+    micBtn.type = "button";
+    micBtn.className = "key wide keyboard-mic-btn";
+    micBtn.innerHTML = "🎙 Record";
+    micBtn.style.cssText = "flex:0 0 auto; width:auto; max-width:none; padding:4px 16px; font-size:0.82rem; border-radius:20px; background:linear-gradient(180deg,#fef3c7,#fde68a); border-color:rgba(217,119,6,0.4); color:#92400e;";
+    micBtn.title = "Record your pronunciation";
+    
+    let mediaRecorder = null;
+    let audioChunks = [];
+    let isRecording = false;
+    
+    micBtn.onclick = async () => {
+        if (isRecording) {
+            // Stop recording
+            if (mediaRecorder && mediaRecorder.state === 'recording') {
+                mediaRecorder.stop();
+            }
+            return;
+        }
+        
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            mediaRecorder = new MediaRecorder(stream);
+            audioChunks = [];
+            
+            mediaRecorder.ondataavailable = (e) => {
+                if (e.data.size > 0) audioChunks.push(e.data);
+            };
+            
+            mediaRecorder.onstart = () => {
+                isRecording = true;
+                micBtn.innerHTML = "⏹ Stop";
+                micBtn.style.background = "linear-gradient(180deg,#fca5a5,#f87171)";
+                micBtn.style.color = "#7f1d1d";
+            };
+            
+            mediaRecorder.onstop = () => {
+                isRecording = false;
+                micBtn.innerHTML = "🎙 Record";
+                micBtn.style.background = "linear-gradient(180deg,#fef3c7,#fde68a)";
+                micBtn.style.color = "#92400e";
+                
+                stream.getTracks().forEach(t => t.stop());
+                
+                const blob = new Blob(audioChunks, { type: 'audio/webm' });
+                const url = URL.createObjectURL(blob);
+                
+                // Show playback in a toast-style popup
+                let playbackDiv = document.getElementById('mic-playback');
+                if (!playbackDiv) {
+                    playbackDiv = document.createElement('div');
+                    playbackDiv.id = 'mic-playback';
+                    playbackDiv.style.cssText = 'position:fixed; bottom:80px; left:50%; transform:translateX(-50%); z-index:9999; background:rgba(255,255,255,0.97); border-radius:16px; padding:10px 16px; box-shadow:0 8px 24px rgba(0,0,0,0.2); display:flex; align-items:center; gap:10px; font-size:0.85rem; backdrop-filter:blur(8px);';
+                    document.body.appendChild(playbackDiv);
+                }
+                
+                playbackDiv.innerHTML = `
+                    <span style="font-weight:700;">Your recording:</span>
+                    <button onclick="new Audio('${url}').play()" style="padding:4px 12px; border-radius:8px; border:1px solid #d1d5db; background:#f0fdf4; cursor:pointer; font-size:0.82rem;">▶ Play</button>
+                    <button onclick="if(typeof tryPlayPackedTtsForCurrentWord==='function'){tryPlayPackedTtsForCurrentWord({text:currentWord,languageCode:'en',type:'word'})}" style="padding:4px 12px; border-radius:8px; border:1px solid #d1d5db; background:#eff6ff; cursor:pointer; font-size:0.82rem;">🔊 Hear Word</button>
+                    <button onclick="this.parentElement.remove()" style="padding:4px 8px; border-radius:8px; border:1px solid #d1d5db; background:#fff; cursor:pointer;">✕</button>
+                `;
+                
+                // Auto-dismiss after 15 seconds
+                setTimeout(() => { if (playbackDiv.parentElement) playbackDiv.remove(); }, 15000);
+            };
+            
+            mediaRecorder.start();
+            // Auto-stop after 5 seconds
+            setTimeout(() => {
+                if (mediaRecorder.state === 'recording') mediaRecorder.stop();
+            }, 5000);
+            
+        } catch (err) {
+            showToast('Microphone access needed for recording');
+        }
+    };
+    
+    micRow.appendChild(micBtn);
+    keyboard.appendChild(micRow);
 }
 
 function createKey(txt, action, wide) {
@@ -13740,6 +13827,36 @@ function initFocusToggle() {
             }
         };
     }
+}
+
+function initQuickTeacherWord() {
+    const input = document.getElementById('quick-teacher-word');
+    const goBtn = document.getElementById('quick-teacher-go');
+    if (!input || !goBtn) return;
+    
+    const doApply = () => {
+        const word = (input.value || '').trim().toLowerCase();
+        if (!word || word.length < 3 || word.length > 12 || /[^a-z]/i.test(word)) {
+            showToast('Enter a 3-12 letter word (letters only)');
+            return;
+        }
+        if (typeof applyCustomWordChallenge === 'function') {
+            const ok = applyCustomWordChallenge(word, { source: 'quick' });
+            if (ok) {
+                input.value = '';
+                showToast(`Teacher word: ${word.toUpperCase()}`);
+            }
+        }
+        input.blur();
+    };
+    
+    goBtn.onclick = doApply;
+    input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') { e.preventDefault(); doApply(); }
+        // Prevent keyboard game input when typing in this field
+        e.stopPropagation();
+    });
+    input.addEventListener('keyup', (e) => e.stopPropagation());
 }
 
 function initHowTo() {
