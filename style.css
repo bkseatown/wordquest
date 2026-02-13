@@ -17008,149 +17008,8 @@ body[data-cs-scene="classic-contrast"] .global-theme-studio-field select {
     }
 }
 
-/* ============================================
-   WORD QUEST LAYOUT FIX - Feb 2026
-   Compact header, fit keyboard on screen
-   ============================================ */
 
-/* --- COMPACT HEADER: single row where possible --- */
-body.word-quest-page header {
-    padding: 4px 8px 2px !important;
-}
-
-body.word-quest-page .header-top {
-    margin-bottom: 2px !important;
-    padding: 0 !important;
-}
-
-body.word-quest-page .controls {
-    display: flex !important;
-    flex-wrap: wrap !important;
-    align-items: center !important;
-    gap: 6px 10px !important;
-    padding: 2px 0 4px !important;
-    margin: 0 !important;
-}
-
-body.word-quest-page .control-group {
-    margin: 0 !important;
-    padding: 0 !important;
-}
-
-body.word-quest-page .control-group label[aria-hidden="true"] {
-    display: none !important;
-}
-
-/* Make focus dropdown smaller */
-body.word-quest-page .wq-control-focus {
-    flex: 0 1 auto !important;
-    max-width: 280px !important;
-}
-
-body.word-quest-page .wq-control-focus select {
-    padding: 5px 8px !important;
-    font-size: 0.82rem !important;
-}
-
-/* Focus hint checkbox inline and compact */
-body.word-quest-page .wq-focus-hint-toggle {
-    display: inline-flex !important;
-    align-items: center !important;
-    gap: 4px !important;
-    font-size: 0.72rem !important;
-    white-space: nowrap !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    text-transform: uppercase !important;
-    letter-spacing: 0.03em !important;
-    opacity: 0.8 !important;
-}
-
-/* Buttons compact */
-body.word-quest-page .new-round-btn {
-    padding: 5px 14px !important;
-    font-size: 0.82rem !important;
-}
-
-body.word-quest-page .wq-play-mode-btn {
-    padding: 5px 12px !important;
-    font-size: 0.78rem !important;
-}
-
-body.word-quest-page .wq-tools-toggle {
-    padding: 5px 12px !important;
-    font-size: 0.82rem !important;
-}
-
-/* --- FOCUS HINT: compact inline chip, don't push board --- */
-body.word-quest-page .focus-round-chip,
-body.word-quest-page #focus-round-chip {
-    margin: 0 0 -2px !important;
-    padding: 2px 12px !important;
-    font-size: 0.78rem !important;
-    font-weight: 600 !important;
-    line-height: 1.3 !important;
-    max-height: 22px !important;
-    overflow: hidden !important;
-}
-
-/* Make game-canvas position relative for the overlay */
-body.word-quest-page #game-canvas {
-    position: relative !important;
-}
-
-/* --- SENTENCE TEXT: above board as compact banner --- */
-body.word-quest-page #sentence-preview {
-    position: absolute !important;
-    bottom: auto !important;
-    top: 8px !important;
-    left: 50% !important;
-    transform: translateX(-50%) !important;
-    z-index: 12 !important;
-    max-width: 90% !important;
-    background: rgba(255, 255, 255, 0.95) !important;
-    color: #1e293b !important;
-    padding: 4px 12px !important;
-    border-radius: 8px !important;
-    font-size: 0.82rem !important;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.15) !important;
-    margin: 0 !important;
-}
-
-body.word-quest-page .cs-sentence-caption-toggle-wrap {
-    position: absolute !important;
-    top: -22px !important;
-    left: 50% !important;
-    transform: translateX(-50%) !important;
-    z-index: 12 !important;
-    font-size: 0.72rem !important;
-    white-space: nowrap !important;
-}
-
-/* --- GAME CANVAS: tighter spacing --- */
-body.word-quest-page #game-canvas {
-    margin: 2px 16px 4px !important;
-    padding: 10px 12px 8px !important;
-    gap: 6px !important;
-}
-
-/* --- HINT ACTIONS: more compact --- */
-body.word-quest-page .hint-actions {
-    gap: 8px !important;
-    padding: 2px 0 !important;
-    margin: 0 !important;
-}
-
-body.word-quest-page .hint-actions .hint-btn {
-    padding: 4px 14px !important;
-    font-size: 0.8rem !important;
-}
-
-/* --- BOARD: sizing now handled at source via calc((100vh - 340px) / 7.5) --- */
-
-/* --- KEYBOARD: sizing now handled at source --- */
-
-/* --- DARK THEME TILE FIX: lighter tiles on dark backgrounds --- */
+/* === DARK THEME: light tiles on dark backgrounds === */
 body.word-quest-page[data-wq-scene="hero-iron"] .tile:not(.correct):not(.present):not(.absent),
 body.word-quest-page[data-wq-scene="hero-shield"] .tile:not(.correct):not(.present):not(.absent),
 body.word-quest-page[data-wq-scene="hero-spider"] .tile:not(.correct):not(.present):not(.absent),
@@ -17163,41 +17022,12 @@ body.word-quest-page[data-wq-scene="professional-midnight"] .tile:not(.correct):
     color: #1a1a2e !important;
 }
 
-/* --- VOICE PICKER: hide, keep speed only --- */
+/* === Hide voice picker button (Ava only for now) === */
 body.word-quest-page #simple-voice-settings {
     display: none !important;
 }
 
-/* --- RESPONSIVE: handled at source definitions now --- */
-
-/* --- CRITICAL: Force page to fit viewport --- */
-body.word-quest-page {
-    height: 100vh !important;
-    height: 100dvh !important;
-    overflow: hidden !important;
-    display: flex !important;
-    flex-direction: column !important;
-}
-
-body.word-quest-page main {
-    flex: 1 !important;
-    min-height: 0 !important;
-    overflow: hidden !important;
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-}
-
-body.word-quest-page #game-canvas {
-    flex: 1 !important;
-    min-height: 0 !important;
-    overflow: hidden !important;
-}
-
-body.word-quest-page #game-board {
-    flex: 1 !important;
-    min-height: 0 !important;
-    display: flex !important;
-    flex-direction: column !important;
-    justify-content: center !important;
+/* === Compact header labels === */
+body.word-quest-page .control-group label[aria-hidden="true"] {
+    display: none !important;
 }
