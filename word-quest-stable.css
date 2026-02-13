@@ -1,0 +1,589 @@
+/* ============================================================
+   WORD QUEST - PRODUCTION POLISH v2.0
+   Educational phonics game - K-12 literacy instruction
+   ============================================================ */
+
+/* ============================================================
+   TYPOGRAPHY FOUNDATION
+   - DM Sans for clean, modern readability
+   - Weight hierarchy: 700 (tiles) > 600 (keys) > 500 (labels)
+   ============================================================ */
+
+body.word-quest-page,
+body.word-quest-page.fit-screen,
+body.word-quest-page.fit-screen-tight {
+    font-family: 'DM Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* ============================================================
+   DEFAULT THEME: Warm Dark Professional
+   - Dark but inviting (not cave-dark)
+   - High contrast for accessibility
+   - Subtle ambient glow for premium feel
+   ============================================================ */
+
+body.word-quest-page,
+body.word-quest-page.fit-screen,
+body.word-quest-page.fit-screen-tight {
+    /* Page background: deep navy with warmth */
+    --wq-page-bg: linear-gradient(180deg, #1a1d2e 0%, #1e2236 50%, #1c1f30 100%);
+    
+    /* Canvas (game board container): slightly elevated */
+    --wq-canvas-surface: linear-gradient(180deg, rgba(30, 35, 52, 0.97) 0%, rgba(26, 31, 48, 0.95) 100%);
+    
+    /* Ambient glow - adds depth without flashiness */
+    --wq-canvas-glow: 
+        radial-gradient(circle at 16% 10%, rgba(99, 144, 228, 0.08), transparent 48%),
+        radial-gradient(circle at 84% 90%, rgba(168, 130, 220, 0.06), transparent 48%);
+    
+    /* Accent stripe (top of canvas) */
+    --wq-canvas-accent: linear-gradient(90deg, rgba(99, 144, 228, 0.7), rgba(168, 130, 220, 0.5));
+    
+    /* Board surface (where tiles sit) */
+    --wq-board-surface: rgba(14, 17, 28, 0.6);
+    
+    /* Tiles: clean white for maximum letter contrast */
+    --wq-tile-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(240, 242, 248, 0.92) 100%);
+    --wq-tile-border: rgba(100, 116, 150, 0.25);
+    --wq-tile-text: #1a1d2e;
+    
+    /* Keyboard: mid-tone surface */
+    --wq-keyboard-surface: rgba(28, 33, 50, 0.85);
+    --wq-key-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.93) 0%, rgba(235, 238, 248, 0.9) 100%);
+    --wq-key-border: rgba(80, 96, 130, 0.3);
+    --wq-key-text: #1a1d2e;
+    
+    /* Vowel keys: subtle blue accent */
+    --wq-key-vowel-bg: linear-gradient(180deg, rgba(220, 232, 255, 0.95) 0%, rgba(200, 218, 250, 0.92) 100%);
+    --wq-key-vowel-border: rgba(99, 144, 228, 0.5);
+    
+    /* Text colors */
+    --wq-heading-text: rgba(240, 244, 255, 0.95);
+    --wq-label-text: rgba(180, 195, 225, 0.85);
+    --wq-caption-text: rgba(160, 178, 210, 0.75);
+    
+    /* Borders and shapes */
+    --wq-panel-border: rgba(80, 96, 140, 0.2);
+    --wq-panel-radius: 16px;
+    --wq-key-radius: 12px;
+    
+    background: var(--wq-page-bg) !important;
+    color: var(--wq-heading-text) !important;
+}
+
+/* ============================================================
+   THEME: Ocean Focus (Calm blue - good for EAL students)
+   ============================================================ */
+body.word-quest-page[data-wq-scene="ocean-calm"] {
+    --wq-page-bg: linear-gradient(180deg, #1c2841 0%, #1e2d4a 50%, #1f3152 100%);
+    --wq-canvas-surface: linear-gradient(180deg, rgba(30, 42, 68, 0.97) 0%, rgba(26, 37, 60, 0.95) 100%);
+    --wq-canvas-glow: 
+        radial-gradient(circle at 16% 10%, rgba(60, 131, 214, 0.12), transparent 48%),
+        radial-gradient(circle at 84% 90%, rgba(41, 123, 163, 0.09), transparent 48%);
+    --wq-canvas-accent: linear-gradient(90deg, rgba(68, 135, 220, 0.75), rgba(72, 168, 210, 0.65));
+    --wq-board-surface: rgba(12, 18, 35, 0.65);
+    --wq-keyboard-surface: rgba(25, 36, 58, 0.85);
+    --wq-heading-text: rgba(230, 242, 255, 0.95);
+    --wq-label-text: rgba(180, 205, 235, 0.88);
+}
+
+/* ============================================================
+   THEME: Forest Meadow (Green - calming for focus)
+   ============================================================ */
+body.word-quest-page[data-wq-scene="meadow-calm"] {
+    --wq-page-bg: linear-gradient(180deg, #1e2b26 0%, #223530 50%, #253a34 100%);
+    --wq-canvas-surface: linear-gradient(180deg, rgba(34, 45, 40, 0.97) 0%, rgba(30, 40, 36, 0.95) 100%);
+    --wq-canvas-glow: 
+        radial-gradient(circle at 16% 10%, rgba(61, 152, 94, 0.11), transparent 48%),
+        radial-gradient(circle at 84% 90%, rgba(95, 170, 110, 0.08), transparent 48%);
+    --wq-canvas-accent: linear-gradient(90deg, rgba(79, 152, 105, 0.75), rgba(107, 177, 126, 0.65));
+    --wq-board-surface: rgba(15, 22, 20, 0.65);
+    --wq-keyboard-surface: rgba(28, 38, 34, 0.85);
+    --wq-heading-text: rgba(230, 245, 235, 0.95);
+    --wq-label-text: rgba(180, 210, 190, 0.88);
+}
+
+/* ============================================================
+   THEME: Sunrise Energy (Warm - engaging for morning classes)
+   ============================================================ */
+body.word-quest-page[data-wq-scene="playful-sunrise"] {
+    --wq-page-bg: linear-gradient(180deg, #2a1f28 0%, #332838 50%, #3a2d42 100%);
+    --wq-canvas-surface: linear-gradient(180deg, rgba(42, 35, 48, 0.97) 0%, rgba(38, 31, 44, 0.95) 100%);
+    --wq-canvas-glow: 
+        radial-gradient(circle at 16% 10%, rgba(233, 119, 79, 0.13), transparent 48%),
+        radial-gradient(circle at 84% 90%, rgba(249, 147, 63, 0.10), transparent 48%);
+    --wq-canvas-accent: linear-gradient(90deg, rgba(226, 112, 84, 0.75), rgba(245, 145, 62, 0.68));
+    --wq-board-surface: rgba(18, 14, 22, 0.65);
+    --wq-keyboard-surface: rgba(35, 28, 40, 0.85);
+    --wq-key-vowel-bg: linear-gradient(180deg, rgba(255, 230, 200, 0.95) 0%, rgba(255, 215, 180, 0.92) 100%);
+    --wq-key-vowel-border: rgba(245, 145, 62, 0.6);
+    --wq-heading-text: rgba(255, 245, 235, 0.95);
+    --wq-label-text: rgba(235, 215, 200, 0.88);
+}
+
+/* ============================================================
+   THEME: High Contrast (Accessibility - dyslexia-friendly)
+   ============================================================ */
+body.word-quest-page[data-wq-scene="classic-contrast"] {
+    --wq-page-bg: linear-gradient(180deg, #0a0e1a 0%, #0d1220 50%, #0f1624 100%);
+    --wq-canvas-surface: linear-gradient(180deg, rgba(15, 22, 38, 0.98) 0%, rgba(12, 18, 32, 0.96) 100%);
+    --wq-canvas-glow: 
+        radial-gradient(circle at 16% 10%, rgba(87, 153, 244, 0.14), transparent 48%),
+        radial-gradient(circle at 84% 90%, rgba(252, 211, 77, 0.08), transparent 48%);
+    --wq-canvas-accent: linear-gradient(90deg, rgba(252, 211, 77, 0.85), rgba(93, 156, 245, 0.75));
+    --wq-board-surface: rgba(5, 8, 16, 0.75);
+    --wq-keyboard-surface: rgba(12, 18, 32, 0.90);
+    --wq-tile-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(245, 248, 255, 0.96) 100%);
+    --wq-key-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.97) 0%, rgba(240, 245, 255, 0.94) 100%);
+    --wq-heading-text: rgba(255, 255, 255, 0.98);
+    --wq-label-text: rgba(240, 245, 255, 0.92);
+    --wq-panel-border: rgba(171, 193, 228, 0.35);
+}
+
+/* ============================================================
+   THEME: Light Mode (Bright - for well-lit classrooms)
+   ============================================================ */
+body.word-quest-page[data-wq-scene="classic-wordle"] {
+    --wq-page-bg: linear-gradient(180deg, #ffffff 0%, #fafbfc 50%, #f5f7fa 100%);
+    --wq-canvas-surface: linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(250, 252, 255, 0.95) 100%);
+    --wq-canvas-glow: 
+        radial-gradient(circle at 16% 10%, rgba(88, 144, 230, 0.06), transparent 48%),
+        radial-gradient(circle at 84% 90%, rgba(150, 138, 224, 0.04), transparent 48%);
+    --wq-canvas-accent: linear-gradient(90deg, rgba(95, 155, 242, 0.3), rgba(150, 138, 224, 0.25));
+    --wq-board-surface: rgba(240, 245, 250, 0.8);
+    --wq-keyboard-surface: rgba(248, 250, 252, 0.9);
+    --wq-tile-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(250, 252, 255, 0.96) 100%);
+    --wq-tile-border: rgba(100, 120, 150, 0.25);
+    --wq-tile-text: #1a1d2e;
+    --wq-key-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(248, 250, 254, 0.96) 100%);
+    --wq-key-border: rgba(110, 130, 160, 0.25);
+    --wq-key-text: #1a1d2e;
+    --wq-key-vowel-bg: linear-gradient(180deg, rgba(225, 238, 255, 0.98) 0%, rgba(210, 228, 252, 0.95) 100%);
+    --wq-key-vowel-border: rgba(88, 144, 230, 0.45);
+    --wq-heading-text: rgba(20, 25, 35, 0.95);
+    --wq-label-text: rgba(45, 55, 75, 0.85);
+    --wq-caption-text: rgba(65, 75, 95, 0.75);
+    --wq-panel-border: rgba(100, 120, 150, 0.20);
+}
+
+/* ============================================================
+   TYPOGRAPHY HIERARCHY
+   ============================================================ */
+
+/* Title - premium feel */
+body.word-quest-page header h1 a {
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    font-size: clamp(1rem, 1.8vw, 1.3rem);
+}
+
+/* Tile letters - bold and confident */
+body.word-quest-page .tile {
+    font-weight: 700;
+    font-size: clamp(1.4rem, 2.5vw, 1.8rem);
+    letter-spacing: 0.02em;
+}
+
+/* Keyboard keys - medium weight */
+body.word-quest-page .key {
+    font-weight: 600;
+    font-size: clamp(0.85rem, 1.5vw, 1rem);
+    letter-spacing: 0.03em;
+}
+
+/* Controls and labels - professional */
+body.word-quest-page select,
+body.word-quest-page .control-group label {
+    font-weight: 500;
+    font-size: 0.82rem;
+    letter-spacing: 0.02em;
+}
+
+/* ============================================================
+   SPACING AND LAYOUT IMPROVEMENTS
+   ============================================================ */
+
+body.word-quest-page header {
+    width: 100% !important;
+    max-width: 1180px !important;
+    margin: 0 auto !important;
+    padding: 8px 14px 4px !important;
+}
+
+body.word-quest-page .header-top {
+    margin-bottom: 4px !important;
+    gap: 8px !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+}
+
+body.word-quest-page .header-top h1 {
+    margin: 0 !important;
+    line-height: 1.08 !important;
+}
+
+body.word-quest-page .header-top h1,
+body.word-quest-page .header-top h1 a {
+    color: var(--wq-heading-text) !important;
+    text-decoration-color: color-mix(in srgb, var(--wq-heading-text) 64%, transparent) !important;
+}
+
+body.word-quest-page .header-top h1::after {
+    background: color-mix(in srgb, var(--wq-heading-text) 70%, #38bdf8) !important;
+}
+
+body.word-quest-page .header-actions .link-btn {
+    color: color-mix(in srgb, var(--wq-heading-text) 82%, transparent) !important;
+    border-color: color-mix(in srgb, var(--wq-heading-text) 28%, transparent) !important;
+    background: color-mix(in srgb, var(--wq-canvas-surface) 56%, transparent) !important;
+    box-shadow: none !important;
+    opacity: 0.78;
+}
+
+body.word-quest-page .demo-exit-link {
+    opacity: 0.82 !important;
+    font-size: 0.86rem !important;
+    min-height: 34px !important;
+    padding: 6px 12px !important;
+}
+
+/* Controls - clean breathing room */
+body.word-quest-page .controls {
+    width: 100% !important;
+    max-width: 1180px !important;
+    margin: 0 auto 4px !important;
+    padding: 0 !important;
+    display: grid !important;
+    grid-template-columns: minmax(360px, 1fr) auto auto !important;
+    gap: 8px 12px !important;
+    align-items: end !important;
+}
+
+body.word-quest-page .controls .control-group > label,
+body.word-quest-page .focus-round-chip {
+    color: var(--wq-label-text) !important;
+    text-shadow: none !important;
+    opacity: 1 !important;
+    font-weight: 760 !important;
+}
+
+body.word-quest-page .controls .control-group > label {
+    font-size: 0.78rem !important;
+    letter-spacing: 0.04em !important;
+}
+
+body.word-quest-page .focus-round-chip {
+    width: 100%;
+    max-width: 1180px;
+    margin: 0 auto 4px !important;
+    font-size: 1rem !important;
+    font-weight: 780 !important;
+}
+
+body.word-quest-page .focus-round-chip.is-hidden {
+    display: none !important;
+}
+
+body.word-quest-page .wq-control-new-round .new-round-btn {
+    min-width: 132px !important;
+}
+
+/* ============================================================
+   PLAY MODE TOGGLE - Enhanced Clarity
+   Make it VERY obvious which mode you're in
+   ============================================================ */
+
+body.word-quest-page .wq-play-mode-selector {
+    display: inline-flex;
+    gap: 4px;
+    padding: 3px;
+    background: rgba(0, 0, 0, 0.15);
+    border-radius: 10px;
+    border: 1px solid var(--wq-panel-border);
+}
+
+body.word-quest-page .wq-play-mode-btn {
+    padding: 6px 14px;
+    border-radius: 7px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    transition: all 0.15s ease;
+    border: none;
+    background: transparent;
+    color: var(--wq-label-text);
+    cursor: pointer;
+}
+
+body.word-quest-page .wq-play-mode-btn.is-active {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(240, 245, 252, 0.92) 100%);
+    color: #1a1d2e;
+    font-weight: 700;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+body.word-quest-page .wq-play-mode-btn:hover:not(.is-active) {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+/* ============================================================
+   BOARD AND TILES - Consistent Spacing
+   ============================================================ */
+
+body.word-quest-page .board-row {
+    gap: 6px;
+    margin-bottom: 6px;
+}
+
+body.word-quest-page .tile {
+    border-radius: 8px;
+    transition: transform 0.1s ease, background 0.3s ease;
+}
+
+body.word-quest-page .tile.revealed {
+    animation: tileReveal 0.4s ease;
+}
+
+@keyframes tileReveal {
+    0% { transform: scaleY(1); }
+    50% { transform: scaleY(0); }
+    100% { transform: scaleY(1); }
+}
+
+/* ============================================================
+   KEYBOARD - Professional Touch
+   ============================================================ */
+
+body.word-quest-page .keyboard-row {
+    gap: 5px;
+    margin-bottom: 5px;
+}
+
+body.word-quest-page .key {
+    border-radius: var(--wq-key-radius);
+    min-height: 48px;
+    padding: 0 12px;
+    transition: transform 0.08s ease, box-shadow 0.15s ease;
+}
+
+body.word-quest-page .key:active {
+    transform: scale(0.95);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+/* ============================================================
+   REVEAL MODAL - The Learning Moment
+   This is where students learn the word meaning
+   ============================================================ */
+
+body.word-quest-page .modal-overlay {
+    backdrop-filter: blur(6px);
+    background: rgba(10, 12, 20, 0.7);
+}
+
+body.word-quest-page .reveal-modal .modal-content {
+    border-radius: 20px;
+    padding: 28px 24px;
+    max-width: 420px;
+    background: linear-gradient(180deg, #ffffff 0%, #f8f9fc 100%);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+/* The word itself - hero treatment */
+body.word-quest-page .reveal-word {
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin: 8px 0 16px;
+    color: #1a1d2e;
+}
+
+/* Definition text */
+body.word-quest-page .reveal-definition {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #3a3f52;
+    margin-bottom: 12px;
+}
+
+/* Sentence text */
+body.word-quest-page .reveal-sentence {
+    font-size: 0.92rem;
+    line-height: 1.55;
+    color: #5a5f72;
+    font-style: italic;
+    padding: 12px 16px;
+    background: rgba(99, 144, 228, 0.06);
+    border-radius: 10px;
+    border-left: 3px solid rgba(99, 144, 228, 0.4);
+}
+
+/* Audio buttons in reveal */
+body.word-quest-page .reveal-audio-btn {
+    border-radius: 10px;
+    padding: 8px 16px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    transition: background 0.2s ease, transform 0.1s ease;
+}
+
+body.word-quest-page .reveal-audio-btn:active {
+    transform: scale(0.97);
+}
+
+/* ============================================================
+   TOOLS MENU
+   ============================================================ */
+
+body.word-quest-page .wq-tools-control {
+    position: relative;
+    min-width: 120px;
+    opacity: 1 !important;
+}
+
+body.word-quest-page #wq-tools-menu {
+    position: relative;
+}
+
+body.word-quest-page #wq-tools-menu > summary {
+    list-style: none;
+    min-width: 126px;
+    justify-content: center;
+    display: inline-flex;
+    align-items: center;
+}
+
+body.word-quest-page #wq-tools-menu > summary::-webkit-details-marker {
+    display: none;
+}
+
+body.word-quest-page #wq-tools-menu[open] > summary {
+    border-color: color-mix(in srgb, var(--wq-heading-text) 36%, transparent) !important;
+}
+
+body.word-quest-page .wq-tools-body {
+    display: none;
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    width: min(360px, calc(100vw - 22px));
+    border-radius: 14px;
+    border: 1px solid rgba(148, 163, 184, 0.48);
+    background: #f8fbff;
+    box-shadow: 0 16px 34px rgba(15, 23, 42, 0.22);
+    padding: 10px;
+    z-index: 2800;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    mix-blend-mode: normal !important;
+    isolation: isolate !important;
+    opacity: 1 !important;
+    color: #0f172a;
+}
+
+body.word-quest-page #wq-tools-menu[open] .wq-tools-body {
+    display: block;
+}
+
+body.word-quest-page .wq-tools-section {
+    margin-bottom: 12px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(100, 116, 139, 0.14);
+}
+
+body.word-quest-page .wq-tools-section:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+body.word-quest-page .wq-tools-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: rgba(30, 41, 59, 0.64);
+    margin-bottom: 6px;
+}
+
+/* ============================================================
+   TEACHER WORD ENTRY - Accessible but Professional
+   ============================================================ */
+
+body.word-quest-page .teacher-word-input {
+    width: 100%;
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(100, 120, 150, 0.3);
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: border-color 0.2s ease;
+}
+
+body.word-quest-page .teacher-word-input:focus {
+    outline: none;
+    border-color: rgba(99, 144, 228, 0.6);
+    box-shadow: 0 0 0 3px rgba(99, 144, 228, 0.1);
+}
+
+/* Hint text for teacher word entry */
+body.word-quest-page .teacher-word-hint {
+    font-size: 0.75rem;
+    color: rgba(45, 55, 75, 0.7);
+    margin-top: 4px;
+    font-style: italic;
+}
+
+/* ============================================================
+   RESPONSIVE ADJUSTMENTS
+   ============================================================ */
+
+@media (max-width: 768px) {
+    body.word-quest-page .controls {
+        grid-template-columns: 1fr !important;
+        gap: 8px !important;
+    }
+    
+    body.word-quest-page .reveal-modal .modal-content {
+        padding: 20px 18px;
+        max-width: calc(100vw - 32px);
+    }
+    
+    body.word-quest-page .reveal-word {
+        font-size: 1.6rem;
+    }
+}
+
+/* ============================================================
+   ACCESSIBILITY ENHANCEMENTS
+   ============================================================ */
+
+/* Focus visible for keyboard navigation */
+body.word-quest-page *:focus-visible {
+    outline: 2px solid rgba(99, 144, 228, 0.8);
+    outline-offset: 2px;
+}
+
+/* Reduced motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+    body.word-quest-page *,
+    body.word-quest-page *::before,
+    body.word-quest-page *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    body.word-quest-page {
+        --wq-tile-border: rgba(100, 116, 150, 0.5);
+        --wq-key-border: rgba(80, 96, 130, 0.5);
+        --wq-panel-border: rgba(80, 96, 140, 0.4);
+    }
+}

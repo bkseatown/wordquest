@@ -1,0 +1,1247 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="cs-build-hash" content="be4e6007" />
+    <meta name="cs-build-time" content="2026-02-12 07:29 UTC" />
+    <title>Word Quest — Decode the Word</title>
+    <script>
+      (function () {
+        try {
+          const params = new URLSearchParams(window.location.search || '');
+          const hash = String(window.location.hash || '').toLowerCase();
+          if (params.get('demo') === '1' || hash === '#demo' || hash === '#demo-mode') {
+            document.documentElement.classList.add('wq-demo-mode');
+            window.__wqDemoMode = true;
+          }
+        } catch {}
+      })();
+    </script>
+    <script>
+      (function applyWordQuestDemoRouteGuard() {
+        function isDemoMode() {
+          return !!(window.__wqDemoMode || document.documentElement.classList.contains('wq-demo-mode'));
+        }
+        function isAllowedDemoHref(rawHref) {
+          const href = String(rawHref || '').trim();
+          if (!href) return true;
+          if (href.startsWith('#') || href.startsWith('javascript:') || href.startsWith('mailto:') || href.startsWith('tel:')) return true;
+          try {
+            const url = new URL(href, window.location.href);
+            if (url.origin !== window.location.origin) return false;
+            const path = url.pathname.replace(/\/+$/, '');
+            return path.endsWith('/literacy-platform/word-quest.html')
+              || path.endsWith('/literacy-platform/word-quest-demo.html')
+              || path.endsWith('/word-quest.html')
+              || path.endsWith('/word-quest-demo.html');
+          } catch {
+            return false;
+          }
+        }
+        function init() {
+          if (!isDemoMode()) return;
+          const homeBtn = document.getElementById('home-btn');
+          if (homeBtn) homeBtn.setAttribute('href', 'word-quest-demo.html');
+          document.addEventListener('click', function (event) {
+            const target = event.target;
+            if (!target || !target.closest) return;
+            const anchor = target.closest('a[href]');
+            if (!anchor) return;
+            const href = anchor.getAttribute('href') || '';
+            if (isAllowedDemoHref(href)) return;
+            event.preventDefault();
+            event.stopPropagation();
+            window.location.href = 'word-quest-demo.html';
+          }, true);
+        }
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', init);
+        } else {
+          init();
+        }
+      })();
+    </script>
+    <!-- Google Font: DM Sans for clean, modern typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
+    
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="word-quest-stable.css" />
+    <link rel="stylesheet" href="delight.css" />
+    <script src="words.js" defer></script>
+    <script src="decodables-expansion.js" defer></script>
+    <script src="young-overrides.js" defer></script>
+    <script src="phoneme-data.js" defer></script>
+    <script src="focus-info.js" defer></script>
+    <script src="translations.js" defer></script>
+    <script src="delight.js" defer></script>
+    <script src="app.js" defer></script>
+  </head>
+
+  <body class="word-quest-page cs-page-wordquest look-35" data-wq-scene="navy-mint">
+    <header>
+      <div class="header-top">
+        <h1>
+          <a href="./">WORD QUEST</a>
+        </h1>
+        <nav class="header-actions" aria-label="Primary">
+          <a id="home-btn" class="link-btn" href="./">Home</a>
+        </nav>
+        <a id="demo-exit-link" class="link-btn demo-exit-link" href="word-quest-demo.html" aria-label="Exit demo">Exit demo</a>
+      </div>
+
+      <div class="controls" role="group" aria-label="Game setup">
+        <div class="control-group wq-control-focus">
+          <select id="pattern-select" aria-label="Choose your path">
+            <option value="shuffle" selected>Choose your path?</option>
+            <option value="all">All Words</option>
+            <option value="cvc">CVC (short vowels: cat, pin)</option>
+            <option value="digraph">Digraphs (sh, ch, th)</option>
+            <option value="ccvc">Initial blends (bl-, tr-, st-)</option>
+            <option value="cvcc">Final blends (-nd, -st, -mp)</option>
+            <option value="trigraph">Trigraphs (tch, dge)</option>
+            <option value="cvce">Magic E (a_e: cake)</option>
+            <option value="vowel_team">Vowel teams (ai, ee, oa)</option>
+            <option value="r_controlled">R-controlled (ar, er, ir)</option>
+            <option value="diphthong">Diphthongs (oi, ow)</option>
+            <option value="floss">FLOSS rule (ff, ll, ss)</option>
+            <option value="welded">Welded sounds (ang, ong)</option>
+            <option value="schwa">Schwa (a in about)</option>
+            <option value="prefix">Prefixes (un-, re-)</option>
+            <option value="suffix">Suffixes (-ing, -ed)</option>
+            <option value="compound">Compound words (sun+set)</option>
+            <option value="multisyllable">Multisyllabic (pic-nic)</option>
+            <optgroup label="Math Vocabulary">
+              <option value="vocab-math-k2">Math Vocabulary (K-2)</option>
+              <option value="vocab-math-35">Math Vocabulary (3-5)</option>
+              <option value="vocab-math-68">Math Vocabulary (6-8)</option>
+              <option value="vocab-math-912">Math Vocabulary (9-12)</option>
+            </optgroup>
+            <optgroup label="Science Vocabulary">
+              <option value="vocab-science-k2">Science Vocabulary (K-2)</option>
+              <option value="vocab-science-35">Science Vocabulary (3-5)</option>
+              <option value="vocab-science-68">Science Vocabulary (6-8)</option>
+              <option value="vocab-science-912">Science Vocabulary (9-12)</option>
+            </optgroup>
+            <optgroup label="Social Studies Vocabulary">
+              <option value="vocab-social-k2">Social Studies Vocabulary (K-2)</option>
+              <option value="vocab-social-35">Social Studies Vocabulary (3-5)</option>
+              <option value="vocab-social-68">Social Studies Vocabulary (6-8)</option>
+              <option value="vocab-social-912">Social Studies Vocabulary (9-12)</option>
+            </optgroup>
+            <optgroup label="ELA Vocabulary">
+              <option value="vocab-ela-k2">ELA Vocabulary (K-2)</option>
+              <option value="vocab-ela-35">ELA Vocabulary (3-5)</option>
+              <option value="vocab-ela-68">ELA Vocabulary (6-8)</option>
+              <option value="vocab-ela-912">ELA Vocabulary (9-12)</option>
+            </optgroup>
+          </select>
+          <label class="wq-focus-hint-toggle" for="wq-toggle-round-clue">
+            <input id="wq-toggle-round-clue" type="checkbox" />
+            <span>Small focus hint</span>
+          </label>
+        </div>
+
+        <div class="control-group control-group-subtle wq-control-new-round">
+          <label for="new-word-btn" aria-hidden="true">&nbsp;</label>
+          <button id="new-word-btn" type="button" class="case-toggle-btn new-round-btn" aria-label="Start new round">New Round</button>
+        </div>
+
+        <div class="control-group control-group-subtle wq-control-mode" aria-label="Play mode">
+          <label for="wq-play-mode-switch" aria-hidden="true">&nbsp;</label>
+          <div id="wq-play-mode-switch" class="wq-play-mode-switch" role="group" aria-label="Play mode">
+            <button id="wq-play-mode-classic" type="button" class="wq-play-mode-btn is-active" data-play-mode-option="classic" aria-pressed="true">Classic</button>
+            <button id="wq-play-mode-listen" type="button" class="wq-play-mode-btn" data-play-mode-option="listen" aria-pressed="false">Listen &amp; Spell</button>
+          </div>
+        </div>
+
+        <div class="control-group control-group-subtle wq-tools-control" aria-label="Utilities">
+          <details id="wq-tools-menu" class="wq-tools-menu">
+            <summary id="wq-tools-toggle" class="case-toggle-btn wq-tools-toggle">Open Tools</summary>
+            <div class="wq-tools-body">
+              <div class="wq-tools-tabs" role="tablist" aria-label="Tool sections">
+                <button
+                  id="wq-tools-tab-round"
+                  type="button"
+                  class="wq-tools-tab is-active"
+                  role="tab"
+                  aria-selected="true"
+                  aria-controls="wq-tools-panel-round"
+                  data-tools-tab="round"
+                >Round Setup</button>
+                <button
+                  id="wq-tools-tab-audio-theme"
+                  type="button"
+                  class="wq-tools-tab"
+                  role="tab"
+                  aria-selected="false"
+                  aria-controls="wq-tools-panel-audio-theme"
+                  data-tools-tab="audio-theme"
+                  tabindex="-1"
+                >Audio + Theme</button>
+                <button
+                  id="wq-tools-tab-teacher"
+                  type="button"
+                  class="wq-tools-tab"
+                  role="tab"
+                  aria-selected="false"
+                  aria-controls="wq-tools-panel-teacher"
+                  data-tools-tab="teacher"
+                  tabindex="-1"
+                >Teacher Word</button>
+              </div>
+
+              <section id="wq-tools-panel-round" class="wq-tools-panel is-active" role="tabpanel" aria-labelledby="wq-tools-tab-round" data-tools-panel="round">
+                <div class="wq-tools-subcard">
+                  <label class="wq-tools-field" for="length-select">
+                    <span>Word length</span>
+                    <select id="length-select" aria-label="Word length">
+                      <option value="any">Any</option>
+                      <option value="3">3</option>
+                      <option value="4">4</option>
+                      <option value="5" selected>5</option>
+                      <option value="6">6</option>
+                      <option value="7">7</option>
+                      <option value="8">8</option>
+                    </select>
+                  </label>
+
+                  <label class="wq-tools-field" for="guess-count-select">
+                    <span>Guesses</span>
+                    <select id="guess-count-select" aria-label="Number of guesses">
+                      <option value="1">1</option>
+                      <option value="2">2</option>
+                      <option value="3">3</option>
+                      <option value="4">4</option>
+                      <option value="5">5</option>
+                      <option value="6" selected>6</option>
+                    </select>
+                  </label>
+                </div>
+
+                <div class="wq-tools-subcard">
+                  <div class="wq-tools-field">
+                    <span>Letter case</span>
+                    <button id="case-toggle" type="button" class="case-toggle-btn" aria-label="Toggle letter case">abc</button>
+                  </div>
+                </div>
+              </section>
+
+              <section id="wq-tools-panel-audio-theme" class="wq-tools-panel hidden" role="tabpanel" aria-labelledby="wq-tools-tab-audio-theme" data-tools-panel="audio-theme" aria-hidden="true">
+                <div class="wq-tools-subcard">
+                  <div class="wq-tools-field wq-tools-inline">
+                    <span>Quick tools</span>
+                    <div class="wq-tools-buttons">
+                      <button id="simple-voice-settings" type="button" class="case-toggle-btn wq-utility-btn" aria-label="Open voice settings">Voice</button>
+                      <button
+                        id="cs-delight-sound-toggle"
+                        type="button"
+                        class="case-toggle-btn wq-utility-btn"
+                        aria-label="Toggle celebration sound"
+                        aria-pressed="false"
+                      >Celebration sound: Off</button>
+                      <button
+                        id="wq-test-celebration-sound"
+                        type="button"
+                        class="case-toggle-btn wq-utility-btn"
+                        aria-label="Play celebration sound test"
+                      >Test Sound</button>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="wq-tools-subcard">
+                  <label class="wq-palette-field" for="wq-palette-select">
+                    <span>Palette</span>
+                    <select id="wq-palette-select" class="wq-palette-select">
+                      <option value="calm-studio">Pastel Slate</option>
+                      <option value="meadow-calm">Forest Wheat</option>
+                      <option value="ocean-calm">Navy Mint</option>
+                      <option value="professional-chrome">Gold Slate</option>
+                      <option value="professional-midnight">Purple Gold</option>
+                      <option value="academy-evergreen">Evergreen Heritage</option>
+                      <option value="pastel-scholars">Soft Scholars</option>
+                      <option value="sprout-lavender">Lavender Sprout</option>
+                      <option value="husky-classic">Husky Classic</option>
+                      <option value="playful-festival">Citrus Arcade</option>
+                      <option value="playful-sunrise">Sunset Pop</option>
+                      <option value="classic-wordle">Classic Wordle</option>
+                      <option value="classic-contrast">Electric Contrast</option>
+                    </select>
+                  </label>
+                </div>
+              </section>
+
+              <section id="wq-tools-panel-teacher" class="wq-tools-panel hidden" role="tabpanel" aria-labelledby="wq-tools-tab-teacher" data-tools-panel="teacher" aria-hidden="true">
+                <section class="wq-tools-teacher-card" aria-label="Teacher word controls">
+                  <div class="wq-tools-teacher-head">
+                    <strong>Teacher Word Mode</strong>
+                    <span>Single word, list paste, or file import</span>
+                  </div>
+                  <div id="quick-custom-word-body" class="quick-custom-word-body">
+                    <div class="quick-custom-word-row">
+                      <input
+                        id="quick-custom-word-input"
+                        type="text"
+                        class="masked"
+                        placeholder="Type one class-safe word (3-12 letters)"
+                        autocapitalize="none"
+                        autocomplete="off"
+                        spellcheck="false"
+                      />
+                      <button id="quick-custom-word-toggle-mask" type="button" class="hint-btn secondary" aria-label="Show or hide custom word">Show</button>
+                      <button id="quick-custom-word-start" type="button" class="hint-btn">Play Word</button>
+                      <button id="quick-custom-word-clear" type="button" class="hint-btn secondary">Use Library</button>
+                    </div>
+                    <div class="quick-custom-word-list">
+                      <label for="quick-custom-word-list-input">Word list (paste one per line, comma, or semicolon)</label>
+                      <textarea
+                        id="quick-custom-word-list-input"
+                        rows="4"
+                        placeholder="photosynthesis&#10;fraction&#10;democracy"
+                        spellcheck="false"
+                      ></textarea>
+                      <div class="quick-custom-word-row quick-custom-word-row-list">
+                        <input
+                          id="quick-custom-word-file"
+                          type="file"
+                          accept=".txt,.csv,.tsv,.json,.doc,.docx,.pdf,text/plain,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                        />
+                        <button id="quick-custom-word-file-import" type="button" class="hint-btn secondary">Import File</button>
+                      </div>
+                      <div class="quick-custom-word-row quick-custom-word-row-list">
+                        <button id="quick-custom-word-list-set" type="button" class="hint-btn">Save List</button>
+                        <label class="quick-custom-word-list-toggle">
+                          <input id="quick-custom-word-list-enable" type="checkbox" />
+                          <span>Lock list for rounds</span>
+                        </label>
+                        <button id="quick-custom-word-list-clear" type="button" class="hint-btn secondary">Clear List</button>
+                      </div>
+                      <div id="quick-custom-word-list-status" class="quick-custom-word-list-status muted" aria-live="polite"></div>
+                    </div>
+                    <div id="quick-custom-word-status" class="quick-custom-word-status muted" aria-live="polite">
+                      Mode: Library. Pick a focus or set a teacher word.
+                    </div>
+                  </div>
+                </section>
+              </section>
+            </div>
+          </details>
+        </div>
+      </div>
+      <div id="focus-round-chip" class="focus-round-chip" aria-live="polite"></div>
+    </header>
+
+    <main>
+      <div id="focus-panel" class="focus-panel hidden" aria-label="Focus hint">
+        <button id="focus-toggle-btn" class="focus-toggle-btn" type="button">💡 Hints</button>
+        <div class="focus-copy">
+          <div id="focus-title" class="focus-title"></div>
+          <div id="focus-desc" class="focus-desc"></div>
+          <div id="focus-examples" class="focus-examples hidden"></div>
+        </div>
+        <div id="quick-tiles-row" class="quick-tiles-row hidden" aria-label="Quick tiles"></div>
+      </div>
+
+      <div id="game-canvas">
+        <div id="game-board" aria-label="Guess grid"></div>
+
+        <div class="hint-actions" aria-label="Quick audio">
+          <button id="simple-hear-word" type="button" class="hint-btn">🔊 Hear Word</button>
+          <button id="simple-hear-sentence" type="button" class="hint-btn">💬 Hear Sentence</button>
+        </div>
+        <div id="sentence-preview" class="sentence-preview hidden" aria-live="polite"></div>
+
+        <div id="keyboard" aria-label="Keyboard"></div>
+      </div>
+    </main>
+
+    <div id="banner-container" class="banner-container hidden" role="status" aria-live="polite"></div>
+    <div id="toast-container" class="toast-container" role="status" aria-live="polite"></div>
+
+    <div id="modal-overlay" class="hidden" aria-hidden="true"></div>
+
+    <!-- Welcome / Tutorial -->
+    <div id="welcome-modal" class="modal hidden welcome-modal" role="dialog" aria-modal="true" aria-label="How to play Word Quest">
+      <div class="modal-content welcome-tutorial-card">
+        <h2 id="welcome-step-title">Word Quest Quick Tour</h2>
+        <p id="welcome-step-caption" class="welcome-step-caption"></p>
+
+        <div class="welcome-step-progress" aria-label="Tutorial step progress">
+          <span class="welcome-step-dot active" data-step-dot="0" aria-hidden="true"></span>
+          <span class="welcome-step-dot" data-step-dot="1" aria-hidden="true"></span>
+          <span class="welcome-step-dot" data-step-dot="2" aria-hidden="true"></span>
+          <span class="welcome-step-dot" data-step-dot="3" aria-hidden="true"></span>
+        </div>
+
+        <section
+          class="welcome-step"
+          data-tutorial-step="0"
+          data-step-mode="both"
+          data-step-title="Pick Your Play Style"
+          data-step-caption="Pick how you want to play! Try to guess like a detective, or listen first to practice spelling."
+        >
+          <div class="welcome-mode-grid">
+            <button type="button" class="welcome-mode-card welcome-mode-choice" data-welcome-mode="classic" aria-pressed="false">
+              <h3>🎮 Detective Mode</h3>
+              <p>Figure out the word like a puzzle! Use clues from your guesses.</p>
+            </button>
+            <button type="button" class="welcome-mode-card welcome-mode-choice" data-welcome-mode="listen" aria-pressed="false">
+              <h3>🎧 Learning Mode</h3>
+              <p>Hear the word and sentence first, then practice spelling!</p>
+            </button>
+          </div>
+          <p id="welcome-mode-helper" class="welcome-step-note">Pick one to start! You can always switch modes while you play.</p>
+        </section>
+
+        <section
+          class="welcome-step hidden"
+          data-tutorial-step="1"
+          data-step-mode="classic"
+          data-step-title="Step 1: First Guess"
+          data-step-caption="Gray = not in the word. Yellow = right letter, wrong place!"
+          data-step-cta="Next Clue"
+        >
+          <div class="welcome-tile-row" aria-label="First guess example">
+            <span class="welcome-tile absent">T</span>
+            <span class="welcome-tile absent">O</span>
+            <span class="welcome-tile absent">U</span>
+            <span class="welcome-tile present">C</span>
+            <span class="welcome-tile absent">H</span>
+          </div>
+          <p class="welcome-step-note">Guess: <strong>TOUCH</strong>. The <strong>C</strong> is in the word, but needs to move!</p>
+        </section>
+
+        <section
+          class="welcome-step hidden"
+          data-tutorial-step="2"
+          data-step-mode="classic"
+          data-step-title="Step 2: Stronger Guess"
+          data-step-caption="Use your clues to guess better!"
+          data-step-cta="Final Step"
+        >
+          <div class="welcome-tile-row" aria-label="Second guess example">
+            <span class="welcome-tile present">C</span>
+            <span class="welcome-tile correct">R</span>
+            <span class="welcome-tile correct">I</span>
+            <span class="welcome-tile present">B</span>
+            <span class="welcome-tile absent">S</span>
+          </div>
+          <p class="welcome-step-note">Guess: <strong>CRIBS</strong>. Nice! <strong>2 greens</strong> (perfect!), <strong>2 yellows</strong> (close!)</p>
+        </section>
+
+        <section
+          class="welcome-step hidden"
+          data-tutorial-step="3"
+          data-step-mode="classic"
+          data-step-title="Step 3: Solve It!"
+          data-step-caption="Use all your clues to find the answer!"
+          data-step-cta="Start Playing"
+        >
+          <div class="welcome-reasoning-row" aria-label="Deductive reasoning example">
+            <span class="welcome-candidate ruled-out">BRISK ✕ (S was gray)</span>
+            <span class="welcome-candidate best">BRICK ✓</span>
+          </div>
+          <div class="welcome-tile-row" aria-label="Winning guess example">
+            <span class="welcome-tile correct">B</span>
+            <span class="welcome-tile correct">R</span>
+            <span class="welcome-tile correct">I</span>
+            <span class="welcome-tile correct">C</span>
+            <span class="welcome-tile correct">K</span>
+          </div>
+          <p class="welcome-step-note">Now you’re ready. Start with Classic mode or turn on listening hints anytime.</p>
+        </section>
+
+        <section
+          class="welcome-step hidden"
+          data-tutorial-step="1"
+          data-step-mode="listen"
+          data-step-title="Step 1: Hear the Sentence Clue"
+          data-step-caption="Tap Hear Sentence first. Use context clues to predict possible spellings."
+          data-step-cta="Next Clue"
+        >
+          <div class="welcome-reasoning-row" aria-label="Sentence-first clue example">
+            <span class="welcome-candidate best">“The <strong>brick</strong> one looked brighter.”</span>
+            <span class="welcome-candidate">Possible words: <strong>brick</strong>, <strong>brisk</strong></span>
+          </div>
+          <p class="welcome-step-note">Sentence hints narrow your options before you type.</p>
+        </section>
+
+        <section
+          class="welcome-step hidden"
+          data-tutorial-step="2"
+          data-step-mode="listen"
+          data-step-title="Step 2: Hear the Target Word"
+          data-step-caption="Tap Hear Word to confirm the exact target, then spell what you heard."
+          data-step-cta="Final Step"
+        >
+          <div class="welcome-tile-row" aria-label="Listen and spell example">
+            <span class="welcome-tile correct">B</span>
+            <span class="welcome-tile correct">R</span>
+            <span class="welcome-tile correct">I</span>
+            <span class="welcome-tile correct">C</span>
+            <span class="welcome-tile correct">K</span>
+          </div>
+          <p class="welcome-step-note">You can replay sentence and word audio as many times as needed.</p>
+        </section>
+
+        <section
+          class="welcome-step hidden"
+          data-tutorial-step="3"
+          data-step-mode="listen"
+          data-step-title="Step 3: Switch Anytime"
+          data-step-caption="Want pure Wordle? Switch to Classic. Need supports? Switch back to Listen & Spell."
+          data-step-cta="Start Playing"
+        >
+          <div class="welcome-mode-grid">
+            <article class="welcome-mode-card">
+              <h3>Classic</h3>
+              <p>Audio buttons are hidden for a deduction-only round.</p>
+            </article>
+            <article class="welcome-mode-card">
+              <h3>Listen &amp; Spell</h3>
+              <p>Audio buttons return so students can use sentence and word clues.</p>
+            </article>
+          </div>
+          <p class="welcome-step-note">Mode switching does not reset your round.</p>
+        </section>
+
+        <div class="welcome-step-actions">
+          <button id="welcome-back-btn" type="button" class="welcome-nav-btn hidden">Back</button>
+          <div class="welcome-step-count" aria-live="polite">
+            <span id="welcome-step-index">1</span>/<span id="welcome-step-total">4</span>
+          </div>
+          <button id="start-playing-btn" type="button" class="primary-btn">Show Example</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Teacher modal -->
+    <div id="teacher-modal" class="modal hidden teacher-modal" role="dialog" aria-modal="true" aria-label="Teacher settings">
+      <div class="modal-content">
+        <button class="close-btn close-teacher" type="button" aria-label="Close">✕</button>
+        <h2>Teacher Session Setup</h2>
+        <p class="teacher-intro-note">Quick class defaults live here. Deep audio and reports are in dedicated hubs.</p>
+        <div class="teacher-tools-grid"></div>
+      </div>
+    </div>
+
+    <!-- Recording Studio -->
+    <div
+      id="recording-studio-modal"
+      class="modal hidden recording-studio-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Recording studio"
+    >
+      <div class="modal-content">
+        <button class="close-btn close-studio" type="button" aria-label="Close">✕</button>
+        <h2>Recording Studio</h2>
+
+        <div id="studio-setup-view">
+          <p class="muted">Record a teacher voice for words/sentences (stored locally in this browser).</p>
+
+          <div class="teacher-row">
+            <label for="studio-source-select"><strong>Word source</strong></label>
+            <select id="studio-source-select">
+              <option value="focus">Current Focus</option>
+              <option value="paste">Paste a list</option>
+            </select>
+          </div>
+
+          <div id="studio-paste-area" class="hidden">
+            <label for="studio-paste-input"><strong>Paste words (one per line)</strong></label>
+            <textarea id="studio-paste-input" rows="6" placeholder="apple&#10;ship&#10;rain"></textarea>
+          </div>
+
+          <label style="display:flex; gap:10px; align-items:center; margin-top:10px;">
+            <input id="studio-skip-existing" type="checkbox" checked />
+            <span>Skip words already recorded</span>
+          </label>
+          <label style="display:flex; gap:10px; align-items:center; margin-top:6px;">
+            <input id="studio-auto-advance" type="checkbox" checked />
+            <span>Auto-advance after each recording</span>
+          </label>
+
+          <div style="display:flex; gap:10px; margin-top:14px; flex-wrap:wrap;">
+            <button id="start-studio-btn" type="button" class="primary-btn">Start studio</button>
+            <button id="exit-studio-btn" type="button" class="secondary-btn">Exit</button>
+          </div>
+        </div>
+
+        <div id="studio-record-view" class="hidden">
+          <div class="studio-meta">
+            <div id="studio-progress" class="muted"></div>
+            <div id="studio-word-display" class="studio-word"></div>
+            <div id="studio-definition-display" class="muted"></div>
+            <div id="studio-sentence-display" class="muted"></div>
+          </div>
+
+          <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;">
+            <button id="record-word-btn" type="button" class="primary-btn">Record Word</button>
+            <button id="play-word-preview" type="button" class="secondary-btn">Play Word</button>
+            <button id="record-sentence-btn" type="button" class="primary-btn">Record Sentence</button>
+            <button id="play-sentence-preview" type="button" class="secondary-btn">Play Sentence</button>
+          </div>
+
+          <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:14px;">
+            <button id="prev-item-btn" type="button" class="secondary-btn">Prev</button>
+            <button id="next-item-btn" type="button" class="secondary-btn">Next</button>
+            <button id="skip-item-btn" type="button" class="secondary-btn">Skip</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- End-of-round modal -->
+    <div id="modal" class="modal hidden game-modal" role="dialog" aria-modal="true" aria-label="Round result">
+      <div class="modal-content">
+        <button class="close-btn" type="button" aria-label="Close">✕</button>
+        <h2 id="modal-title">Great Job!</h2>
+        <div id="modal-word" class="modal-word"></div>
+        <div id="modal-syllables" class="modal-syllables hidden"></div>
+        <div id="modal-def" class="modal-def"></div>
+        <div id="modal-sentence" class="modal-sentence"></div>
+
+	        <div id="modal-action-row" class="modal-action-row">
+	          <button id="speak-btn" type="button" class="modal-audio-btn">Hear Word</button>
+	          <button id="play-again-btn" type="button" class="primary-btn">Play Again</button>
+	        </div>
+
+	        <div class="translation-selector" aria-label="Translate">
+	          <label for="language-select"><strong>Language</strong></label>
+	          <select id="language-select" aria-label="Translation language">
+	            <option value="en">English</option>
+	            <option value="es">Español (Spanish)</option>
+	            <option value="zh">中文 (Simplified Chinese)</option>
+	            <option value="hi">हिन्दी (Hindi)</option>
+	            <option value="ms">Bahasa Melayu (Malay)</option>
+	            <option value="vi">Tiếng Việt (Vietnamese)</option>
+	            <option value="tl">Tagalog (Filipino)</option>
+	            <option value="ar">العربية (Arabic)</option>
+	            <option value="ko">한국어 (Korean)</option>
+	            <option value="ja">日本語 (Japanese)</option>
+	          </select>
+	          <label class="translation-pin">
+	            <input type="checkbox" id="pin-language" />
+	            Lock this language
+	          </label>
+	          <div id="translation-pin-status" class="translation-pin-status hidden" aria-live="polite"></div>
+	        </div>
+	      </div>
+	    </div>
+
+    <!-- Bonus modal (joke / fun fact / quote) -->
+    <div id="bonus-modal" class="modal hidden bonus-modal" role="dialog" aria-modal="true" aria-label="Bonus content">
+      <div class="modal-content">
+        <button class="close-btn" type="button" aria-label="Close">✕</button>
+        <div id="bonus-emoji" class="bonus-emoji">🌟</div>
+        <div id="bonus-title" class="bonus-title">Fun Fact!</div>
+        <div id="bonus-text" class="bonus-text"></div>
+        <div class="bonus-actions">
+          <button id="bonus-hear" type="button" class="secondary-btn">Hear This</button>
+          <button id="bonus-continue" type="button" class="primary-btn">Continue</button>
+        </div>
+        <div id="bonus-audio-note" class="bonus-audio-note hidden" aria-live="polite"></div>
+      </div>
+    </div>
+
+    <!-- Sound Lab (required by Tools ▾ → Sound Lab) -->
+    <div id="phoneme-modal" class="modal hidden phoneme-modal" role="dialog" aria-modal="true" aria-label="Sound Lab">
+      <div class="modal-content">
+        <button class="close-btn close-phoneme" type="button" aria-label="Close">✕</button>
+        <h2>Sound Lab</h2>
+        <p class="sound-guide-subtitle">Tap a tile to see a quick tip and example. Each sound can have its own video clip, including teacher-recorded versions.</p>
+
+        <div class="sound-guide-top-actions">
+          <button id="sound-lab-popout" type="button" class="secondary-btn">Open in new tab</button>
+        </div>
+
+        <div class="sound-guide-layout">
+          <aside class="sound-guide-card" aria-label="Selected sound">
+            <div id="selected-sound-display" class="selected-sound hidden">
+              <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+                <div id="sound-letter" style="font-size:2rem; font-weight:900;"></div>
+                <div>
+                  <div id="sound-name" style="font-weight:800;"></div>
+                  <div id="mouth-cue" class="muted"></div>
+                </div>
+              </div>
+              <div id="mouth-description" class="muted" style="margin-top:8px;"></div>
+              <div id="mouth-visual" style="margin-top:10px;"></div>
+            </div>
+            <p class="muted" style="margin:0;">Choose a sound tile to see tips here.</p>
+          </aside>
+
+          <section class="sound-guide-board" aria-label="Sound tiles">
+            <div class="sound-guide-section">
+              <h3>Short Vowels</h3>
+              <div id="vowel-row" class="sound-row"></div>
+            </div>
+            <div class="sound-guide-section">
+              <h3>Alphabet Sounds</h3>
+              <div id="alphabet-board" class="sound-row"></div>
+            </div>
+            <div class="sound-guide-section">
+              <h3>Digraphs</h3>
+              <div id="digraph-board" class="sound-row"></div>
+            </div>
+            <div class="sound-guide-section">
+              <h3>Blends</h3>
+              <div id="blend-board" class="sound-row"></div>
+            </div>
+            <div class="sound-guide-section">
+              <h3>Vowel Teams</h3>
+              <div id="vowel-team-board" class="sound-row"></div>
+            </div>
+            <div class="sound-guide-section">
+              <h3>R-Controlled</h3>
+              <div id="rcontrolled-board" class="sound-row"></div>
+            </div>
+            <div class="sound-guide-section">
+              <h3>Welded</h3>
+              <div id="welded-board" class="sound-row"></div>
+            </div>
+
+            <div class="sound-guide-section">
+              <h3>Letter Sounds (optional)</h3>
+              <div id="letters-grid" aria-label="Letters"></div>
+              <div id="letter-sounds-display" class="hidden" style="margin-top:10px;">
+                <div class="muted" style="margin-bottom:8px;">
+                  Selected letter: <strong id="selected-letter">—</strong>
+                </div>
+                <div id="letter-sounds-grid" aria-label="Letter sounds"></div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+
+    <!-- Progress modal (optional, but used by openProgressModal when enabled) -->
+    <div id="progress-modal" class="modal hidden progress-modal" role="dialog" aria-modal="true" aria-label="Progress">
+      <div class="modal-content">
+        <button class="close-btn close-progress" type="button" aria-label="Close">✕</button>
+        <h2>Progress</h2>
+        <div style="display:grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 10px;">
+          <div><strong>Attempted</strong><div id="stat-attempted">0</div></div>
+          <div><strong>Correct</strong><div id="stat-correct">0</div></div>
+          <div><strong>Success rate</strong><div id="stat-rate">0%</div></div>
+          <div><strong>Avg guesses</strong><div id="stat-avg-guesses">0</div></div>
+        </div>
+        <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top: 12px;">
+          <button id="export-data-btn" type="button" class="secondary-btn">Export</button>
+          <button id="clear-data-btn" type="button" class="secondary-btn">Clear</button>
+        </div>
+        <div id="recent-words" style="margin-top: 12px;"></div>
+      </div>
+    </div>
+
+    <style>
+      .wq-palette-field {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 4px 10px;
+        border-radius: 12px;
+        border: 1px solid rgba(71, 85, 105, 0.34);
+        background: rgba(255, 255, 255, 0.9);
+        box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+      }
+
+      .wq-palette-field span {
+        color: #334155;
+        font-size: 0.7rem;
+        font-weight: 820;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+
+      .wq-palette-select {
+        min-height: 34px;
+        min-width: 172px;
+        border-radius: 10px;
+        border: 1px solid rgba(71, 85, 105, 0.35);
+        background: #ffffff;
+        color: #0f172a;
+        font-size: 0.9rem;
+        font-weight: 760;
+        padding: 4px 10px;
+      }
+
+      .wq-palette-select:focus-visible {
+        outline: 2px solid #2563eb;
+        outline-offset: 1px;
+      }
+
+      body.word-quest-page {
+        --wq-panel-border: rgba(71, 85, 105, 0.4);
+        --wq-key-border: rgba(71, 85, 105, 0.44);
+        --wq-tile-border: rgba(71, 85, 105, 0.46);
+        --wq-key-text: #0f172a;
+        --wq-tile-text: #0f172a;
+      }
+
+      body.word-quest-page[data-wq-scene="calm-studio"] {
+        --wq-page-bg: linear-gradient(180deg, #eaf6fa 0%, #f2eddc 52%, #f2e8f4 100%);
+        --wq-canvas-surface: linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(244, 247, 245, 0.95) 100%);
+        --wq-canvas-glow: radial-gradient(circle at 16% 12%, rgba(145, 204, 222, 0.28), transparent 46%), radial-gradient(circle at 84% 88%, rgba(186, 123, 203, 0.22), transparent 48%);
+        --wq-canvas-accent: linear-gradient(90deg, rgba(145, 204, 222, 0.9), rgba(205, 147, 112, 0.86), rgba(186, 123, 203, 0.82));
+        --wq-panel-border: rgba(168, 167, 150, 0.46);
+        --wq-keyboard-surface: rgba(232, 239, 234, 0.9);
+        --wq-key-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.99) 0%, rgba(238, 244, 248, 0.97) 100%);
+        --wq-key-border: rgba(96, 116, 142, 0.46);
+        --wq-key-vowel-bg: linear-gradient(180deg, rgba(234, 223, 248, 0.98) 0%, rgba(222, 206, 242, 0.96) 100%);
+        --wq-key-vowel-border: rgba(122, 95, 154, 0.62);
+      }
+
+      body.word-quest-page[data-wq-scene="meadow-calm"] {
+        --wq-page-bg: linear-gradient(180deg, #f7f2df 0%, #f5e7c5 52%, #efe1d9 100%);
+        --wq-canvas-surface: linear-gradient(180deg, rgba(255, 252, 252, 0.99) 0%, rgba(248, 239, 221, 0.95) 100%);
+        --wq-canvas-glow: radial-gradient(circle at 14% 12%, rgba(11, 66, 26, 0.18), transparent 44%), radial-gradient(circle at 86% 90%, rgba(96, 76, 76, 0.22), transparent 48%);
+        --wq-canvas-accent: linear-gradient(90deg, rgba(11, 66, 26, 0.9), rgba(234, 199, 132, 0.88), rgba(96, 76, 76, 0.84));
+        --wq-panel-border: rgba(96, 76, 76, 0.5);
+        --wq-keyboard-surface: rgba(244, 232, 205, 0.9);
+        --wq-key-bg: linear-gradient(180deg, rgba(255, 252, 252, 0.99) 0%, rgba(247, 237, 220, 0.97) 100%);
+        --wq-key-border: rgba(54, 36, 21, 0.5);
+        --wq-key-vowel-bg: linear-gradient(180deg, rgba(252, 240, 205, 0.98) 0%, rgba(241, 221, 162, 0.96) 100%);
+        --wq-key-vowel-border: rgba(152, 111, 51, 0.62);
+        --wq-key-text: #2f2318;
+        --wq-tile-text: #2f2318;
+        --wq-tile-bg: linear-gradient(180deg, #fffdf9 0%, #f4ead4 100%);
+        --wq-tile-border: rgba(96, 76, 76, 0.46);
+      }
+
+      body.word-quest-page[data-wq-scene="ocean-calm"] {
+        --wq-page-bg: linear-gradient(180deg, #002347 0%, #023289 58%, #046937 100%);
+        --wq-canvas-surface: linear-gradient(180deg, rgba(17, 34, 63, 0.97) 0%, rgba(12, 49, 76, 0.95) 100%);
+        --wq-canvas-glow: radial-gradient(circle at 14% 12%, rgba(168, 175, 178, 0.24), transparent 44%), radial-gradient(circle at 84% 84%, rgba(107, 193, 42, 0.26), transparent 48%);
+        --wq-canvas-accent: linear-gradient(90deg, rgba(107, 193, 42, 0.92), rgba(168, 175, 178, 0.86), rgba(2, 50, 137, 0.88));
+        --wq-panel-border: rgba(168, 175, 178, 0.62);
+        --wq-keyboard-surface: rgba(8, 37, 73, 0.9);
+        --wq-key-bg: linear-gradient(180deg, rgba(247, 251, 255, 0.99) 0%, rgba(228, 237, 247, 0.97) 100%);
+        --wq-key-border: rgba(44, 88, 138, 0.64);
+        --wq-key-vowel-bg: linear-gradient(180deg, rgba(232, 247, 218, 0.98) 0%, rgba(206, 236, 176, 0.96) 100%);
+        --wq-key-vowel-border: rgba(78, 150, 34, 0.74);
+        --wq-key-text: #12263f;
+        --wq-tile-bg: linear-gradient(180deg, #f8fbff 0%, #e7eef7 100%);
+        --wq-tile-border: rgba(123, 141, 163, 0.56);
+        --wq-tile-text: #12263f;
+      }
+
+      body.word-quest-page[data-wq-scene="professional-chrome"] {
+        --wq-page-bg: linear-gradient(180deg, #d4dae4 0%, #bcc5d8 54%, #aeb7cb 100%);
+        --wq-canvas-surface: linear-gradient(180deg, rgba(246, 248, 252, 0.98) 0%, rgba(230, 235, 244, 0.95) 100%);
+        --wq-canvas-glow: radial-gradient(circle at 16% 12%, rgba(80, 92, 124, 0.24), transparent 46%), radial-gradient(circle at 84% 84%, rgba(152, 136, 41, 0.24), transparent 48%);
+        --wq-canvas-accent: linear-gradient(90deg, rgba(40, 46, 60, 0.92), rgba(80, 92, 124, 0.88), rgba(152, 136, 41, 0.88), rgba(253, 255, 0, 0.78));
+        --wq-panel-border: rgba(80, 92, 124, 0.58);
+        --wq-keyboard-surface: rgba(213, 219, 230, 0.92);
+        --wq-key-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.99) 0%, rgba(234, 239, 248, 0.97) 100%);
+        --wq-key-border: rgba(80, 92, 124, 0.64);
+        --wq-key-vowel-bg: linear-gradient(180deg, rgba(253, 255, 210, 0.99) 0%, rgba(241, 245, 168, 0.96) 100%);
+        --wq-key-vowel-border: rgba(152, 136, 41, 0.72);
+        --wq-key-text: #222b3a;
+        --wq-tile-bg: linear-gradient(180deg, #ffffff 0%, #edf2f9 100%);
+        --wq-tile-border: rgba(80, 92, 124, 0.56);
+        --wq-tile-text: #1f2737;
+      }
+
+      body.word-quest-page[data-wq-scene="professional-midnight"] {
+        --wq-page-bg: linear-gradient(180deg, #32006e 0%, #4b2e83 60%, #2d1f52 100%);
+        --wq-canvas-surface: linear-gradient(180deg, rgba(53, 32, 98, 0.97) 0%, rgba(65, 43, 116, 0.95) 100%);
+        --wq-canvas-glow: radial-gradient(circle at 16% 12%, rgba(255, 199, 0, 0.24), transparent 46%), radial-gradient(circle at 84% 86%, rgba(42, 210, 201, 0.2), transparent 48%);
+        --wq-canvas-accent: linear-gradient(90deg, rgba(255, 199, 0, 0.94), rgba(197, 180, 227, 0.88), rgba(42, 210, 201, 0.8));
+        --wq-panel-border: rgba(197, 180, 227, 0.62);
+        --wq-keyboard-surface: rgba(58, 40, 106, 0.9);
+        --wq-key-bg: linear-gradient(180deg, rgba(250, 245, 232, 0.99) 0%, rgba(240, 231, 206, 0.96) 100%);
+        --wq-key-text: #2f2450;
+        --wq-key-border: rgba(133, 117, 77, 0.64);
+        --wq-key-vowel-bg: linear-gradient(180deg, rgba(239, 230, 255, 0.99) 0%, rgba(222, 207, 245, 0.96) 100%);
+        --wq-key-vowel-border: rgba(75, 46, 131, 0.8);
+        --wq-tile-bg: linear-gradient(180deg, rgba(251, 246, 233, 0.99) 0%, rgba(240, 229, 201, 0.96) 100%);
+        --wq-tile-text: #2d2350;
+        --wq-tile-border: rgba(183, 165, 122, 0.62);
+      }
+
+      body.word-quest-page[data-wq-scene="academy-evergreen"] {
+        --wq-page-bg: linear-gradient(180deg, #f8f4ea 0%, #efe0bb 48%, #d9cbc2 100%);
+        --wq-canvas-surface: linear-gradient(180deg, rgba(255, 252, 246, 0.98) 0%, rgba(246, 237, 222, 0.95) 100%);
+        --wq-canvas-glow: radial-gradient(circle at 16% 12%, rgba(11, 66, 26, 0.18), transparent 46%), radial-gradient(circle at 84% 86%, rgba(96, 76, 76, 0.2), transparent 48%);
+        --wq-canvas-accent: linear-gradient(90deg, rgba(11, 66, 26, 0.94), rgba(234, 199, 132, 0.9), rgba(54, 36, 21, 0.82));
+        --wq-panel-border: rgba(96, 76, 76, 0.5);
+        --wq-keyboard-surface: rgba(244, 232, 208, 0.92);
+        --wq-key-bg: linear-gradient(180deg, rgba(255, 252, 247, 0.99) 0%, rgba(246, 236, 219, 0.97) 100%);
+        --wq-key-border: rgba(84, 62, 44, 0.6);
+        --wq-key-vowel-bg: linear-gradient(180deg, rgba(248, 238, 205, 0.99) 0%, rgba(235, 214, 158, 0.96) 100%);
+        --wq-key-vowel-border: rgba(133, 104, 66, 0.72);
+        --wq-key-text: #2d2319;
+        --wq-tile-bg: linear-gradient(180deg, #fffdf9 0%, #f3e8d6 100%);
+        --wq-tile-border: rgba(96, 76, 76, 0.52);
+        --wq-tile-text: #2d2319;
+      }
+
+      body.word-quest-page[data-wq-scene="pastel-scholars"] {
+        --wq-page-bg: linear-gradient(180deg, #e8f4f8 0%, #f0e7d1 48%, #efe1f3 100%);
+        --wq-canvas-surface: linear-gradient(180deg, rgba(252, 254, 255, 0.99) 0%, rgba(246, 243, 235, 0.96) 100%);
+        --wq-canvas-glow: radial-gradient(circle at 16% 12%, rgba(145, 204, 222, 0.2), transparent 46%), radial-gradient(circle at 84% 86%, rgba(186, 123, 203, 0.18), transparent 48%);
+        --wq-canvas-accent: linear-gradient(90deg, rgba(145, 204, 222, 0.94), rgba(226, 201, 92, 0.88), rgba(205, 147, 112, 0.84), rgba(186, 123, 203, 0.8));
+        --wq-panel-border: rgba(168, 167, 150, 0.52);
+        --wq-keyboard-surface: rgba(236, 240, 232, 0.92);
+        --wq-key-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.99) 0%, rgba(238, 243, 247, 0.97) 100%);
+        --wq-key-border: rgba(112, 123, 136, 0.58);
+        --wq-key-vowel-bg: linear-gradient(180deg, rgba(245, 232, 255, 0.99) 0%, rgba(230, 214, 244, 0.96) 100%);
+        --wq-key-vowel-border: rgba(131, 101, 170, 0.7);
+        --wq-key-text: #283345;
+        --wq-tile-bg: linear-gradient(180deg, #ffffff 0%, #f1f4f8 100%);
+        --wq-tile-border: rgba(132, 140, 148, 0.56);
+        --wq-tile-text: #283345;
+      }
+
+      body.word-quest-page[data-wq-scene="sprout-lavender"] {
+        --wq-page-bg: linear-gradient(180deg, #e5dff3 0%, #dde7e0 48%, #eef6d9 100%);
+        --wq-canvas-surface: linear-gradient(180deg, rgba(248, 246, 255, 0.98) 0%, rgba(238, 247, 235, 0.95) 100%);
+        --wq-canvas-glow: radial-gradient(circle at 16% 12%, rgba(120, 66, 175, 0.2), transparent 46%), radial-gradient(circle at 84% 86%, rgba(185, 255, 28, 0.2), transparent 48%);
+        --wq-canvas-accent: linear-gradient(90deg, rgba(120, 66, 175, 0.92), rgba(98, 117, 160, 0.88), rgba(126, 173, 139, 0.84), rgba(185, 255, 28, 0.8));
+        --wq-panel-border: rgba(98, 117, 160, 0.52);
+        --wq-keyboard-surface: rgba(233, 239, 229, 0.92);
+        --wq-key-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.99) 0%, rgba(237, 243, 251, 0.97) 100%);
+        --wq-key-border: rgba(98, 117, 160, 0.56);
+        --wq-key-vowel-bg: linear-gradient(180deg, rgba(236, 246, 211, 0.99) 0%, rgba(217, 240, 172, 0.96) 100%);
+        --wq-key-vowel-border: rgba(120, 173, 66, 0.76);
+        --wq-key-text: #27334b;
+        --wq-tile-bg: linear-gradient(180deg, #ffffff 0%, #edf2f8 100%);
+        --wq-tile-border: rgba(110, 128, 150, 0.52);
+        --wq-tile-text: #27334b;
+      }
+
+      body.word-quest-page[data-wq-scene="husky-classic"] {
+        --wq-page-bg: linear-gradient(180deg, #3a3545 0%, #4a4458 56%, #3d3749 100%);
+        --wq-canvas-surface: linear-gradient(180deg, rgba(58, 53, 69, 0.95) 0%, rgba(64, 58, 76, 0.93) 100%);
+        --wq-canvas-glow: radial-gradient(circle at 16% 12%, rgba(200, 180, 140, 0.12), transparent 46%), radial-gradient(circle at 84% 86%, rgba(150, 135, 115, 0.10), transparent 48%);
+        --wq-canvas-accent: linear-gradient(90deg, rgba(200, 180, 140, 0.35), rgba(150, 135, 115, 0.30));
+        --wq-panel-border: rgba(130, 120, 145, 0.30);
+        --wq-keyboard-surface: rgba(50, 45, 60, 0.85);
+        --wq-key-bg: linear-gradient(180deg, rgba(252, 250, 246, 0.98) 0%, rgba(245, 242, 236, 0.95) 100%);
+        --wq-key-border: rgba(100, 90, 80, 0.30);
+        --wq-key-vowel-bg: linear-gradient(180deg, rgba(235, 230, 245, 0.98) 0%, rgba(220, 210, 235, 0.95) 100%);
+        --wq-key-vowel-border: rgba(110, 100, 130, 0.40);
+        --wq-key-text: #2f2a3a;
+        --wq-tile-bg: linear-gradient(180deg, rgba(252, 250, 245, 0.98) 0%, rgba(245, 240, 230, 0.95) 100%);
+        --wq-tile-border: rgba(120, 110, 100, 0.35);
+        --wq-tile-text: #2f2a3a;
+      }
+
+      body.word-quest-page[data-wq-scene="playful-festival"] {
+        --wq-page-bg: linear-gradient(180deg, #e8dfd0 0%, #dfe8d8 42%, #d8e3ed 100%);
+        --wq-canvas-surface: linear-gradient(180deg, rgba(245, 242, 236, 0.95) 0%, rgba(240, 245, 240, 0.93) 100%);
+        --wq-canvas-glow: radial-gradient(circle at 16% 12%, rgba(200, 150, 120, 0.12), transparent 46%), radial-gradient(circle at 84% 12%, rgba(180, 130, 110, 0.10), transparent 44%), radial-gradient(circle at 54% 88%, rgba(130, 160, 130, 0.10), transparent 50%);
+        --wq-canvas-accent: linear-gradient(90deg, rgba(200, 150, 120, 0.30), rgba(150, 170, 185, 0.28), rgba(180, 130, 110, 0.25));
+        --wq-keyboard-surface: rgba(240, 235, 225, 0.85);
+        --wq-key-bg: linear-gradient(180deg, rgba(255, 255, 252, 0.98) 0%, rgba(250, 245, 235, 0.95) 100%);
+        --wq-key-border: rgba(140, 120, 100, 0.28);
+        --wq-key-vowel-bg: linear-gradient(180deg, rgba(240, 250, 235, 0.98) 0%, rgba(230, 240, 220, 0.95) 100%);
+        --wq-key-vowel-border: rgba(120, 150, 140, 0.35);
+      }
+
+      body.word-quest-page[data-wq-scene="playful-sunrise"] {
+        --wq-page-bg: linear-gradient(180deg, #e5dad0 0%, #e0d5d0 38%, #d8dae5 100%);
+        --wq-canvas-surface: linear-gradient(180deg, rgba(240, 235, 230, 0.95) 0%, rgba(235, 233, 240, 0.93) 100%);
+        --wq-canvas-glow: radial-gradient(circle at 18% 12%, rgba(200, 140, 120, 0.11), transparent 46%), radial-gradient(circle at 84% 16%, rgba(150, 130, 145, 0.10), transparent 44%), radial-gradient(circle at 56% 90%, rgba(140, 160, 180, 0.09), transparent 50%);
+        --wq-canvas-accent: linear-gradient(90deg, rgba(200, 140, 120, 0.30), rgba(150, 130, 145, 0.28), rgba(140, 160, 180, 0.25));
+        --wq-keyboard-surface: rgba(240, 230, 225, 0.85);
+        --wq-key-bg: linear-gradient(180deg, rgba(255, 255, 252, 0.98) 0%, rgba(250, 243, 238, 0.95) 100%);
+        --wq-key-border: rgba(130, 110, 125, 0.28);
+        --wq-key-vowel-bg: linear-gradient(180deg, rgba(235, 245, 250, 0.98) 0%, rgba(220, 235, 245, 0.95) 100%);
+        --wq-key-vowel-border: rgba(120, 135, 155, 0.35);
+      }
+
+      body.word-quest-page[data-wq-scene="classic-contrast"] {
+        --wq-page-bg: linear-gradient(180deg, #2a3441 0%, #313d4f 50%, #2d3847 100%);
+        --wq-canvas-surface: linear-gradient(180deg, rgba(52, 62, 78, 0.95) 0%, rgba(45, 54, 68, 0.93) 100%);
+        --wq-canvas-glow: radial-gradient(circle at 14% 12%, rgba(88, 110, 140, 0.15), transparent 44%), radial-gradient(circle at 84% 84%, rgba(100, 120, 150, 0.12), transparent 48%);
+        --wq-canvas-accent: linear-gradient(90deg, rgba(88, 110, 140, 0.4), rgba(100, 120, 150, 0.3));
+        --wq-panel-border: rgba(100, 116, 140, 0.25);
+        --wq-keyboard-surface: rgba(35, 43, 56, 0.85);
+        --wq-key-bg: linear-gradient(180deg, #ffffff 0%, #f5f7fa 100%);
+        --wq-key-vowel-bg: linear-gradient(180deg, #fef3c7 0%, #fde68a 100%);
+        --wq-key-border: rgba(80, 96, 120, 0.25);
+        --wq-key-vowel-border: rgba(245, 158, 11, 0.3);
+        --wq-key-text: #1f2937;
+        --wq-key-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.08);
+        --wq-tile-bg: linear-gradient(180deg, #ffffff 0%, #f5f7fa 100%);
+        --wq-tile-border: rgba(100, 116, 140, 0.2);
+        --wq-tile-text: #1f2937;
+      }
+
+      body.word-quest-page[data-wq-scene="classic-wordle"] {
+        --wq-page-bg: linear-gradient(180deg, #f8f8f8 0%, #ffffff 62%, #f2f3f4 100%);
+        --wq-canvas-surface: linear-gradient(180deg, rgba(255, 255, 255, 0.99) 0%, rgba(246, 247, 248, 0.97) 100%);
+        --wq-canvas-glow: radial-gradient(circle at 16% 12%, rgba(108, 169, 101, 0.14), transparent 48%), radial-gradient(circle at 84% 88%, rgba(200, 182, 83, 0.16), transparent 52%);
+        --wq-canvas-accent: linear-gradient(90deg, rgba(108, 169, 101, 0.92), rgba(200, 182, 83, 0.88), rgba(120, 124, 127, 0.86));
+        --wq-panel-border: rgba(120, 124, 127, 0.42);
+        --wq-keyboard-surface: rgba(243, 244, 245, 0.92);
+        --wq-key-bg: linear-gradient(180deg, #ffffff 0%, #f3f4f5 100%);
+        --wq-key-border: rgba(120, 124, 127, 0.58);
+        --wq-key-vowel-bg: linear-gradient(180deg, rgba(229, 242, 227, 0.99) 0%, rgba(209, 229, 206, 0.96) 100%);
+        --wq-key-vowel-border: rgba(108, 169, 101, 0.74);
+        --wq-key-text: #000000;
+        --wq-key-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.96), 0 2px 7px rgba(0, 0, 0, 0.14);
+        --wq-tile-bg: linear-gradient(180deg, #ffffff 0%, #f4f5f6 100%);
+        --wq-tile-border: rgba(120, 124, 127, 0.62);
+        --wq-tile-text: #000000;
+      }
+
+      @media (max-width: 760px) {
+        .wq-palette-field {
+          width: 100%;
+        }
+
+        .wq-palette-select {
+          min-width: 0;
+          width: 100%;
+        }
+      }
+
+      .demo-exit-link {
+        display: none;
+      }
+
+      html.wq-demo-mode body.word-quest-page .demo-exit-link {
+        display: inline-flex;
+        margin-left: auto;
+      }
+
+      html.wq-demo-mode body.word-quest-page .header-top {
+        gap: 10px;
+      }
+
+      html.wq-demo-mode body.word-quest-page .header-top h1 a {
+        font-size: clamp(1.1rem, 2vw, 1.35rem);
+      }
+    </style>
+    <script>
+      (function initWordQuestBuildStamp() {
+        function readMeta(name) {
+          var node = document.querySelector('meta[name="' + name + '"]');
+          if (!node) return '';
+          return String(node.getAttribute('content') || '').trim();
+        }
+
+        function readScriptVersion(prefix) {
+          var scripts = Array.from(document.querySelectorAll('script[src]'));
+          var target = scripts.find(function (node) {
+            return new RegExp(prefix.replace('.', '\\.') + '(\\?|$)').test(String(node.getAttribute('src') || ''));
+          });
+          if (!target) return '';
+          try {
+            var parsed = new URL(target.src, window.location.href);
+            return String(parsed.searchParams.get('v') || '').trim();
+          } catch (e) {
+            return '';
+          }
+        }
+
+        function ensureStyle() {
+          if (!document.head || document.getElementById('wq-build-stamp-style')) return;
+          var style = document.createElement('style');
+          style.id = 'wq-build-stamp-style';
+          style.textContent = [
+            '#wq-build-stamp {',
+            '  position: fixed;',
+            '  right: 12px;',
+            '  bottom: 52px;',
+            '  z-index: 2200;',
+            '  padding: 4px 10px;',
+            '  border-radius: 999px;',
+            '  border: 1px solid rgba(51, 65, 85, 0.25);',
+            '  background: rgba(248, 250, 252, 0.88);',
+            '  color: #334155;',
+            '  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.14);',
+            '  font: 600 11px/1.2 "Atkinson Hyperlegible", "Segoe UI", sans-serif;',
+            '  letter-spacing: 0.02em;',
+            '  pointer-events: none;',
+            '}',
+            '@media (max-width: 720px) {',
+            '  #wq-build-stamp { right: 8px; bottom: 46px; font-size: 10px; }',
+            '}',
+            '@media print {',
+            '  #wq-build-stamp { display: none !important; }',
+            '}'
+          ].join('\n');
+          document.head.appendChild(style);
+        }
+
+        function render() {
+          if (!document.body) return;
+          ensureStyle();
+          var hash = readMeta('cs-build-hash') || readScriptVersion('app.js') || 'local';
+          var time = readMeta('cs-build-time');
+          var badge = document.getElementById('wq-build-stamp');
+          if (!badge) {
+            badge = document.createElement('div');
+            badge.id = 'wq-build-stamp';
+            badge.setAttribute('aria-live', 'polite');
+            document.body.appendChild(badge);
+          }
+          badge.textContent = time ? ('Build: ' + hash + ' | ' + time) : ('Build: ' + hash);
+        }
+
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', render);
+        } else {
+          render();
+        }
+      })();
+    </script>
+    <script>
+      (function initWordQuestThemeStudio() {
+        var STORAGE_KEYS = {
+          scene: 'cs_wq_scene',
+          keyboard: 'cs_wq_keyboard_style',
+          intensity: 'cs_wq_intensity',
+          shape: 'cs_wq_shape',
+          density: 'cs_wq_density'
+        };
+
+        var allowedScenes = new Set([
+          'calm-studio',
+          'meadow-calm',
+          'ocean-calm',
+          'professional-chrome',
+          'professional-midnight',
+          'academy-evergreen',
+          'pastel-scholars',
+          'sprout-lavender',
+          'husky-classic',
+          'playful-festival',
+          'playful-sunrise',
+          'classic-wordle',
+          'classic-contrast'
+        ]);
+
+        var scenePresets = Object.freeze({
+          'calm-studio': { keyboard: 'calm', intensity: 'soft', shape: 'soft', density: 'standard' },
+          'meadow-calm': { keyboard: 'calm', intensity: 'soft', shape: 'soft', density: 'standard' },
+          'ocean-calm': { keyboard: 'professional', intensity: 'medium', shape: 'soft', density: 'standard' },
+          'professional-chrome': { keyboard: 'professional', intensity: 'medium', shape: 'crisp', density: 'standard' },
+          'professional-midnight': { keyboard: 'professional', intensity: 'vivid', shape: 'crisp', density: 'standard' },
+          'academy-evergreen': { keyboard: 'professional', intensity: 'soft', shape: 'soft', density: 'standard' },
+          'pastel-scholars': { keyboard: 'calm', intensity: 'soft', shape: 'soft', density: 'standard' },
+          'sprout-lavender': { keyboard: 'playful', intensity: 'medium', shape: 'round', density: 'standard' },
+          'husky-classic': { keyboard: 'professional', intensity: 'vivid', shape: 'crisp', density: 'standard' },
+          'playful-festival': { keyboard: 'playful', intensity: 'medium', shape: 'round', density: 'standard' },
+          'playful-sunrise': { keyboard: 'playful', intensity: 'soft', shape: 'round', density: 'standard' },
+          'classic-wordle': { keyboard: 'professional', intensity: 'medium', shape: 'crisp', density: 'standard' },
+          'classic-contrast': { keyboard: 'professional', intensity: 'vivid', shape: 'crisp', density: 'large' }
+        });
+
+        function activeBaseTheme() {
+          var cls = document.body ? document.body.className : '';
+          if (cls.indexOf('cs-hv2-theme-professional') >= 0) return 'professional';
+          if (cls.indexOf('cs-hv2-theme-playful') >= 0) return 'playful';
+          if (cls.indexOf('cs-hv2-theme-high-contrast') >= 0) return 'high-contrast';
+          return 'calm';
+        }
+
+        function sceneFromTheme(theme) {
+          return 'classic-contrast';
+        }
+
+        function normalizeScene(value, fallback) {
+          var v = String(value || '').trim().toLowerCase();
+          return allowedScenes.has(v) ? v : fallback;
+        }
+
+        function createSettingsForScene(scene) {
+          var normalizedScene = normalizeScene(scene, 'calm-studio');
+          var preset = scenePresets[normalizedScene] || scenePresets['calm-studio'];
+          return {
+            scene: normalizedScene,
+            keyboard: preset.keyboard,
+            intensity: preset.intensity,
+            shape: preset.shape,
+            density: preset.density
+          };
+        }
+
+        function loadSceneDefault() {
+          var fallbackScene = sceneFromTheme(activeBaseTheme());
+          try {
+            return normalizeScene(localStorage.getItem(STORAGE_KEYS.scene), fallbackScene);
+          } catch (e) {
+            return fallbackScene;
+          }
+        }
+
+        function persist(settings) {
+          try {
+            localStorage.setItem(STORAGE_KEYS.scene, settings.scene);
+            localStorage.setItem(STORAGE_KEYS.keyboard, settings.keyboard);
+            localStorage.setItem(STORAGE_KEYS.intensity, settings.intensity);
+            localStorage.setItem(STORAGE_KEYS.shape, settings.shape);
+            localStorage.setItem(STORAGE_KEYS.density, settings.density);
+          } catch (e) {}
+        }
+
+        function apply(settings, opts) {
+          var options = opts || {};
+          if (!document.body) return;
+          document.body.dataset.wqScene = settings.scene;
+          document.body.dataset.wqKeyboardStyle = settings.keyboard;
+          document.body.dataset.wqIntensity = settings.intensity;
+          document.body.dataset.wqShape = settings.shape;
+          document.body.dataset.wqDensity = settings.density;
+          if (options.persist !== false) {
+            persist(settings);
+          }
+        }
+
+        function init() {
+          var paletteSelect = document.getElementById('wq-palette-select');
+          if (!paletteSelect) return;
+
+          var scene = loadSceneDefault();
+          var settings = createSettingsForScene(scene);
+          apply(settings, { persist: false });
+          paletteSelect.value = settings.scene;
+
+          paletteSelect.addEventListener('change', function () {
+            var nextScene = normalizeScene(paletteSelect.value, settings.scene);
+            settings = createSettingsForScene(nextScene);
+            paletteSelect.value = settings.scene;
+            apply(settings, { persist: true });
+            var toolsMenu = document.getElementById('wq-tools-menu');
+            if (toolsMenu && typeof toolsMenu.open === 'boolean') {
+              toolsMenu.open = false;
+            }
+            if (document.activeElement && document.activeElement !== document.body && typeof document.activeElement.blur === 'function') {
+              document.activeElement.blur();
+            }
+            if (document.body && typeof document.body.focus === 'function') {
+              if (!document.body.hasAttribute('tabindex')) {
+                document.body.setAttribute('tabindex', '-1');
+              }
+              try {
+                document.body.focus({ preventScroll: true });
+              } catch (e) {
+                document.body.focus();
+              }
+            }
+            try {
+              window.dispatchEvent(new CustomEvent('cornerstone:wq-palette-applied', { detail: { scene: settings.scene } }));
+            } catch (e) {}
+          });
+        }
+
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', init);
+        } else {
+          init();
+        }
+      })();
+    </script>
+  </body>
+</html>

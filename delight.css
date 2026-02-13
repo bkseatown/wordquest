@@ -1,0 +1,217 @@
+:root {
+  --cs-delight-star-fill: #e7c676;
+  --cs-delight-star-soft: #fff6df;
+  --cs-delight-star-outline: #a78d5f;
+  --cs-delight-meter-bg: rgba(255, 250, 238, 0.95);
+  --cs-delight-meter-border: rgba(208, 178, 122, 0.52);
+  --cs-delight-shadow: 0 10px 26px rgba(58, 48, 26, 0.18);
+  --cs-delight-ripple: rgba(218, 185, 121, 0.4);
+}
+
+.cs-delight-layer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1600;
+}
+
+.cs-delight-meter {
+  position: fixed;
+  top: 12px;
+  left: 50%;
+  z-index: 1;
+  overflow: visible;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-width: 176px;
+  padding: 8px 14px 9px;
+  border-radius: 999px;
+  border: 1px solid var(--cs-delight-meter-border);
+  background: var(--cs-delight-meter-bg);
+  box-shadow: var(--cs-delight-shadow);
+  text-align: center;
+  transform: translateX(-50%) translateY(-10px);
+  opacity: 0;
+  transition: opacity 0.18s ease, transform 0.18s ease;
+}
+
+.cs-delight-meter.is-visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.cs-delight-stars {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cs-delight-star {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  line-height: 24px;
+  text-align: center;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--cs-delight-star-soft);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6);
+  -webkit-text-stroke: 0.9px var(--cs-delight-star-outline);
+  transform: scale(0.9);
+  opacity: 0.66;
+  transition: transform 0.18s ease, opacity 0.18s ease, color 0.18s ease;
+}
+
+.cs-delight-star.is-filled {
+  color: var(--cs-delight-star-fill);
+  -webkit-text-stroke: 0.2px rgba(140, 107, 48, 0.22);
+  opacity: 1;
+  transform: scale(1);
+  text-shadow: 0 0 12px rgba(231, 198, 118, 0.28);
+}
+
+.cs-delight-star.is-shine {
+  animation: csDelightStarShine 280ms ease-out;
+}
+
+.cs-delight-label {
+  margin-top: 1px;
+  font-size: 11px;
+  line-height: 1.25;
+  font-weight: 700;
+  color: #5e5135;
+}
+
+.cs-delight-ripple {
+  position: absolute;
+  inset: -14px -20px;
+  border-radius: 999px;
+  border: 1px solid var(--cs-delight-ripple);
+  pointer-events: none;
+  opacity: 0;
+  transform: scale(0.95);
+}
+
+.cs-delight-particles {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+}
+
+.cs-delight-particle {
+  position: fixed;
+  width: 7px;
+  height: 7px;
+  border-radius: 2px;
+  opacity: 0;
+  transform: translate3d(0, 0, 0) rotate(0deg) scale(0.86);
+}
+
+.cs-delight-particle.is-live {
+  animation: csDelightBurst 640ms cubic-bezier(0.24, 0.7, 0.22, 1) forwards;
+}
+
+.cs-delight-sound-toggle {
+  position: fixed;
+  right: 12px;
+  bottom: 12px;
+  z-index: 1601;
+  pointer-events: auto;
+  border: 1px solid rgba(180, 152, 101, 0.45);
+  border-radius: 999px;
+  background: rgba(255, 249, 236, 0.96);
+  color: #5f5133;
+  box-shadow: 0 8px 18px rgba(70, 53, 20, 0.14);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  padding: 8px 10px;
+  cursor: pointer;
+}
+
+.cs-delight-sound-toggle:hover,
+.cs-delight-sound-toggle:focus-visible {
+  border-color: rgba(188, 154, 95, 0.78);
+  background: #fffefb;
+}
+
+@keyframes csDelightStarShine {
+  0% {
+    transform: scale(0.92);
+    filter: brightness(1);
+  }
+  45% {
+    transform: scale(1.14);
+    filter: brightness(1.1);
+  }
+  100% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+}
+
+@keyframes csDelightRipple {
+  0% {
+    opacity: 0.34;
+    transform: scale(0.95);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.16);
+  }
+}
+
+@keyframes csDelightBurst {
+  0% {
+    opacity: 0.95;
+    transform: translate3d(0, 0, 0) rotate(0deg) scale(0.88);
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(var(--dx), var(--dy), 0) rotate(var(--rot)) scale(0.12);
+  }
+}
+
+.cs-delight-ripple.is-live {
+  animation: csDelightRipple 520ms ease-out;
+}
+
+@media (max-width: 1024px) {
+  .cs-delight-sound-toggle {
+    padding: 7px 9px;
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 820px) {
+  .cs-delight-meter {
+    top: 10px;
+    min-width: 162px;
+    padding: 7px 11px 8px;
+  }
+
+  .cs-delight-star {
+    font-size: 19px;
+  }
+
+  .cs-delight-sound-toggle {
+    bottom: 10px;
+    right: 10px;
+    font-size: 11px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cs-delight-meter,
+  .cs-delight-star {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .cs-delight-ripple,
+  .cs-delight-particle {
+    display: none !important;
+  }
+}
