@@ -181,4 +181,4 @@ Once you upload these files and hard refresh your site, you should have:
 - Clean, professional polish
 - Kid-friendly design choices
 
-Good luck! 🚀 
+Good luck! 🚀

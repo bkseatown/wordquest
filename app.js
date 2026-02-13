@@ -80,10 +80,12 @@ const PHONEME_VIDEO_LIBRARY_CANDIDATE_DIRS = [
 ];
 let activeSoundVideoObjectUrl = '';
 const PACKED_TTS_BASE_PREF_KEY = 'decode_tts_base_path_v1';
-const PACKED_TTS_BASE_PLAIN = 'https://cdn.jsdelivr.net/gh/bkseatown/Cornerstone-MTSS@main/audio/tts/packs/ave-multi';
-const PACKED_TTS_BASE_SCOPED = 'https://cdn.jsdelivr.net/gh/bkseatown/Cornerstone-MTSS@main/audio/tts/packs/ave-multi';
+const PACKED_TTS_BASE_PLAIN = 'https://raw.githubusercontent.com/bkseatown/Cornerstone-MTSS/main/literacy-platform/audio/tts/packs/ava-multi';
+const PACKED_TTS_BASE_SCOPED = 'https://raw.githubusercontent.com/bkseatown/Cornerstone-MTSS/main/literacy-platform/audio/tts/packs/ava-multi';
+
 const PACKED_TTS_REGISTRY_URL = null;
 const PACKED_TTS_MANIFEST_URL = null;
+const PACKED_TTS_USE_RAW = true;
 function normalizePackedTtsBasePath(value = '') {
     const candidate = String(value || '').trim().replace(/^\/+|\/+$/g, '');
     if (candidate === PACKED_TTS_BASE_PLAIN || candidate === PACKED_TTS_BASE_SCOPED) {
