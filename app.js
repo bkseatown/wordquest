@@ -128,7 +128,7 @@ function resolvePackedTtsBasePath() {
 }
 const PACKED_TTS_BASE_PATH = resolvePackedTtsBasePath();
 const PACKED_TTS_DEFAULT_MANIFEST_PATH = `${PACKED_TTS_BASE_PATH}/tts-manifest.json`;
-const PACKED_TTS_PACK_REGISTRY_PATH = `${PACKED_TTS_BASE_PATH}/packs/pack-registry.json`;
+const PACKED_TTS_PACK_REGISTRY_PATH = null;
 const packedTtsManifestCacheByPath = new Map();
 const packedTtsManifestPromiseByPath = new Map();
 let packedTtsPackRegistryCache = null;
@@ -1192,107 +1192,26 @@ function normalizeTtsPackRegistry(rawRegistry) {
     return { packs, packMap };
 }
 
-async function loadPackedTtsPackRegistry({ forceRefresh = false } = {}) {
-    if (forceRefresh) {
-        packedTtsPackRegistryCache = null;
-        packedTtsPackRegistryPromise = null;
-    }
-    if (packedTtsPackRegistryCache) return packedTtsPackRegistryCache;
-    if (packedTtsPackRegistryPromise) return packedTtsPackRegistryPromise;
-
-    packedTtsPackRegistryPromise = (async () => {
-            const candidates = getPackedClipPathCandidates(PACKED_TTS_PACK_REGISTRY_PATH);
-            for (const candidate of candidates) {
-                try {
-                    const response = await fetch(candidate, { cache: 'no-store' });
-                    if (!response.ok) continue;
-                    const parsed = await response.json();
-                    const detectedBase = detectPackedTtsBasePathFromAssetPath(candidate);
-                    if (detectedBase) rememberPackedTtsBasePathPreference(detectedBase);
-                    packedTtsPackRegistryCache = normalizeTtsPackRegistry(parsed);
-                    return packedTtsPackRegistryCache;
-                } catch (e) {}
-            }
-            packedTtsPackRegistryCache = normalizeTtsPackRegistry(null);
-            return packedTtsPackRegistryCache;
-        })()
-        .catch(() => {
-            packedTtsPackRegistryCache = normalizeTtsPackRegistry(null);
-            return packedTtsPackRegistryCache;
-        })
-        .finally(() => {
-            packedTtsPackRegistryPromise = null;
-        });
-
-    return packedTtsPackRegistryPromise;
+async function loadPackedTtsPackRegistry() {
+    return null; 
 }
 
 async function resolvePackedTtsManifestInfo(packId = '') {
-    const selectedPackId = normalizeTtsPackId(packId || getPreferredTtsPackId());
-    if (selectedPackId === 'default') {
-        return getDefaultTtsPackOption();
-    }
-    const registry = await loadPackedTtsPackRegistry();
-    const pack = registry?.packMap?.[selectedPackId];
-    if (pack?.manifestPath) return pack;
-    const preferredFallbackPackId = registry?.packMap?.[DEFAULT_SETTINGS.ttsPackId]
-        ? DEFAULT_SETTINGS.ttsPackId
-        : 'default';
-    if (appSettings.ttsPackId !== preferredFallbackPackId) {
-        appSettings.ttsPackId = preferredFallbackPackId;
-        saveSettings();
-    }
-    return getDefaultTtsPackOption();
+    return {
+        id: 'ava-multi',
+        manifestPath: `${PACKED_TTS_BASE_PATH}/tts-manifest.json`
+    };
 }
 
 async function loadPackedTtsManifestFromPath(manifestPath = '') {
-    const normalizedPath = normalizePackManifestPath(manifestPath || PACKED_TTS_DEFAULT_MANIFEST_PATH);
-    if (packedTtsManifestCacheByPath.has(normalizedPath)) {
-        return packedTtsManifestCacheByPath.get(normalizedPath);
+    try {
+        const response = await fetch(manifestPath);
+        if (response.ok) return await response.json();
+    } catch (e) {
+        console.log("Manifest not found, playing audio directly.");
     }
-    if (packedTtsManifestPromiseByPath.has(normalizedPath)) {
-        return packedTtsManifestPromiseByPath.get(normalizedPath);
-    }
-
-    const loadPromise = (async () => {
-            const candidates = getPackedClipPathCandidates(normalizedPath);
-            for (const candidate of candidates) {
-                try {
-                    const response = await fetch(candidate, { cache: 'no-store' });
-                    if (!response.ok) continue;
-                    const parsed = await response.json();
-                    const detectedBase = detectPackedTtsBasePathFromAssetPath(candidate);
-                    if (detectedBase) rememberPackedTtsBasePathPreference(detectedBase);
-                    if (!parsed || typeof parsed !== 'object' || typeof parsed.entries !== 'object') {
-                        continue;
-                    }
-                    const normalizedEntries = {};
-                    Object.entries(parsed.entries || {}).forEach(([key, value]) => {
-                        if (!key || typeof value !== 'string') return;
-                        normalizedEntries[key] = normalizePackManifestPath(value);
-                    });
-                    parsed.entries = normalizedEntries;
-                    packedTtsManifestCacheByPath.set(normalizedPath, parsed);
-                    return parsed;
-                } catch (e) {}
-            }
-            const empty = { entries: {} };
-            packedTtsManifestCacheByPath.set(normalizedPath, empty);
-            return empty;
-        })()
-        .catch(() => {
-            const empty = { entries: {} };
-            packedTtsManifestCacheByPath.set(normalizedPath, empty);
-            return empty;
-        })
-        .finally(() => {
-            packedTtsManifestPromiseByPath.delete(normalizedPath);
-        });
-
-    packedTtsManifestPromiseByPath.set(normalizedPath, loadPromise);
-    return loadPromise;
+    return { words: {}, sentences: {} };
 }
-
 async function loadPackedTtsManifest() {
     const selectedPack = await resolvePackedTtsManifestInfo();
     const manifest = await loadPackedTtsManifestFromPath(selectedPack.manifestPath);
