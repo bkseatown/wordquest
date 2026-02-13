@@ -7406,17 +7406,16 @@ function initKeyboard() {
         keyboard.appendChild(rowDiv);
     });
 
-    // Add mic button row
-    const micRow = document.createElement("div");
-    micRow.className = "keyboard-row keyboard-mic-row";
-    micRow.style.cssText = "justify-content:center; gap:8px; margin-top:2px;";
+    // Add mic button to the end of the last keyboard row (not a separate row)
+    const lastRow = keyboard.lastElementChild;
     const micBtn = document.createElement("button");
     micBtn.id = "keyboard-mic-btn";
     micBtn.type = "button";
-    micBtn.className = "key wide keyboard-mic-btn";
-    micBtn.innerHTML = "🎙 Record";
-    micBtn.style.cssText = "flex:0 0 auto; width:auto; max-width:none; padding:4px 16px; font-size:0.82rem; border-radius:20px; background:linear-gradient(180deg,#fef3c7,#fde68a); border-color:rgba(217,119,6,0.4); color:#92400e;";
+    micBtn.className = "key keyboard-mic-btn";
+    micBtn.innerHTML = "🎙";
+    micBtn.style.cssText = "flex:0 0 auto; width:36px; min-width:36px; max-width:36px; padding:4px; font-size:1rem; border-radius:10px; background:linear-gradient(180deg,#fef3c7,#fde68a); border:1px solid rgba(217,119,6,0.4); color:#92400e; cursor:pointer;";
     micBtn.title = "Record your pronunciation";
+    if (lastRow) lastRow.appendChild(micBtn);
     
     let mediaRecorder = null;
     let audioChunks = [];
@@ -7488,9 +7487,6 @@ function initKeyboard() {
             showToast('Microphone access needed for recording');
         }
     };
-    
-    micRow.appendChild(micBtn);
-    keyboard.appendChild(micRow);
 }
 
 function createKey(txt, action, wide) {

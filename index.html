@@ -3,8 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="cs-build-hash" content="f7a2c913" />
-    <meta name="cs-build-time" content="2026-02-13 18:30 UTC" />
+    <meta name="cs-build-hash" content="a3b8d201" />
+    <meta name="cs-build-time" content="2026-02-13 19:15 UTC" />
     <title>Word Quest — Decode the Word</title>
     <script>
       (function () {
@@ -68,22 +68,22 @@
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
     
     <link rel="icon" href="favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="style.css?v=f7a2c913" />
+    <link rel="stylesheet" href="style.css?v=a3b8d201" />
     <link rel="stylesheet" href="word-quest-stable.css" />
     <link rel="stylesheet" href="delight.css" />
-    <script src="words.js?v=f7a2c913" defer></script>
+    <script src="words.js?v=a3b8d201" defer></script>
     <script src="decodables-expansion.js" defer></script>
     <script src="young-overrides.js" defer></script>
     <script src="phoneme-data.js" defer></script>
     <script src="focus-info.js" defer></script>
     <script src="translations.js" defer></script>
     <script src="delight.js" defer></script>
-    <script src="app.js?v=f7a2c913" defer></script>
+    <script src="app.js?v=a3b8d201" defer></script>
   </head>
 
   <body class="word-quest-page cs-page-wordquest look-35" data-wq-scene="navy-mint">
     <header>
-      <div class="header-row" style="display:flex; align-items:center; gap:8px; padding:4px 10px; flex-wrap:nowrap; overflow-x:auto;">
+      <div class="header-row" style="display:flex; align-items:center; gap:8px; padding:4px 10px; flex-wrap:nowrap;">
         <h1 style="font-size:0.9rem; margin:0; white-space:nowrap;">
           <a href="./" style="text-decoration:underline;">WORD QUEST</a>
         </h1>
@@ -140,9 +140,9 @@
 
         <button id="new-word-btn" type="button" class="case-toggle-btn new-round-btn" aria-label="Start new round" style="padding:4px 12px; font-size:0.75rem; white-space:nowrap;">New Round</button>
 
-        <details id="wq-tools-menu" class="wq-tools-menu" style="position:relative;">
-          <summary id="wq-tools-toggle" class="case-toggle-btn wq-tools-toggle" style="padding:4px 12px; font-size:0.75rem; white-space:nowrap;">Tools</summary>
-            <div class="wq-tools-body">
+        <details id="wq-tools-menu" class="wq-tools-menu" style="position:relative; z-index:100;">
+          <summary id="wq-tools-toggle" class="case-toggle-btn wq-tools-toggle" style="padding:4px 12px; font-size:0.75rem; white-space:nowrap; cursor:pointer;">Tools ▾</summary>
+            <div class="wq-tools-body" style="position:absolute; top:100%; right:0; z-index:1000; min-width:320px; max-width:420px; max-height:70vh; overflow-y:auto; background:rgba(255,255,255,0.98); border-radius:12px; box-shadow:0 8px 32px rgba(0,0,0,0.25); border:1px solid rgba(0,0,0,0.12); padding:8px; margin-top:4px;">
               <div class="wq-tools-tabs" role="tablist" aria-label="Tool sections">
                 <button
                   id="wq-tools-tab-round"
