@@ -9797,15 +9797,60 @@ body.word-quest-page .cs-sentence-caption-toggle-wrap label {
 
 /* Reduce header headroom */
 body.word-quest-page header {
-    padding: 4px 12px 2px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+body.word-quest-page .header-row {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    padding: 4px 10px !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    min-height: 0 !important;
+}
+body.word-quest-page .header-row h1 {
+    font-size: 0.9rem !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    white-space: nowrap !important;
+}
+body.word-quest-page .header-row h1 a {
+    font-size: 0.9rem !important;
+    text-decoration: underline !important;
+}
+body.word-quest-page .header-row select {
+    max-width: 180px !important;
+    font-size: 0.75rem !important;
+    padding: 4px 6px !important;
+}
+body.word-quest-page .header-row .wq-play-mode-btn {
+    padding: 4px 10px !important;
+    font-size: 0.72rem !important;
+}
+body.word-quest-page .header-row .new-round-btn {
+    padding: 4px 12px !important;
+    font-size: 0.75rem !important;
+    white-space: nowrap !important;
+}
+body.word-quest-page .header-row .wq-tools-toggle {
+    padding: 4px 12px !important;
+    font-size: 0.75rem !important;
+    white-space: nowrap !important;
+}
+body.word-quest-page .header-row .link-btn {
+    padding: 4px 8px !important;
+    font-size: 0.72rem !important;
 }
 body.word-quest-page .controls {
-    padding: 2px 8px !important;
-    gap: 4px !important;
+    display: none !important;
 }
 body.word-quest-page .header-top {
-    padding: 2px 0 !important;
-    gap: 6px !important;
+    display: none !important;
+}
+body.word-quest-page .focus-round-chip {
+    padding: 0 10px 2px !important;
+    font-size: 0.78rem !important;
 }
 body.word-quest-page .hint-actions {
     padding: 0 !important;

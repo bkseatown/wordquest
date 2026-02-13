@@ -4012,6 +4012,20 @@ function getTranslationData(word, langCode, options = {}) {
             return sanitized;
         }
     }
+    
+    // Direct fallback to WORDS_DATA (has full translations even if WORD_ENTRIES IIFE stripped them)
+    if (typeof WORDS_DATA !== 'undefined' && WORDS_DATA?.[lower]?.[normalizedLang]) {
+        const raw = WORDS_DATA[lower][normalizedLang];
+        const cleaned = sanitizeAgainstEnglish({
+            wordText: raw.word || raw.label || '',
+            definition: raw.def || '',
+            sentence: raw.sentence || ''
+        });
+        const sanitized = sanitizeTranslationCopy(cleaned);
+        if (sanitized.definition || sanitized.sentence) {
+            return sanitized;
+        }
+    }
     return null;
 }
 
@@ -8461,56 +8475,6 @@ function showEndModal(win) {
         }
     }
     
-    // Show inline bonus (joke/fact/riddle/quote) directly in the reveal modal
-    const revealBonus = document.getElementById('reveal-bonus');
-    const revealBonusEmoji = document.getElementById('reveal-bonus-emoji');
-    const revealBonusTitle = document.getElementById('reveal-bonus-title');
-    const revealBonusText = document.getElementById('reveal-bonus-text');
-    const revealBonusPunchline = document.getElementById('reveal-bonus-punchline');
-    if (revealBonus && revealBonusText && shouldShowBonusContent()) {
-        try {
-            const pool = getBonusContentPool();
-            const types = ['jokes', 'riddles', 'facts', 'quotes'].filter(t => Array.isArray(pool?.[t]) && pool[t].length);
-            if (types.length) {
-                const entries = types.flatMap(t => (pool[t] || []).map(text => ({ type: t, text })));
-                const pick = entries[Math.floor(Math.random() * entries.length)];
-                if (pick?.text) {
-                    const emojis = { jokes: '😄', riddles: '🧩', facts: '🌟', quotes: '💭' };
-                    const titles = { jokes: 'Joke Time!', riddles: 'Riddle Time!', facts: 'Fun Fact!', quotes: 'Inspiration' };
-                    if (revealBonusEmoji) revealBonusEmoji.textContent = emojis[pick.type] || '✨';
-                    if (revealBonusTitle) revealBonusTitle.textContent = titles[pick.type] || 'Bonus';
-                    
-                    // For jokes/riddles, split setup from punchline/answer
-                    let visibleText = pick.text;
-                    let hiddenText = '';
-                    if (pick.type === 'jokes') {
-                        const parsed = splitJokeSetupAndPunchline(pick.text);
-                        if (parsed.punchline) { visibleText = parsed.setup; hiddenText = parsed.punchline; }
-                    } else if (pick.type === 'riddles') {
-                        const parsed = splitRiddlePromptAndAnswer(pick.text);
-                        if (parsed.answer) { visibleText = parsed.prompt; hiddenText = parsed.answer; }
-                    }
-                    
-                    revealBonusText.textContent = visibleText;
-                    revealBonus.classList.remove('hidden');
-                    
-                    if (hiddenText && revealBonusPunchline) {
-                        revealBonusPunchline.classList.remove('hidden');
-                        revealBonusPunchline.textContent = pick.type === 'riddles' ? 'Reveal Answer' : 'Reveal Punchline';
-                        revealBonusPunchline.onclick = () => {
-                            revealBonusText.textContent = visibleText + '\n' + hiddenText;
-                            revealBonusPunchline.classList.add('hidden');
-                        };
-                    } else if (revealBonusPunchline) {
-                        revealBonusPunchline.classList.add('hidden');
-                    }
-                }
-            }
-        } catch (e) {}
-    } else if (revealBonus) {
-        revealBonus.classList.add('hidden');
-    }
-    
     // Store that we should show bonus when modal closes
     sessionStorage.setItem('showBonusOnClose', 'true');
 
@@ -8693,6 +8657,7 @@ function handleTeacherSubmit() {
 
 function closeModal() {
     const wasGameModalOpen = !gameModal.classList.contains("hidden");
+    const wasBonusModalOpen = !document.getElementById('bonus-modal')?.classList.contains("hidden");
     cancelAutoPlayReveal();
     stopAllActiveAudioPlayers();
     stopDecodableFollowAlong({ clearHighlights: true });
@@ -8745,13 +8710,24 @@ function closeModal() {
     if (wasGameModalOpen && sessionStorage.getItem('showBonusOnClose') === 'true') {
         sessionStorage.removeItem('showBonusOnClose');
         if (shouldShowBonusContent()) {
+            // Show bonus first; new game starts when bonus is closed
+            sessionStorage.setItem('startNewGameAfterBonus', 'true');
             setTimeout(() => showBonusContent(), 300);
+            return; // Don't start new game yet
         }
     }
     
     // Auto-start new game after closing win/loss modal
     if (wasGameModalOpen && gameOver) {
         setTimeout(() => startNewGame(), 300);
+    }
+    
+    // Auto-start new game after closing bonus modal
+    if (wasBonusModalOpen && sessionStorage.getItem('startNewGameAfterBonus') === 'true') {
+        sessionStorage.removeItem('startNewGameAfterBonus');
+        if (gameOver) {
+            setTimeout(() => startNewGame(), 300);
+        }
     }
 
     document.body.classList.remove('adventure-open');

@@ -83,19 +83,12 @@
 
   <body class="word-quest-page cs-page-wordquest look-35" data-wq-scene="navy-mint">
     <header>
-      <div class="header-top">
-        <h1>
-          <a href="./">WORD QUEST</a>
+      <div class="header-row" style="display:flex; align-items:center; gap:8px; padding:4px 10px; flex-wrap:nowrap; overflow-x:auto;">
+        <h1 style="font-size:0.9rem; margin:0; white-space:nowrap;">
+          <a href="./" style="text-decoration:underline;">WORD QUEST</a>
         </h1>
-        <nav class="header-actions" aria-label="Primary">
-          <a id="home-btn" class="link-btn" href="./">Home</a>
-        </nav>
-        <a id="demo-exit-link" class="link-btn demo-exit-link" href="word-quest-demo.html" aria-label="Exit demo">Exit demo</a>
-      </div>
 
-      <div class="controls" role="group" aria-label="Game setup">
-        <div class="control-group wq-control-focus">
-          <select id="pattern-select" aria-label="Choose your path">
+        <select id="pattern-select" aria-label="Choose your path" style="max-width:180px; font-size:0.75rem; padding:4px 6px; border-radius:8px;">
             <option value="shuffle" selected>Choose your path?</option>
             <option value="all">All Words</option>
             <option value="cvc">CVC (short vowels: cat, pin)</option>
@@ -138,34 +131,17 @@
               <option value="vocab-ela-68">ELA Vocabulary (6-8)</option>
               <option value="vocab-ela-912">ELA Vocabulary (9-12)</option>
             </optgroup>
-          </select>
-          <label class="wq-focus-hint-toggle" for="wq-toggle-round-clue">
-            <input id="wq-toggle-round-clue" type="checkbox" />
-            <span>Small focus hint</span>
-          </label>
+        </select>
+
+        <div id="wq-play-mode-switch" class="wq-play-mode-switch" role="group" aria-label="Play mode" style="display:flex; gap:0;">
+          <button id="wq-play-mode-classic" type="button" class="wq-play-mode-btn is-active" data-play-mode-option="classic" aria-pressed="true" style="padding:4px 10px; font-size:0.72rem; border-radius:8px 0 0 8px;">Classic</button>
+          <button id="wq-play-mode-listen" type="button" class="wq-play-mode-btn" data-play-mode-option="listen" aria-pressed="false" style="padding:4px 10px; font-size:0.72rem; border-radius:0 8px 8px 0;">Listen &amp; Spell</button>
         </div>
 
-        <div class="control-group control-group-subtle wq-control-teacher-quick" style="display:flex; align-items:center; gap:4px;">
-          <input id="quick-teacher-word" type="text" placeholder="Teacher word" class="masked" autocomplete="off" spellcheck="false" maxlength="12" style="width:110px; padding:5px 8px; border-radius:8px; border:1px solid rgba(100,116,139,0.4); font-size:0.82rem; background:rgba(255,255,255,0.9); color:#1e293b;" />
-          <button id="quick-teacher-go" type="button" style="padding:5px 10px; border-radius:8px; border:1px solid rgba(100,116,139,0.4); background:rgba(255,255,255,0.85); font-size:0.78rem; font-weight:700; cursor:pointer; white-space:nowrap;">Go</button>
-        </div>
+        <button id="new-word-btn" type="button" class="case-toggle-btn new-round-btn" aria-label="Start new round" style="padding:4px 12px; font-size:0.75rem; white-space:nowrap;">New Round</button>
 
-        <div class="control-group control-group-subtle wq-control-new-round">
-          <label for="new-word-btn" aria-hidden="true">&nbsp;</label>
-          <button id="new-word-btn" type="button" class="case-toggle-btn new-round-btn" aria-label="Start new round">New Round</button>
-        </div>
-
-        <div class="control-group control-group-subtle wq-control-mode" aria-label="Play mode">
-          <label for="wq-play-mode-switch" aria-hidden="true">&nbsp;</label>
-          <div id="wq-play-mode-switch" class="wq-play-mode-switch" role="group" aria-label="Play mode">
-            <button id="wq-play-mode-classic" type="button" class="wq-play-mode-btn is-active" data-play-mode-option="classic" aria-pressed="true">Classic</button>
-            <button id="wq-play-mode-listen" type="button" class="wq-play-mode-btn" data-play-mode-option="listen" aria-pressed="false">Listen &amp; Spell</button>
-          </div>
-        </div>
-
-        <div class="control-group control-group-subtle wq-tools-control" aria-label="Utilities">
-          <details id="wq-tools-menu" class="wq-tools-menu">
-            <summary id="wq-tools-toggle" class="case-toggle-btn wq-tools-toggle">Open Tools</summary>
+        <details id="wq-tools-menu" class="wq-tools-menu" style="position:relative;">
+          <summary id="wq-tools-toggle" class="case-toggle-btn wq-tools-toggle" style="padding:4px 12px; font-size:0.75rem; white-space:nowrap;">Tools</summary>
             <div class="wq-tools-body">
               <div class="wq-tools-tabs" role="tablist" aria-label="Tool sections">
                 <button
@@ -200,6 +176,16 @@
               </div>
 
               <section id="wq-tools-panel-round" class="wq-tools-panel is-active" role="tabpanel" aria-labelledby="wq-tools-tab-round" data-tools-panel="round">
+                <div class="wq-tools-subcard" style="margin-bottom:8px;">
+                  <div style="display:flex; align-items:center; gap:6px; margin-bottom:6px;">
+                    <input id="quick-teacher-word" type="text" placeholder="Teacher word" class="masked" autocomplete="off" spellcheck="false" maxlength="12" style="flex:1; padding:5px 8px; border-radius:8px; border:1px solid rgba(100,116,139,0.4); font-size:0.82rem; background:rgba(255,255,255,0.9); color:#1e293b;" />
+                    <button id="quick-teacher-go" type="button" style="padding:5px 10px; border-radius:8px; border:1px solid rgba(100,116,139,0.4); background:rgba(255,255,255,0.85); font-size:0.78rem; font-weight:700; cursor:pointer; white-space:nowrap;">Go</button>
+                  </div>
+                  <label class="wq-focus-hint-toggle" for="wq-toggle-round-clue" style="display:flex; align-items:center; gap:4px; font-size:0.8rem;">
+                    <input id="wq-toggle-round-clue" type="checkbox" />
+                    <span>Small focus hint</span>
+                  </label>
+                </div>
                 <div class="wq-tools-subcard">
                   <label class="wq-tools-field" for="length-select">
                     <span>Word length</span>
@@ -348,7 +334,13 @@
               </section>
             </div>
           </details>
-        </div>
+
+        <div style="flex:1;"></div>
+
+        <nav class="header-actions" aria-label="Primary" style="display:flex; gap:4px; align-items:center;">
+          <a id="home-btn" class="link-btn" href="./" style="padding:4px 8px; font-size:0.72rem;">Home</a>
+          <button id="help-open-btn" type="button" class="link-btn" style="padding:4px 8px; font-size:0.72rem;" aria-label="Help">?</button>
+        </nav>
       </div>
       <div id="focus-round-chip" class="focus-round-chip" aria-live="polite"></div>
     </header>
@@ -527,13 +519,6 @@
 	        <div id="modal-action-row" class="modal-action-row">
 	          <button id="speak-btn" type="button" class="modal-audio-btn">Hear Word</button>
 	          <button id="play-again-btn" type="button" class="primary-btn">Play Again</button>
-	        </div>
-
-	        <div id="reveal-bonus" class="reveal-bonus hidden" style="margin:12px 0 4px; padding:10px 14px; border-radius:12px; background:linear-gradient(180deg,#fef9e7,#fdf2d1); border:1px solid rgba(234,179,8,0.3); text-align:center;">
-	          <div id="reveal-bonus-emoji" style="font-size:1.5rem;"></div>
-	          <div id="reveal-bonus-title" style="font-weight:800; font-size:0.85rem; color:#92400e; margin:2px 0;"></div>
-	          <div id="reveal-bonus-text" style="font-size:0.88rem; color:#1a1a2e; line-height:1.4;"></div>
-	          <button id="reveal-bonus-punchline" type="button" class="hidden" style="margin-top:6px; padding:4px 14px; border-radius:8px; border:1px solid rgba(234,179,8,0.4); background:#fff; font-size:0.82rem; cursor:pointer; font-weight:700;">Reveal Answer</button>
 	        </div>
 
 	        <div class="translation-selector" aria-label="Translate">
