@@ -14543,8 +14543,8 @@ function ensureHowToModal() {
 }
 
 function openHowToModal() {
-    const modal = ensureHowToModal();
-    if (!modalOverlay) return;
+    const modal = document.getElementById('welcome-modal');
+    if (!modal || !modalOverlay) return;
     modalOverlay.classList.remove('hidden');
     modal.classList.remove('hidden');
 }
