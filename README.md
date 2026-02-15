@@ -3,7 +3,7 @@
 **Live URL:** https://bkseatown.github.io/WordQuest/
 **Repo:** https://github.com/bkseatown/WordQuest
 **Owner:** Bob (bkseatown)
-**Last Build:** e9f6a745 — Feb 14, 2026
+**Last Build:** c5d4a032 — Feb 15, 2026
 
 ---
 
@@ -206,6 +206,10 @@ Translation debug logging has been removed — translations confirmed working as
 | 10 | **Evaluate screenshots carefully** | Check colors, spacing, alignment, text visibility, overflow, scroll |
 | 11 | **Describe visual impact before coding** | If you cannot articulate what a CSS change will look like, you are guessing |
 | 12 | **Always update this README** | Add what you changed, what broke, what you learned |
+| 13 | **Never getElementById().prop without null check** | Elements like `speak-btn` are created dynamically in `showEndModal()`, not in HTML. Always use `const el = getElementById(); if (el) el.onclick = ...` |
+| 14 | **Watch for unclosed comments** | A `/*` without `*/` will swallow all code below it. One unclosed comment killed `updatePhonicsHint()` and crashed the entire game |
+| 15 | **Modal HTML must match showEndModal() expectations** | `showEndModal()` dynamically creates audio controls, action rows, and translation selectors. Don't restructure modal HTML (e.g. wrapping in `<details>`) without updating the JS DOM manipulation logic |
+| 16 | **TTS treats ALL-CAPS as acronyms** | Words like 'BOO' in definitions get spelled B-O-O. Use title case ('Boo') instead |
 
 ---
 
@@ -247,6 +251,35 @@ Translation debug logging has been removed — translations confirmed working as
 ---
 
 ## Change Log
+
+### Build c5d4a032 — Feb 15, 2026
+- FIXED: `updatePhonicsHint()` was inside unclosed `/*` comment block — function never got defined, crashing `startNewGame()` and preventing board/keyboard render
+- FIXED: `speak-btn` null reference at init — button is created dynamically in `showEndModal()`, not in HTML
+- REDUCED audio hints vertical spacing (game-canvas gap: 12px, hint-actions margin: 0)
+- Added README update for AI agent handoff
+
+### Build b4c3f921 — Feb 15, 2026
+- Null checks for `speak-btn` and `play-again-btn` in `initControls()`
+- Teacher Word tab redesigned: word list textarea front-and-center, clearer "Use These Words" / "Clear List" buttons
+- Reveal modal reverted to simpler HTML structure (collapsible `<details>` conflicted with `showEndModal` DOM manipulation)
+
+### Build a7d2e910 — Feb 15, 2026
+- Path dropdown narrowed to 220px
+- Phonics hint bar added below header (shows pattern + syllable count)
+- Keyboard absent keys shrink to 65% + fade to 35% opacity
+- Repeated letter ✦ badge on keyboard keys (pulsing indicator when letter appears more than once)
+- Vowel keys get subtle indigo tint when unused
+- How-to modal redesigned: compact 3-column layout, "Don't show this again" checkbox
+- Audio toggle replaces Classic/Listen & Spell buttons
+- Theme dropdown: all themes now have emoji icons + "School"/"Fun" group headers
+- Build stamp made very subtle (transparent bg, 30% opacity, 9px font)
+- Recording: 3-2-1 countdown before mic activates
+- TTS fix: all-caps words in definitions changed to title case
+
+### Build f3a1b820 — Feb 14, 2026
+- Board-keyboard spacing increased
+- Tools tabs pill-style redesign
+- Teacher word input removed from Round Setup (lives only in Teacher Word tab)
 
 ### Build e9f6a745 — Feb 14, 2026
 - REMOVED 586-line prefers-color-scheme dark block (was fighting theme system)

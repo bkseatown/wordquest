@@ -7224,7 +7224,7 @@ function updateFocusPanel() {
     }
 }
 
-/* ==========================================
+/* ========================================== */
 function updatePhonicsHint() {
     const hintEl = document.getElementById('wq-phonics-hint');
     if (!hintEl) return;

@@ -9852,10 +9852,7 @@ body.word-quest-page .game-modal .translation-pin {
 
 /* ===== Build e9f6a745+ Polish Fixes ===== */
 
-/* 1. More space between board and keyboard */
-body.word-quest-page #game-canvas {
-    gap: 24px !important;
-}
+/* 1. Board-keyboard spacing managed below */
 
 /* 2. Build stamp subtle */
 body.word-quest-page .cs-build-stamp,
@@ -10201,4 +10198,19 @@ body.word-quest-page .key {
 @keyframes pulse-badge {
     0%, 100% { transform: scale(1); }
     50% { transform: scale(1.15); }
+}
+
+/* Tighten audio hint spacing */
+body.word-quest-page .hint-actions {
+    margin: 0 !important;
+    padding: 2px 0 !important;
+    gap: 6px !important;
+}
+body.word-quest-page .sentence-preview {
+    margin: 0 !important;
+    padding: 2px 0 !important;
+    font-size: 0.78rem !important;
+}
+body.word-quest-page #game-canvas {
+    gap: 12px !important;
 }
