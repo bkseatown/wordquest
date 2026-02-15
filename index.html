@@ -3,8 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="cs-build-hash" content="a7d2e910" />
-    <meta name="cs-build-time" content="2026-02-15 10:00 UTC" />
+    <meta name="cs-build-hash" content="b4c3f921" />
+    <meta name="cs-build-time" content="2026-02-15 11:00 UTC" />
     <title>Word Quest — Decode the Word</title>
     <script>
       (function () {
@@ -68,17 +68,17 @@
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
     
     <link rel="icon" href="favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="style.css?v=a7d2e910" />
+    <link rel="stylesheet" href="style.css?v=b4c3f921" />
     <link rel="stylesheet" href="word-quest-stable.css" />
     <link rel="stylesheet" href="delight.css" />
-    <script src="words.js?v=a7d2e910" defer></script>
+    <script src="words.js?v=b4c3f921" defer></script>
     <script src="decodables-expansion.js" defer></script>
     <script src="young-overrides.js" defer></script>
     <script src="phoneme-data.js" defer></script>
     <script src="focus-info.js" defer></script>
     <script src="translations.js" defer></script>
     <script src="delight.js" defer></script>
-    <script src="app.js?v=a7d2e910" defer></script>
+    <script src="app.js?v=b4c3f921" defer></script>
   </head>
 
   <body class="word-quest-page cs-page-wordquest look-35" data-wq-scene="navy-mint">
@@ -298,52 +298,68 @@
               <section id="wq-tools-panel-teacher" class="wq-tools-panel hidden" role="tabpanel" aria-labelledby="wq-tools-tab-teacher" data-tools-panel="teacher" aria-hidden="true">
                 <section class="wq-tools-teacher-card" aria-label="Teacher word controls">
                   <div class="wq-tools-teacher-head">
-                    <strong>Teacher Word Mode</strong>
-                    <span>Single word, list paste, or file import</span>
+                    <strong>📋 Today's Word List</strong>
+                    <span>Paste your lesson words below — they become the game path</span>
                   </div>
                   <div id="quick-custom-word-body" class="quick-custom-word-body">
-                    <div class="quick-custom-word-row">
-                      <input
-                        id="quick-custom-word-input"
-                        type="text"
-                        class="masked"
-                        placeholder="Type one class-safe word (3-12 letters)"
-                        autocapitalize="none"
-                        autocomplete="off"
-                        spellcheck="false"
-                      />
-                      <button id="quick-custom-word-toggle-mask" type="button" class="hint-btn secondary" aria-label="Show or hide custom word">Show</button>
-                      <button id="quick-custom-word-start" type="button" class="hint-btn">Play Word</button>
-                      <button id="quick-custom-word-clear" type="button" class="hint-btn secondary">Use Library</button>
-                    </div>
                     <div class="quick-custom-word-list">
-                      <label for="quick-custom-word-list-input">Word list (paste one per line, comma, or semicolon)</label>
                       <textarea
                         id="quick-custom-word-list-input"
-                        rows="4"
-                        placeholder="photosynthesis&#10;fraction&#10;democracy"
+                        rows="5"
+                        placeholder="Paste words here — one per line, or separated by commas:&#10;&#10;photosynthesis, fraction, democracy&#10;&#10;Or one per line:&#10;photosynthesis&#10;fraction&#10;democracy"
                         spellcheck="false"
+                        style="width:100%; box-sizing:border-box; padding:8px 10px; border:1px solid #d1d5db; border-radius:8px; font-size:0.82rem; resize:vertical; min-height:80px;"
                       ></textarea>
-                      <div class="quick-custom-word-row quick-custom-word-row-list">
+                      <div class="quick-custom-word-row quick-custom-word-row-list" style="display:flex; gap:6px; margin-top:6px; flex-wrap:wrap;">
+                        <button id="quick-custom-word-list-set" type="button" class="hint-btn" style="flex:1;">✅ Use These Words</button>
+                        <button id="quick-custom-word-list-clear" type="button" class="hint-btn secondary" style="flex:1;">🗑 Clear List</button>
+                      </div>
+                      <div class="quick-custom-word-row quick-custom-word-row-list" style="display:flex; gap:6px; margin-top:4px; align-items:center;">
+                        <label class="quick-custom-word-list-toggle" style="display:flex; align-items:center; gap:4px; font-size:0.72rem; color:#64748b;">
+                          <input id="quick-custom-word-list-enable" type="checkbox" />
+                          <span>🔒 Lock list for all rounds</span>
+                        </label>
+                      </div>
+                      <div id="quick-custom-word-list-status" class="quick-custom-word-list-status muted" aria-live="polite" style="font-size:0.72rem; color:#94a3b8; margin-top:4px;"></div>
+                    </div>
+
+                    <div style="border-top:1px solid #e2e8f0; margin-top:8px; padding-top:8px;">
+                      <p style="font-size:0.72rem; color:#94a3b8; font-weight:600; margin:0 0 4px;">Or enter a single word:</p>
+                      <div class="quick-custom-word-row" style="display:flex; gap:6px;">
+                        <input
+                          id="quick-custom-word-input"
+                          type="text"
+                          class="masked"
+                          placeholder="Type one word (3-12 letters)"
+                          autocapitalize="none"
+                          autocomplete="off"
+                          spellcheck="false"
+                          style="flex:1; padding:6px 10px; border:1px solid #d1d5db; border-radius:8px; font-size:0.82rem;"
+                        />
+                        <button id="quick-custom-word-toggle-mask" type="button" class="hint-btn secondary">Show</button>
+                        <button id="quick-custom-word-start" type="button" class="hint-btn">Play</button>
+                      </div>
+                    </div>
+
+                    <div style="border-top:1px solid #e2e8f0; margin-top:8px; padding-top:8px;">
+                      <p style="font-size:0.72rem; color:#94a3b8; font-weight:600; margin:0 0 4px;">Import from file:</p>
+                      <div class="quick-custom-word-row quick-custom-word-row-list" style="display:flex; gap:6px; align-items:center;">
                         <input
                           id="quick-custom-word-file"
                           type="file"
                           accept=".txt,.csv,.tsv,.json,.doc,.docx,.pdf,text/plain,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                          style="font-size:0.72rem; max-width:200px;"
                         />
-                        <button id="quick-custom-word-file-import" type="button" class="hint-btn secondary">Import File</button>
+                        <button id="quick-custom-word-file-import" type="button" class="hint-btn secondary">Import</button>
                       </div>
-                      <div class="quick-custom-word-row quick-custom-word-row-list">
-                        <button id="quick-custom-word-list-set" type="button" class="hint-btn">Save List</button>
-                        <label class="quick-custom-word-list-toggle">
-                          <input id="quick-custom-word-list-enable" type="checkbox" />
-                          <span>Lock list for rounds</span>
-                        </label>
-                        <button id="quick-custom-word-list-clear" type="button" class="hint-btn secondary">Clear List</button>
-                      </div>
-                      <div id="quick-custom-word-list-status" class="quick-custom-word-list-status muted" aria-live="polite"></div>
                     </div>
-                    <div id="quick-custom-word-status" class="quick-custom-word-status muted" aria-live="polite">
-                      Mode: Library. Pick a focus or set a teacher word.
+
+                    <div style="margin-top:6px; display:flex; justify-content:center;">
+                      <button id="quick-custom-word-clear" type="button" class="hint-btn secondary" style="font-size:0.72rem;">↩ Back to Library</button>
+                    </div>
+
+                    <div id="quick-custom-word-status" class="quick-custom-word-status muted" aria-live="polite" style="font-size:0.72rem; color:#94a3b8; margin-top:4px; text-align:center;">
+                      Mode: Library. Paste words above or pick a focus path.
                     </div>
                   </div>
                 </section>
@@ -520,50 +536,33 @@
         <div id="modal-def" class="modal-def"></div>
         <div id="modal-sentence" class="modal-sentence"></div>
 
-        <div id="modal-action-row" class="modal-action-row" style="display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin:10px 0;">
+        <div id="modal-action-row" class="modal-action-row"></div>
+
+        <div id="reveal-record-section" style="text-align:center; margin-top:6px; padding-top:6px; border-top:1px solid rgba(0,0,0,0.06);">
+          <button id="reveal-record-btn" type="button" style="padding:8px 18px; border-radius:10px; border:2px solid #e5e7eb; background:linear-gradient(180deg,#fefce8,#fef3c7); color:#92400e; font-weight:700; font-size:0.82rem; cursor:pointer;">🎙 Practice Saying It</button>
+          <div id="reveal-record-status" style="margin-top:6px;"></div>
         </div>
 
-        <button id="play-again-btn" type="button" class="primary-btn" style="width:100%; margin:6px 0;">Play Again</button>
-
-        <!-- Collapsible: Practice Recording -->
-        <details id="reveal-record-details" class="reveal-section-details">
-          <summary class="reveal-section-summary">🎙 Practice Saying It</summary>
-          <div id="reveal-record-section" style="padding:8px 0; text-align:center;">
-            <button id="reveal-record-btn" type="button" style="padding:8px 18px; border-radius:10px; border:2px solid #e5e7eb; background:linear-gradient(180deg,#fefce8,#fef3c7); color:#92400e; font-weight:700; font-size:0.82rem; cursor:pointer;">🔴 Start Recording</button>
-            <div id="reveal-record-status" style="margin-top:6px;"></div>
-          </div>
-        </details>
-
-        <!-- Collapsible: Auto-read & Translation -->
-        <details id="reveal-translate-details" class="reveal-section-details">
-          <summary class="reveal-section-summary">🌐 Language + Translation</summary>
-          <div style="padding:8px 0;">
-            <label style="display:flex; align-items:center; gap:6px; font-size:0.78rem; color:#64748b; margin-bottom:6px; cursor:pointer;">
-              <input type="checkbox" id="auto-read-toggle" checked />
-              Auto-read word, definition, and sentence
-            </label>
-            <div class="translation-selector" aria-label="Translate" style="border:none; padding:0;">
-              <label for="language-select" style="font-size:0.72rem; color:#94a3b8; font-weight:600;">Language</label>
-              <select id="language-select" aria-label="Translation language" style="width:100%; padding:6px 8px; border-radius:8px; border:1px solid #d1d5db; font-size:0.82rem; margin:4px 0;">
-                <option value="en">English</option>
-                <option value="es">Español (Spanish)</option>
-                <option value="zh">中文 (Simplified Chinese)</option>
-                <option value="hi">हिन्दी (Hindi)</option>
-                <option value="ms">Bahasa Melayu (Malay)</option>
-                <option value="vi">Tiếng Việt (Vietnamese)</option>
-                <option value="tl">Tagalog (Filipino)</option>
-                <option value="ar">العربية (Arabic)</option>
-                <option value="ko">한국어 (Korean)</option>
-                <option value="ja">日本語 (Japanese)</option>
-              </select>
-              <label class="translation-pin" style="font-size:0.72rem; color:#94a3b8;">
-                <input type="checkbox" id="pin-language" />
-                Lock this language
-              </label>
-              <div id="translation-pin-status" class="translation-pin-status hidden" aria-live="polite"></div>
-            </div>
-          </div>
-        </details>
+        <div class="translation-selector" aria-label="Translate">
+          <label for="language-select"><strong>Language</strong></label>
+          <select id="language-select" aria-label="Translation language">
+            <option value="en">English</option>
+            <option value="es">Español (Spanish)</option>
+            <option value="zh">中文 (Simplified Chinese)</option>
+            <option value="hi">हिन्दी (Hindi)</option>
+            <option value="ms">Bahasa Melayu (Malay)</option>
+            <option value="vi">Tiếng Việt (Vietnamese)</option>
+            <option value="tl">Tagalog (Filipino)</option>
+            <option value="ar">العربية (Arabic)</option>
+            <option value="ko">한국어 (Korean)</option>
+            <option value="ja">日本語 (Japanese)</option>
+          </select>
+          <label class="translation-pin">
+            <input type="checkbox" id="pin-language" />
+            Lock this language
+          </label>
+          <div id="translation-pin-status" class="translation-pin-status hidden" aria-live="polite"></div>
+        </div>
       </div>
     </div>
 

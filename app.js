@@ -5241,14 +5241,20 @@ function initControls() {
     }
     updateWordQuestAudioAvailabilityNotice();
     
-    document.getElementById("speak-btn").onclick = () => {
-        if (isCurrentWordAudioBlocked()) return;
-        speak(currentWord, "word");
-    };
-    document.getElementById("play-again-btn").onclick = () => {
-        closeModal();
-        startNewGame();
-    };
+    const speakBtn = document.getElementById("speak-btn");
+    if (speakBtn) {
+        speakBtn.onclick = () => {
+            if (isCurrentWordAudioBlocked()) return;
+            speak(currentWord, "word");
+        };
+    }
+    const playAgainBtn = document.getElementById("play-again-btn");
+    if (playAgainBtn) {
+        playAgainBtn.onclick = () => {
+            closeModal();
+            startNewGame();
+        };
+    }
     const bonusContinueBtn = document.getElementById("bonus-continue");
     if (bonusContinueBtn) {
         bonusContinueBtn.onclick = closeModal;
