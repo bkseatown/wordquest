@@ -1,0 +1,69 @@
+/* =====================================================
+   Word Quest — modes.css
+   LOCKED: Do not edit selectors or layout.
+   Contains only Projector Mode and Motion overrides.
+   ===================================================== */
+
+/* ── Reduced Motion: OS-level preference ────────────── */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration:        0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration:       0.001ms !important;
+  }
+}
+
+/* ── Reduced Motion: manual toggle in Settings ───────── */
+[data-motion="off"] * {
+  animation-duration:        0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration:       0.001ms !important;
+}
+
+/* ── Projector Mode ──────────────────────────────────── */
+/* Higher contrast, thicker borders, larger type.        */
+/* Designed for classroom display at 10+ feet.           */
+[data-projector="on"] .tile {
+  border-width: 3px;
+  font-size:    calc(var(--tile-size) * 0.50);
+  font-weight:  800;
+}
+
+[data-projector="on"] .key {
+  font-size:   1.05rem;
+  font-weight: 800;
+}
+
+/* Force high-contrast tile text in projector mode */
+[data-projector="on"] .tile:not(.correct):not(.present):not(.absent) {
+  --tile-text: #000000;
+}
+
+/* Projector mode: disable subtle gradients on tiles for cleaner projection */
+[data-projector="on"] .tile:not(.correct):not(.present):not(.absent) {
+  background: #ffffff;
+}
+
+/* Projector mode: stronger feedback borders */
+[data-projector="on"] .tile.correct,
+[data-projector="on"] .tile.present,
+[data-projector="on"] .tile.absent {
+  border-width: 3px;
+}
+
+/* Projector mode: forced Classic feedback (no subtle tinting) */
+/* Safety: ensures color-blind students can still read state */
+[data-projector="on"] .tile.correct::before {
+  content: "✓";
+  position: absolute;
+  top: 2px; right: 4px;
+  font-size: 0.5em;
+  opacity: 0.7;
+}
+[data-projector="on"] .tile.present::before {
+  content: "·";
+  position: absolute;
+  top: 2px; right: 4px;
+  font-size: 0.7em;
+  opacity: 0.7;
+}

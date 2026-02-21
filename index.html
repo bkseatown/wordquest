@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="default" data-case="lower" data-projector="off" data-motion="on">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Word Quest</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Atkinson Hyperlegible: distinct I/l/1, designed for low-vision readers -->
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Nunito:wght@800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style/components.css?v=DEV">
+  <link rel="stylesheet" href="style/themes.css?v=DEV">
+  <link rel="stylesheet" href="style/modes.css?v=DEV">
+</head>
+<body>
+
+  <div id="loading-screen"><div class="spinner"></div><span>Loading…</span></div>
+
+  <!-- ── Header ───────────────────────────────────── -->
+  <header>
+    <div class="logo">Word<span>Quest</span></div>
+    <div class="header-right">
+      <button id="settings-btn" class="icon-btn" title="Settings" aria-label="Settings">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        </svg>
+      </button>
+      <button id="new-game-btn">New Word</button>
+    </div>
+  </header>
+
+  <!-- ── Focus bar ────────────────────────────────── -->
+  <div class="focus-bar">
+    <span class="focus-label">Focus</span>
+    <select id="setting-focus">
+      <option value="all">— All Words —</option>
+      <optgroup label="SoR Phonics">
+        <option value="cvc">CVC · Short Vowels</option>
+        <option value="digraph">Digraphs · sh, ch, th</option>
+        <option value="ccvc">Initial Blends · st, bl, tr</option>
+        <option value="cvcc">Final Blends · mp, nd, st</option>
+        <option value="trigraph">Trigraphs · tch, dge, igh</option>
+        <option value="cvce">Magic E · CVCe</option>
+        <option value="vowel_team">Vowel Teams · ai, ee, oa</option>
+        <option value="r_controlled">R-Controlled · ar, or, er</option>
+        <option value="diphthong">Diphthongs · oi, oy, ou</option>
+        <option value="floss">FLOSS Rule · ff, ll, ss</option>
+        <option value="welded">Welded Sounds · -ang, -ing</option>
+        <option value="schwa">Schwa</option>
+        <option value="prefix">Prefixes · un-, re-, pre-</option>
+        <option value="suffix">Suffixes · -ing, -ed, -er</option>
+        <option value="compound">Compound Words</option>
+        <option value="multisyllable">Multisyllabic Words</option>
+      </optgroup>
+      <optgroup label="Math"><option value="vocab-math-k2">Math K–2</option><option value="vocab-math-35">Math 3–5</option><option value="vocab-math-68">Math 6–8</option><option value="vocab-math-912">Math 9–12</option></optgroup>
+      <optgroup label="Science"><option value="vocab-science-k2">Science K–2</option><option value="vocab-science-35">Science 3–5</option><option value="vocab-science-68">Science 6–8</option><option value="vocab-science-912">Science 9–12</option></optgroup>
+      <optgroup label="Social Studies"><option value="vocab-social-k2">Social Studies K–2</option><option value="vocab-social-35">Social Studies 3–5</option><option value="vocab-social-68">Social Studies 6–8</option><option value="vocab-social-912">Social Studies 9–12</option></optgroup>
+      <optgroup label="ELA"><option value="vocab-ela-k2">ELA K–2</option><option value="vocab-ela-35">ELA 3–5</option><option value="vocab-ela-68">ELA 6–8</option><option value="vocab-ela-912">ELA 9–12</option></optgroup>
+    </select>
+    <span id="focus-hint" class="focus-hint hidden"></span>
+  </div>
+
+  <!-- ── Settings overlay ─────────────────────────── -->
+  <div id="settings-panel" class="settings-panel hidden">
+    <div class="settings-header">
+      <span>Settings</span>
+      <button id="settings-close" class="close-btn" aria-label="Close settings">✕</button>
+    </div>
+    <div class="settings-body">
+      <div class="setting-row"><label>Theme<select id="s-theme">
+        <optgroup label="Light">
+          <option value="default">🌿 Default</option>
+          <option value="sunset">🌅 Sunset</option>
+          <option value="ocean">🌊 Ocean</option>
+          <option value="superman">🦸 Superman</option>
+          <option value="marvel">💥 Marvel</option>
+        </optgroup>
+        <optgroup label="Dark — Sports">
+          <option value="seahawks">🦅 Seahawks</option>
+          <option value="huskies">🐾 Huskies</option>
+        </optgroup>
+        <optgroup label="Dark — Pop Culture">
+          <option value="ironman">🔴 Iron Man</option>
+          <option value="demonhunter">🌸 Demon Hunter</option>
+          <option value="harleyquinn">🃏 Harley Quinn</option>
+          <option value="kuromi">🖤 Kuromi</option>
+        </optgroup>
+        <optgroup label="Dark — Other">
+          <option value="dark">🌙 Dark</option>
+          <option value="coffee">☕ Coffee</option>
+          <option value="matrix">💻 Matrix</option>
+        </optgroup>
+      </select></label></div>
+      <div class="setting-row"><label>Grade Band<select id="s-grade"><option value="all">All grades</option><option value="K-2">K–2</option><option value="G3-5">Grades 3–5</option><option value="G6-8">Grades 6–8</option><option value="G9-12">Grades 9–12</option></select></label></div>
+      <div class="setting-row"><label>Word Length<select id="s-length"><option value="any">Any</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option></select></label></div>
+      <div class="setting-row"><label>Max Guesses<select id="s-guesses"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6" selected>6</option></select></label></div>
+      <div class="setting-row"><label>Letter Case<select id="s-case"><option value="lower">lowercase</option><option value="upper">UPPERCASE</option></select></label></div>
+      <div class="setting-row"><label>Phonics Hint<select id="s-hint"><option value="off">Off</option><option value="on">On</option></select></label></div>
+      <div class="setting-row"><label>Duplicate Alert<select id="s-dupe"><option value="on">On</option><option value="off">Off</option></select></label></div>
+      <div class="setting-row"><label>Win Confetti<select id="s-confetti"><option value="on">On</option><option value="off">Off</option></select></label></div>
+      <div class="setting-row"><label>Projector Mode<select id="s-projector"><option value="off">Off</option><option value="on">On · high contrast</option></select></label></div>
+      <div class="setting-row"><label>Motion<select id="s-motion"><option value="on">On</option><option value="off">Reduced</option></select></label></div>
+      <div class="setting-row setting-row-full"><label>Voice<select id="s-voice"><option value="auto">Auto (best available)</option></select></label></div>
+    </div>
+  </div>
+
+  <!-- ── Main game area ───────────────────────────── -->
+  <main id="main">
+
+    <!-- Board plate + grid -->
+    <div class="board-zone">
+      <div class="board-plate">
+        <div id="game-board"></div>
+      </div>
+
+      <!-- Hear Word / Hear Sentence — visible during gameplay like old version -->
+      <div class="gameplay-audio">
+        <button class="audio-ghost-btn" id="g-hear-word">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
+          Hear Word
+        </button>
+        <button class="audio-ghost-btn" id="g-hear-sentence">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Hear Sentence
+        </button>
+      </div>
+    </div>
+
+    <!-- Keyboard -->
+    <div id="keyboard"></div>
+
+  </main>
+
+  <div id="toast" role="alert" aria-live="polite"></div>
+  <canvas id="confetti-canvas"></canvas>
+
+  <!-- ── End modal ────────────────────────────────── -->
+  <div id="modal-overlay" class="hidden">
+    <div id="end-modal" class="hidden" role="dialog" aria-modal="true">
+      <div id="modal-result"></div>
+      <div id="modal-word"></div>
+      <div id="modal-syllables"></div>
+      <div id="modal-badge"></div>
+      <div id="modal-guesses"></div>
+      <div class="modal-divider"></div>
+      <p id="modal-def"></p>
+      <p id="modal-sentence"></p>
+      <div id="modal-fun-wrap"><p id="modal-fun"></p></div>
+      <div class="audio-row">
+        <button class="audio-btn" id="hear-word-btn">🔊 Word</button>
+        <button class="audio-btn" id="hear-def-btn">📖 Meaning</button>
+        <button class="audio-btn" id="hear-sentence-btn">💬 Sentence</button>
+        <button class="audio-btn" id="hear-fun-btn">✨ Fun</button>
+      </div>
+      <button id="play-again-btn">Play Again →</button>
+    </div>
+  </div>
+
+  <script src="data/words-inline.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/game.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

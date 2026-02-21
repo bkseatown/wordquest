@@ -1,0 +1,167 @@
+/**
+ * audio.js — Word Quest v2
+ * Smart voice selection: prefers neural/enhanced/premium voices.
+ * No robotic browser default — finds the best available.
+ * Falls back gracefully if nothing good is found.
+ */
+
+const WQAudio = (() => {
+
+  const VOICE_PREF_KEY = 'wq_v2_voice';
+  let _selectedVoice = null;
+  let _allVoices = [];
+  let _voicesReady = false;
+
+  // Score a voice by quality (higher = better)
+  function _scoreVoice(v) {
+    const n = (v.name || '').toLowerCase();
+    const l = (v.lang || '').toLowerCase();
+    let s = 0;
+
+    // Language preference: en-US > en-GB > en-* > other
+    if (l === 'en-us') s += 20;
+    else if (l.startsWith('en-')) s += 12;
+    else if (!l.startsWith('en')) return -999; // non-English: skip
+
+    // Neural / premium voices (macOS Ventura+, iOS 17+, Windows 11)
+    if (n.includes('neural'))    s += 30;
+    if (n.includes('premium'))   s += 28;
+    if (n.includes('enhanced'))  s += 22;
+    if (n.includes('natural'))   s += 18;
+
+    // Known high-quality named voices
+    if (n.includes('samantha'))  s += 16; // macOS default, sounds good
+    if (n.includes('karen'))     s += 15; // macOS
+    if (n.includes('daniel'))    s += 15; // macOS/iOS
+    if (n.includes('ava'))       s += 14; // macOS/iOS neural
+    if (n.includes('allison'))   s += 14; // macOS
+    if (n.includes('siri'))      s += 12; // iOS native
+    if (n.includes('microsoft')) s += 10; // Windows voices tend to be clear
+    if (n.includes('google'))    s += 10; // Android
+
+    // Penalise known low-quality voices
+    if (n.includes('compact'))   s -= 15;
+    if (n.includes('espeak'))    s -= 20;
+
+    // Slight bonus for default system voice
+    if (v.default) s += 3;
+
+    return s;
+  }
+
+  function _loadVoices() {
+    _allVoices = window.speechSynthesis.getVoices();
+    if (!_allVoices.length) return;
+    _voicesReady = true;
+
+    // Apply saved preference, or pick best automatically
+    const saved = localStorage.getItem(VOICE_PREF_KEY);
+    if (saved && saved !== 'auto') {
+      _selectedVoice = _allVoices.find(v => v.name === saved) || null;
+    }
+    if (!_selectedVoice) {
+      const ranked = [..._allVoices]
+        .map(v => ({ v, score: _scoreVoice(v) }))
+        .filter(x => x.score > -999)
+        .sort((a, b) => b.score - a.score);
+      _selectedVoice = ranked[0]?.v || null;
+    }
+  }
+
+  // Voices load asynchronously on many browsers
+  window.speechSynthesis.onvoiceschanged = _loadVoices;
+  _loadVoices(); // try immediately too
+
+  // ─── Playback ───────────────────────────────────
+  let _active = null;
+
+  function _stop() {
+    if (_active) { _active.pause(); _active.currentTime = 0; _active = null; }
+    window.speechSynthesis.cancel();
+  }
+
+  function _playFile(path) {
+    return new Promise((res, rej) => {
+      _stop();
+      const a = new Audio(path);
+      _active = a;
+      a.onended = () => { _active = null; res(); };
+      a.onerror = () => { _active = null; rej(); };
+      a.play().catch(rej);
+    });
+  }
+
+  function _speak(text, rate = 0.88, pitch = 1) {
+    return new Promise(res => {
+      _stop();
+      if (!window.speechSynthesis) { res(); return; }
+      if (!_voicesReady) _loadVoices();
+
+      const utt = new SpeechSynthesisUtterance(text);
+      utt.rate  = rate;
+      utt.pitch = pitch;
+      utt.lang  = 'en-US';
+      if (_selectedVoice) utt.voice = _selectedVoice;
+      utt.onend   = res;
+      utt.onerror = res;
+      window.speechSynthesis.speak(utt);
+    });
+  }
+
+  async function _play(path, fallback, rate = 0.88) {
+    if (path) {
+      try { await _playFile(path); return; } catch { /* fall through */ }
+    }
+    if (fallback) await _speak(fallback, rate);
+  }
+
+  // ─── Public API ─────────────────────────────────
+  // Audio paths follow flat folder convention:
+  //   assets/audio/words/{word}.mp3
+  //   assets/audio/defs/{word}.mp3
+  //   assets/audio/sentences/{word}.mp3
+  //   assets/audio/fun/{word}.mp3
+  //   assets/audio/syllables/{word}.mp3   ← Gemini phoneme-quality pronunciations
+  //
+  // entry.audio is injected by add_audio_paths.py:
+  //   { word, def, sentence, fun, syllables }
+  // All fields are optional — TTS fallback used if file missing.
+
+  function playWord(entry)      { return _play(entry?.audio?.word,      entry?.word,        0.82); }
+  function playDef(entry)       { return _play(entry?.audio?.def,       entry ? `${entry.word} means: ${entry.definition}` : '', 0.9); }
+  function playSentence(entry)  { return _play(entry?.audio?.sentence,  entry?.sentence,    0.9);  }
+  function playFun(entry)       { return _play(entry?.audio?.fun,       entry?.fun_add_on,  0.9);  }
+  // Syllable-by-syllable pronunciation for phonics instruction
+  // Falls back to word audio, then TTS
+  function playSyllables(entry) {
+    const path = entry?.audio?.syllables || entry?.audio?.word;
+    return _play(path, entry?.syllables || entry?.word, 0.72);  // slower rate for phonics
+  }
+  function stop()               { _stop(); }
+
+  // Returns list of English voices for settings UI
+  function getAvailableVoices() {
+    if (!_voicesReady) _loadVoices();
+    return _allVoices
+      .filter(v => v.lang.startsWith('en'))
+      .sort((a, b) => _scoreVoice(b) - _scoreVoice(a));
+  }
+
+  function setVoiceByName(name) {
+    if (name === 'auto') {
+      localStorage.removeItem(VOICE_PREF_KEY);
+      _selectedVoice = null;
+      _loadVoices();
+    } else {
+      const v = _allVoices.find(v => v.name === name);
+      if (v) { _selectedVoice = v; localStorage.setItem(VOICE_PREF_KEY, name); }
+    }
+  }
+
+  function getCurrentVoiceName() {
+    return _selectedVoice?.name || 'auto';
+  }
+
+  return { playWord, playDef, playSentence, playFun, playSyllables, stop,
+           getAvailableVoices, setVoiceByName, getCurrentVoiceName };
+})();
