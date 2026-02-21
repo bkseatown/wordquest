@@ -83,7 +83,8 @@ const WQUI = (() => {
         t.classList.add('flip');
         setTimeout(() => {
           t.classList.remove('flip', 'filled', 'just-typed');
-          t.classList.add(status);
+          t.classList.add(status, 'wq-reveal');
+          setTimeout(()=>t.classList.remove('wq-reveal'), 260);
         }, 230);
       }, col * STAGGER);
     });
@@ -112,6 +113,7 @@ const WQUI = (() => {
         const btn = document.createElement('button');
         btn.className = 'key';
         btn.dataset.key = key;
+        if (/^[A-Z]$/.test(key)) btn.dataset.letter = key.toLowerCase();
 
         if (key === '⌫') {
           btn.textContent = '⌫';
@@ -256,21 +258,13 @@ const WQUI = (() => {
 
     // Width: constrain to viewport
     const vw = Math.min(window.innerWidth, 560) - 24; // 12px each side
-    const byWidth = Math.floor((vw - (wordLength - 1) * 5) / wordLength);
+    const byWidth = Math.floor((vw - 28 - (wordLength - 1) * 5) / wordLength); // 28 = plate sides
 
     const size = Math.max(32, Math.min(byHeight, byWidth, 64));
 
-    // Width planning: board uses tile size; keyboard needs enough width for 10 keys.
+    // Keyboard width matches the board width including plate padding
     const boardWidth = wordLength * size + (wordLength - 1) * 5;
-
-    // Keyboard target width (10 keys + gaps). Keep it within viewport.
-    const keyGap = 9;
-    const keyW = Math.max(42, Math.min(62, Math.floor((vw - 9 * keyGap) / 10)));
-    const keyboardW = 10 * keyW + 9 * keyGap;
-
-    // Playfield width follows the keyboard (so it doesn't feel "smooshed").
-    // Board will remain centered inside the plate if it's narrower.
-    const playfieldW = Math.max(boardWidth, keyboardW);
+    const playfieldW = boardWidth; // keyboard matches board grid, not plate
 
     document.documentElement.style.setProperty('--tile-size',       size + 'px');
     document.documentElement.style.setProperty('--playfield-width', playfieldW + 'px');

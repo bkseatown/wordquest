@@ -8,9 +8,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <!-- Atkinson Hyperlegible: distinct I/l/1, designed for low-vision readers -->
   <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Nunito:wght@800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style/components.css?v=DEV">
-  <link rel="stylesheet" href="style/themes.css?v=DEV">
-  <link rel="stylesheet" href="style/modes.css?v=DEV">
+  <link rel="stylesheet" href="style/modes.css?v=20260222">
+  <link rel="stylesheet" href="style/themes.css?v=20260222">
+  <link rel="stylesheet" href="style/components.css?v=20260222">
 </head>
 <body>
 
@@ -72,7 +72,7 @@
         <optgroup label="Light">
           <option value="default">🌿 Default</option>
           <option value="sunset">🌅 Sunset</option>
-          <option value="ocean">🌊 Ocean</option>
+          <option value="ocean">🌊 Ocean</option><option value="arctic">❄️ Arctic Blue</option><option value="jungle">🌿 Jungle</option><option value="solar">☀️ Solar Gold</option>
           <option value="superman">🦸 Superman</option>
           <option value="marvel">💥 Marvel</option>
         </optgroup>
@@ -85,7 +85,7 @@
           <option value="demonhunter">🌸 Demon Hunter</option>
           <option value="harleyquinn">🃏 Harley Quinn</option>
           <option value="kuromi">🖤 Kuromi</option>
-        </optgroup>
+          <option value="minecraft">⛏️ Minecraft</option>  <option value="pokemon">📟 Pokédex</option>  <option value="mario">🍄 Retro Arcade</option>  <option value="starwars">⭐ Space Saga</option>  <option value="barbie">💖 Pop Pink</option></optgroup>
         <optgroup label="Dark — Other">
           <option value="dark">🌙 Dark</option>
           <option value="coffee">☕ Coffee</option>
@@ -100,8 +100,8 @@
       <div class="setting-row"><label>Duplicate Alert<select id="s-dupe"><option value="on">On</option><option value="off">Off</option></select></label></div>
       <div class="setting-row"><label>Win Confetti<select id="s-confetti"><option value="on">On</option><option value="off">Off</option></select></label></div>
       <div class="setting-row"><label>Projector Mode<select id="s-projector"><option value="off">Off</option><option value="on">On · high contrast</option></select></label></div>
-      <div class="setting-row"><label>Motion<select id="s-motion"><option value="on">On</option><option value="off">Reduced</option></select></label></div>
-      <div class="setting-row setting-row-full"><label>Voice<select id="s-voice"><option value="auto">Auto (best available)</option></select></label></div>
+      <div class="setting-row"><label>Motion<select id="s-motion"><option value="fun">Fun</option><option value="calm">Calm</option><option value="reduced">Reduced</option></select></label></div>
+      <div class="setting-row"><label>Feedback Colors<select id="s-feedback"><option value="classic">Classic (green/yellow/gray)</option><option value="themed">Themed (matches theme)</option></select></label></div><div class="setting-row"><label>Music<select id="s-music"><option value="lofi">Lo‑fi</option><option value="arcade">8‑bit Arcade</option><option value="fantasy">Fantasy</option><option value="scifi">Sci‑fi</option><option value="sports">Sports Hype</option><option value="off">Off</option></select></label></div><div class="setting-row setting-row-full"><label>Music Volume<input id="s-music-vol" type="range" min="0" max="1" step="0.05" value="0.35"></label></div><div class="setting-row setting-row-full"><label>Audio Voice<select id="s-voice"><option value="recorded">Recorded only (recommended)</option><option value="auto">Recorded → device fallback</option><option value="device">Device voice only (beta)</option></select></label></div><div class="setting-row setting-row-full small-help"><button id="voice-help-btn" class="link-btn" type="button">How to improve device voice</button></div>
     </div>
   </div>
 
@@ -133,6 +133,7 @@
   </main>
 
   <div id="toast" role="alert" aria-live="polite"></div>
+  <div id="celebrate-layer" class="celebrate-layer" aria-hidden="true"></div>
   <canvas id="confetti-canvas"></canvas>
 
   <!-- ── End modal ────────────────────────────────── -->
@@ -157,11 +158,32 @@
     </div>
   </div>
 
+  
+  <!-- ── Voice help modal ─────────────────────────── -->
+  <div id="voice-help-modal" class="modal hidden" role="dialog" aria-modal="true" aria-label="Improve device voice">
+    <div class="modal-card">
+      <div class="modal-head">
+        <strong>Improve device voice quality</strong>
+        <button id="voice-help-close" class="close-btn" aria-label="Close">✕</button>
+      </div>
+      <div class="modal-body">
+        <p><b>Best quality (recommended):</b> use the recorded WordQuest audio whenever available.</p>
+        <p>If you must use device voice as a fallback:</p>
+        <ul>
+          <li><b>iPhone/iPad:</b> Settings → Accessibility → Spoken Content → Voices, download a higher‑quality voice.</li>
+          <li><b>Android (Samsung):</b> Settings → Accessibility (or General management) → Text‑to‑speech → install/download high‑quality voices.</li>
+          <li><b>Chrome:</b> device voices vary; try switching to a different downloaded voice in your OS settings.</li>
+        </ul>
+        <p>WordQuest will <b>never auto‑switch</b> to device voice unless you choose a fallback mode.</p>
+      </div>
+    </div>
+  </div>
+
   <script src="data/words-inline.js"></script>
-  <script src="js/data.js"></script>
-  <script src="js/audio.js"></script>
-  <script src="js/game.js"></script>
-  <script src="js/ui.js"></script>
-  <script src="js/app.js"></script>
+  <script src="js/data.js?v=20260222"></script>
+  <script src="js/audio.js?v=20260222"></script>
+  <script src="js/game.js?v=20260222"></script>
+  <script src="js/ui.js?v=20260222"></script>
+  <script src="js/app.js?v=20260222"></script>
 </body>
 </html>

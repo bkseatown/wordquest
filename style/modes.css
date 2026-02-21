@@ -67,3 +67,26 @@
   font-size: 0.7em;
   opacity: 0.7;
 }
+
+
+/* Feedback palette switch */
+html[data-feedback="themed"]{
+  --correct: var(--correct-theme, var(--correct));
+  --present: var(--present-theme, var(--present));
+  --absent:  var(--absent-theme,  var(--absent));
+}
+
+/* Motion tiers */
+html[data-motion="fun"]{ --motion-mult: 1; }
+html[data-motion="calm"]{ --motion-mult: 0.55; }
+html[data-motion="reduced"]{ --motion-mult: 0; }
+
+/* If OS reduce-motion is enabled, force reduced. */
+@media (prefers-reduced-motion: reduce){
+  html{ --motion-mult: 0; }
+}
+
+/* When motion is reduced, disable celebratory particles & bouncy transforms */
+html[data-motion="reduced"] .wq-anim,
+html[data-motion="reduced"] #confetti-canvas,
+html[data-motion="reduced"] .celebrate-layer{ display:none !important; }

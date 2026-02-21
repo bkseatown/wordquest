@@ -8,6 +8,8 @@
 const WQAudio = (() => {
 
   const VOICE_PREF_KEY = 'wq_v2_voice';
+  const VOICE_MODE_KEY = "wq_voice_mode_v1";
+  let _voiceMode = localStorage.getItem(VOICE_MODE_KEY) || "recorded";
   let _selectedVoice = null;
   let _allVoices = [];
   let _voicesReady = false;
@@ -75,7 +77,26 @@ const WQAudio = (() => {
   // ─── Playback ───────────────────────────────────
   let _active = null;
 
-  function _stop() {
+  
+  function _speakSynth(text, kind){
+    if (!text || !window.speechSynthesis) return Promise.resolve(false);
+    try{
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.rate  = 0.95;
+      utter.pitch = 1.0;
+      const best = _pickBestVoiceFor(kind);
+      if (best) utter.voice = best;
+      return new Promise(resolve=>{
+        utter.onend = ()=>resolve(true);
+        utter.onerror = ()=>resolve(false);
+        speechSynthesis.speak(utter);
+      });
+    }catch(err){
+      console.warn("[WQAudio] synth error", err);
+      return Promise.resolve(false);
+    }
+  }
+function _stop() {
     if (_active) { _active.pause(); _active.currentTime = 0; _active = null; }
     window.speechSynthesis.cancel();
   }
@@ -116,28 +137,11 @@ const WQAudio = (() => {
   }
 
   // ─── Public API ─────────────────────────────────
-  // Audio paths follow flat folder convention:
-  //   assets/audio/words/{word}.mp3
-  //   assets/audio/defs/{word}.mp3
-  //   assets/audio/sentences/{word}.mp3
-  //   assets/audio/fun/{word}.mp3
-  //   assets/audio/syllables/{word}.mp3   ← Gemini phoneme-quality pronunciations
-  //
-  // entry.audio is injected by add_audio_paths.py:
-  //   { word, def, sentence, fun, syllables }
-  // All fields are optional — TTS fallback used if file missing.
-
-  function playWord(entry)      { return _play(entry?.audio?.word,      entry?.word,        0.82); }
-  function playDef(entry)       { return _play(entry?.audio?.def,       entry ? `${entry.word} means: ${entry.definition}` : '', 0.9); }
-  function playSentence(entry)  { return _play(entry?.audio?.sentence,  entry?.sentence,    0.9);  }
-  function playFun(entry)       { return _play(entry?.audio?.fun,       entry?.fun_add_on,  0.9);  }
-  // Syllable-by-syllable pronunciation for phonics instruction
-  // Falls back to word audio, then TTS
-  function playSyllables(entry) {
-    const path = entry?.audio?.syllables || entry?.audio?.word;
-    return _play(path, entry?.syllables || entry?.word, 0.72);  // slower rate for phonics
-  }
-  function stop()               { _stop(); }
+  function playWord(entry)     { return _play(entry?.audio?.word,     entry?.word,        0.82); }
+  function playDef(entry)      { return _play(entry?.audio?.def,      entry ? `${entry.word} means: ${entry.definition}` : '', 0.9); }
+  function playSentence(entry) { return _play(entry?.audio?.sentence, entry?.sentence,    0.9);  }
+  function playFun(entry)      { return _play(entry?.audio?.fun,      entry?.fun_add_on,  0.9);  }
+  function stop()              { _stop(); }
 
   // Returns list of English voices for settings UI
   function getAvailableVoices() {
@@ -147,7 +151,15 @@ const WQAudio = (() => {
       .sort((a, b) => _scoreVoice(b) - _scoreVoice(a));
   }
 
-  function setVoiceByName(name) {
+  
+  function setVoiceMode(mode){
+    const m = (mode || "").toLowerCase();
+    const allowed = new Set(["recorded","auto","device"]);
+    _voiceMode = allowed.has(m) ? m : "recorded";
+    try{ localStorage.setItem(VOICE_MODE_KEY, _voiceMode); }catch(e){}
+  }
+  function getVoiceMode(){ return _voiceMode || "recorded"; }
+function setVoiceByName(name) {
     if (name === 'auto') {
       localStorage.removeItem(VOICE_PREF_KEY);
       _selectedVoice = null;
@@ -162,6 +174,7 @@ const WQAudio = (() => {
     return _selectedVoice?.name || 'auto';
   }
 
-  return { playWord, playDef, playSentence, playFun, playSyllables, stop,
+  return { playWord, playDef, playSentence, playFun, stop,
+           setVoiceMode, getVoiceMode,
            getAvailableVoices, setVoiceByName, getCurrentVoiceName };
 })();

@@ -413,8 +413,7 @@ main {
   flex-direction: column;
   align-items:    center;
   gap:            var(--gap-key);
-  width:          100%;
-  max-width:      var(--playfield-width);
+  width:          min(520px, var(--playfield-width));
   flex-shrink:    0;
 }
 
@@ -429,7 +428,7 @@ main {
   height:        var(--key-h);
   min-width:     var(--key-min-w);
   flex:          1;
-  max-width:     var(--key-max-w);
+  max-width:     52px;
   padding:       0;
   border:        none;
   border-radius: var(--radius-key);
@@ -449,24 +448,17 @@ main {
 
 .key:hover  { background: var(--key-hover); }
 
-/* ── Vowel cue: subtle dot (unused vowels only) ───────── */
-/* Disappears once the key has a state (correct/present/absent). */
-.key.vowel:not(.correct):not(.present):not(.absent)::after {
-  content: '';
-  position: absolute;
-  width: 7px;
-  height: 7px;
-  border-radius: 999px;
-  background: var(--vowel-accent);
-  opacity: 0.65;
-  top: 6px;
-  right: 6px;
-  box-shadow: 0 0 0 2px rgba(0,0,0,0.12);
+/* ── Vowel cue ───────────────────────────────────── */
+
+/* ── Vowel cue (Phonics Hint only): subtle inner ring ──── */
+html[data-hint="on"] .key.vowel:not(.correct):not(.present):not(.absent){
+  box-shadow:
+    var(--key-shadow),
+    inset 0 0 0 2px color-mix(in oklab, var(--vowel-accent) 70%, transparent);
 }
-
-
+/* No ring, no glow — just a clean accent underline */
 /* Wide keys */
-.key.wide { flex: 1.6; max-width: calc(var(--key-max-w) * 1.55); font-size: 0.78rem; }
+.key.wide { flex: 1.6; max-width: 80px; font-size: 0.78rem; }
 
 /* Bounce — only when motion is on */
 [data-motion="on"] .key.bounce { animation: key-bounce 0.14s ease; }
@@ -752,4 +744,51 @@ main {
 @media (orientation: landscape) and (max-height: 540px) {
   main { flex-direction: row; gap: 14px; justify-content: center; }
   :root { --tile-size: 38px; --key-h: 40px; --key-min-w: 24px; --gap-key: 6px; }
+}
+/* ── Motion (Fun/Calm) ───────────────────────────────── */
+@keyframes key-pop {
+  0%   { transform: translateY(0) scale(1); }
+  55%  { transform: translateY(calc(-2px * var(--motion-mult))) scale(calc(1 + (0.06 * var(--motion-mult)))); }
+  100% { transform: translateY(0) scale(1); }
+}
+@keyframes key-wiggle {
+  0% { transform: rotate(0deg); }
+  25% { transform: rotate(calc(-2deg * var(--motion-mult))); }
+  50% { transform: rotate(calc(2deg * var(--motion-mult))); }
+  100% { transform: rotate(0deg); }
+}
+.key.wq-press {
+  animation: key-pop calc(140ms + (60ms * (1 - var(--motion-mult)))) ease-out;
+}
+html[data-motion="fun"] .key.wq-press {
+  animation: key-pop 160ms ease-out, key-wiggle 140ms ease-out;
+}
+
+/* Tile reveal emphasis */
+@keyframes tile-settle {
+  0% { transform: translateY(0) scale(1); }
+  60% { transform: translateY(calc(2px * var(--motion-mult))) scale(calc(1 + (0.03 * var(--motion-mult)))); }
+  100% { transform: translateY(0) scale(1); }
+}
+.tile.wq-reveal { animation: tile-settle 220ms ease-out; }
+
+/* Celebration layer */
+.celebrate-layer{
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 999;
+}
+.celebrate-star{
+  position: absolute;
+  font-size: 34px;
+  filter: drop-shadow(0 10px 18px rgba(0,0,0,0.35));
+  opacity: 0;
+  transform: translate(-50%,-50%) scale(0.4);
+  animation: star-pop 900ms ease-out forwards;
+}
+@keyframes star-pop{
+  0%{ opacity:0; transform: translate(-50%,-50%) scale(0.4) rotate(0deg); }
+  35%{ opacity:1; transform: translate(-50%,-50%) scale(1.1) rotate(8deg); }
+  100%{ opacity:0; transform: translate(-50%,-50%) scale(1.3) rotate(-8deg); }
 }

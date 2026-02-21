@@ -32,27 +32,7 @@ const WQData = (() => {
   let _loaded = false;
 
   // ─── Normalise NEW JSON format ─────────────────────────────────────
-  
-  // ─── Default audio path fallback (no scripts/terminal needed) ──────
-  function _slugWord(w) {
-    return String(w || '')
-      .trim()
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/^-+|-+$/g, '');
-  }
-  function _applyDefaultAudio(entry) {
-    const key = _slugWord(entry.word || entry.display_word || '');
-    if (!key) return;
-    entry.audio = entry.audio || { word: null, def: null, sentence: null, fun: null };
-    entry.audio.word     ||= `assets/audio/words/${key}.mp3`;
-    entry.audio.def      ||= `assets/audio/defs/${key}.mp3`;
-    entry.audio.sentence ||= `assets/audio/sentences/${key}.mp3`;
-    entry.audio.fun      ||= `assets/audio/fun/${key}.mp3`;
-  }
-  // ───────────────────────────────────────────────────────────────────
-
-function _fromNew(raw) {
+  function _fromNew(raw) {
     const entries = {};
     for (const [, v] of Object.entries(raw)) {
       const word = (v.display_word || '').toLowerCase().trim();
@@ -74,7 +54,6 @@ function _fromNew(raw) {
           fun:      v.audio_paths?.fun_audio       || null,
         }
       };
-      _applyDefaultAudio(entries[word]);
     }
     return entries;
   }
@@ -100,7 +79,6 @@ function _fromNew(raw) {
                    : 'playable',
         audio: { word: null, def: null, sentence: null, fun: null }
       };
-      _applyDefaultAudio(entries[w]);
     }
     return entries;
   }

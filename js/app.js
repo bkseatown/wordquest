@@ -65,21 +65,7 @@
     document.documentElement.setAttribute('data-motion', mode);
   }
 
-  function populateVoiceSelector() {
-    const sel = _el('s-voice');
-    if (!sel) return;
-    const voices  = WQAudio.getAvailableVoices();
-    const current = prefs.voice || 'auto';
-    sel.innerHTML = '<option value="auto">Auto (best available)</option>';
-    voices.forEach(v => {
-      const opt = document.createElement('option');
-      opt.value = v.name;
-      opt.textContent = v.name;
-      if (v.name === current) opt.selected = true;
-      sel.appendChild(opt);
-    });
-    if (current !== 'auto') WQAudio.setVoiceByName(current);
-  }
+  function populateVoiceSelector(){ /* voice list removed (simplified modes) */ }
 
   // ─── 5. Settings panel wiring ───────────────────────
   _el('settings-btn')?.addEventListener('click', () => {
@@ -89,7 +75,14 @@
     _el('settings-panel')?.classList.add('hidden');
   });
 
-  // Close settings when clicking outside
+  
+  // Voice help modal
+  const openVoiceHelp = () => _el('voice-help-modal')?.classList.remove('hidden');
+  const closeVoiceHelp = () => _el('voice-help-modal')?.classList.add('hidden');
+  _el('voice-help-btn')?.addEventListener('click', openVoiceHelp);
+  _el('voice-help-close')?.addEventListener('click', closeVoiceHelp);
+  _el('voice-help-modal')?.addEventListener('click', e => { if (e.target.id === 'voice-help-modal') closeVoiceHelp(); });
+// Close settings when clicking outside
   document.addEventListener('pointerdown', e => {
     const panel = _el('settings-panel');
     if (!panel?.classList.contains('hidden') &&
@@ -119,11 +112,17 @@
   _el('s-grade')?.addEventListener('change',   e => setPref('grade',    e.target.value));
   _el('s-length')?.addEventListener('change',  e => setPref('length',   e.target.value));
   _el('s-guesses')?.addEventListener('change', e => setPref('guesses',  e.target.value));
-  _el('s-hint')?.addEventListener('change',    e => { setPref('hint',   e.target.value); updateFocusHint(); });
+  _el('s-hint')?.addEventListener('change',    e => { setPref('hint',   e.target.value); applyHint(e.target.value); updateFocusHint(); });
   _el('s-dupe')?.addEventListener('change',    e => setPref('dupe',     e.target.value));
   _el('s-confetti')?.addEventListener('change',e => setPref('confetti', e.target.value));
-  _el('s-voice')?.addEventListener('change',   e => {
-    WQAudio.setVoiceByName(e.target.value);
+  _el('s-feedback')?.addEventListener('change', e => { applyFeedback(e.target.value); setPref('feedback', e.target.value); });
+  _el('s-music')?.addEventListener('change', e => { setPref('music', e.target.value); WQMusic.setMode(e.target.value); });
+  _el('s-music-vol')?.addEventListener('input', e => { setPref('musicVol', e.target.value); WQMusic.setVolume(parseFloat(e.target.value)); });
+
+  _el('s-voice')?.addEventListener('change', e => {
+    WQAudio.setVoiceMode(e.target.value);
+    setPref('voice', e.target.value);
+  });
     setPref('voice', e.target.value);
   });
 
@@ -200,7 +199,7 @@
             WQUI.showModal(result);
             _el('new-game-btn')?.classList.add('pulse');
             const settings = WQUI.getSettings();
-            if (result.won && settings.confetti) launchConfetti();
+            if (result.won && settings.confetti){ launchConfetti(); launchStars(); }
           }, 520);
         }
       });
@@ -223,14 +222,14 @@
     handleKey(e.key === 'Backspace' ? 'Backspace' : e.key);
     if (/^[a-zA-Z]$/.test(e.key)) {
       const btn = document.querySelector(`.key[data-key="${e.key.toLowerCase()}"]`);
-      if (btn) { btn.classList.add('bounce'); setTimeout(() => btn.classList.remove('bounce'), 160); }
+      if (btn) { btn.classList.add('wq-press'); setTimeout(() => btn.classList.remove('wq-press'), 220); }
     }
   });
 
   // On-screen keyboard
   _el('keyboard')?.addEventListener('click', e => {
     const btn = e.target.closest('.key');
-    if (btn) handleKey(btn.dataset.key);
+    if (btn){ btn.classList.add('wq-press'); setTimeout(()=>btn.classList.remove('wq-press'),220); handleKey(btn.dataset.key);} 
   });
 
   // Buttons
@@ -303,7 +302,25 @@
     setTimeout(removeDupeToast, 8000);
   }
 
-  // ─── 11. Confetti ────────────────────────────────────
+  
+  function launchStars(){
+    const layer = _el('celebrate-layer');
+    if (!layer) return;
+    layer.innerHTML = '';
+    const starChars = ['⭐','✨','🌟'];
+    const count = 12;
+    for (let i=0;i<count;i++){
+      const s = document.createElement('div');
+      s.className = 'celebrate-star wq-anim';
+      s.textContent = starChars[i % starChars.length];
+      s.style.left = (10 + Math.random()*80) + 'vw';
+      s.style.top  = (15 + Math.random()*55) + 'vh';
+      s.style.animationDelay = (Math.random()*180) + 'ms';
+      layer.appendChild(s);
+    }
+    setTimeout(()=>{ layer.innerHTML=''; }, 1200);
+  }
+// ─── 11. Confetti ────────────────────────────────────
   function launchConfetti() {
     const canvas = _el('confetti-canvas');
     if (!canvas) return;
@@ -344,7 +361,86 @@
     setTimeout(() => { cancelAnimationFrame(frame); ctx.clearRect(0, 0, canvas.width, canvas.height); }, 5500);
   }
 
-  // ─── 12. Start ───────────────────────────────────────
+  
+  // ─── Music (WebAudio, lightweight) ──────────────────
+  const WQMusic = (() => {
+    let ctx = null;
+    let gain = null;
+    let interval = null;
+    let mode = 'off';
+    let vol = 0.35;
+
+    const ensure = () => {
+      if (ctx) return;
+      ctx = new (window.AudioContext || window.webkitAudioContext)();
+      gain = ctx.createGain();
+      gain.gain.value = vol;
+      gain.connect(ctx.destination);
+      // Auto-resume on user gesture
+      const resume = () => { if (ctx.state === 'suspended') ctx.resume(); };
+      document.addEventListener('pointerdown', resume, { once:true });
+      document.addEventListener('keydown', resume, { once:true });
+    };
+
+    const beep = (freq, dur=0.12, type='sine') => {
+      if (!ctx || !gain) return;
+      const o = ctx.createOscillator();
+      const g = ctx.createGain();
+      o.type = type;
+      o.frequency.value = freq;
+      g.gain.value = 0.0001;
+      o.connect(g); g.connect(gain);
+      const t = ctx.currentTime;
+      g.gain.exponentialRampToValueAtTime(0.18, t + 0.01);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+      o.start(t);
+      o.stop(t + dur + 0.02);
+    };
+
+    const patterns = {
+      lofi:  [220, 0, 247, 0, 196, 0, 220, 0],
+      arcade:[523, 659, 784, 659, 523, 392, 523, 659],
+      fantasy:[262, 330, 392, 330, 440, 392, 330, 262],
+      scifi: [440, 0, 880, 0, 660, 0, 990, 0],
+      sports:[392, 392, 523, 392, 659, 523, 784, 659],
+    };
+
+    const start = () => {
+      stop();
+      if (mode === 'off') return;
+      ensure();
+      let i = 0;
+      interval = setInterval(() => {
+        const seq = patterns[mode] || patterns.lofi;
+        const f = seq[i % seq.length];
+        if (f) beep(f, 0.11, mode === 'arcade' ? 'square' : 'sine');
+        i++;
+      }, mode === 'lofi' ? 420 : 260);
+    };
+
+    const stop = () => { if (interval) clearInterval(interval); interval = null; };
+
+    return {
+      setMode(m){ mode = m; start(); },
+      setVolume(v){ vol = Math.max(0, Math.min(1, v)); if (gain) gain.gain.value = vol; },
+      initFromPrefs(p){
+        mode = p.music || 'off';
+        vol = parseFloat(p.musicVol ?? '0.35');
+        // do not autoplay unless user picked a mode
+        if (mode !== 'off') start();
+        this.setVolume(vol);
+      }
+    };
+  })();
+// ─── 12. Start ───────────────────────────────────────
+  // Apply persisted visual prefs early
+  applyTheme(prefs.theme || 'default');
+  applyProjector(prefs.projector || 'off');
+  applyMotion(prefs.motion || 'fun');
+  applyHint(prefs.hint || 'on');
+  applyFeedback(prefs.feedback || 'classic');
+  WQAudio.setVoiceMode(prefs.voice || 'recorded');
+  WQMusic.initFromPrefs(prefs);
   newGame();
 
 })();
