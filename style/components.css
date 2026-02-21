@@ -21,12 +21,7 @@
    Background and keyboard adopt the brand palette.
    ══════════════════════════════════════════════════════ */
 
-/* ── DEFAULT: warm, classroom-friendly light theme ──── */
-:root,
-
-
-/* ── DARK: slate/charcoal, blue accent ─────────────── */
-
+/* Theme tokens live in themes.css — do not add them here */
 
 /* ── SEAHAWKS: navy #002244 / action green #69BE28 / wolf gray #A5ACAF ── */
 
