@@ -149,7 +149,7 @@
   function sanitizeMetrics(module, metrics) {
     var src = metrics || {};
     var allow = {
-      wordquest: ["totalGuesses", "solveSuccess", "timeToFirstCorrectLetter", "vowelConfusionProxy", "wrongSlotRepeat", "newInfoPerGuess", "streaks"],
+      wordquest: ["attemptLengthSec", "totalGuesses", "solveSuccess", "timeToFirstCorrectLetter", "firstMissTimingMs", "hintUsage", "vowelConfusionProxy", "wrongSlotRepeat", "newInfoPerGuess", "streaks", "completionState"],
       reading_lab: ["accuracy", "wpmProxy", "selfCorrects", "punct", "prosodyFlatFlag", "hardWordsTop3"],
       sentence_surgery: ["reasoningAdded", "runOnFlag", "fragmentFlag", "editsCount", "timeOnTaskSec"],
       writing_studio: ["paragraphs", "revisionCount", "voiceFlatFlag", "timeOnTaskSec"]

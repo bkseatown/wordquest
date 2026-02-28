@@ -24,7 +24,7 @@
 
       <div class="td-top-actions">
         <button id="td-coach-chip" class="td-top-btn td-coach-chip" type="button">Coach</button>
-        <button id="td-add-student" class="td-top-btn" type="button">+ Add Student</button>
+        <button id="td-new-session" class="td-top-btn" type="button">New Session</button>
         <button id="td-import-export" class="td-top-btn" type="button">Import/Export</button>
         <button id="td-settings" class="td-top-btn" type="button">Settings</button>
         <button id="td-local-status" class="td-local-dot" type="button" title="Local data on this device" aria-label="Local mode"></button>
@@ -95,13 +95,17 @@
         <div id="td-right-content" class="hidden">
           <div id="td-evidence-chips" class="td-chip-grid"></div>
           <div class="td-artifacts">
-            <h3>Recent artifacts</h3>
-            <a id="td-artifact-reading" href="#">Reading Lab summary</a>
-            <a id="td-artifact-sentence" href="#">Sentence Surgery summary</a>
+            <h3>Recent sessions</h3>
+            <div id="td-session-list"></div>
           </div>
+          <label class="td-notes">
+            <span>Notes</span>
+            <textarea id="td-notes-input" rows="3" placeholder="Add notes for intervention follow-up..."></textarea>
+          </label>
           <div class="td-share">
             <button id="td-export-json" class="td-btn td-btn-ghost" type="button">Export JSON</button>
             <button id="td-copy-csv" class="td-btn td-btn-ghost" type="button">Copy CSV</button>
+            <button id="td-copy-summary" class="td-btn td-btn-ghost" type="button">Copy summary</button>
           </div>
         </div>
       </aside>

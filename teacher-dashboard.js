@@ -33,9 +33,12 @@
     evidenceChips: document.getElementById("td-evidence-chips"),
     exportJson: document.getElementById("td-export-json"),
     copyCsv: document.getElementById("td-copy-csv"),
+    copySummary: document.getElementById("td-copy-summary"),
     importExport: document.getElementById("td-import-export"),
-    addStudent: document.getElementById("td-add-student"),
+    newSession: document.getElementById("td-new-session"),
     settings: document.getElementById("td-settings"),
+    sessionList: document.getElementById("td-session-list"),
+    notesInput: document.getElementById("td-notes-input"),
     quickButtons: Array.prototype.slice.call(document.querySelectorAll("[data-quick]")),
     emptyActions: Array.prototype.slice.call(document.querySelectorAll("[data-empty-action]")),
     coachRibbon: document.getElementById("td-coach-ribbon"),
@@ -45,6 +48,7 @@
     coachCollapse: document.getElementById("td-coach-collapse"),
     coachChip: document.getElementById("td-coach-chip")
   };
+  var NOTES_KEY = "cs_teacher_notes_v1";
 
   function seedFromCaseloadStore() {
     if (!CaseloadStore || typeof CaseloadStore.loadCaseload !== "function") return;
@@ -182,17 +186,76 @@
       };
     });
 
-    renderEvidenceChips(summary.evidenceChips);
+    renderEvidenceChips(summary);
+    renderRecentSessionRows(summary.student.id);
+    hydrateNotes(summary.student.id);
     setCoachLine(summary.nextMove.line);
   }
 
-  function renderEvidenceChips(chips) {
-    if (!chips || !chips.length) {
+  function renderRecentSessionRows(studentId) {
+    if (!el.sessionList) return;
+    var sessions = (Evidence.load().sessions || [])
+      .filter(function (row) { return String(row.studentId || "") === String(studentId || ""); })
+      .slice(-4)
+      .reverse();
+    el.sessionList.innerHTML = sessions.length
+      ? sessions.map(function (session) {
+          var when = new Date(Number(session.ts || Date.now())).toLocaleDateString();
+          return '<div class="td-recent-item">' + when + " - " + String(session.module || "").replace("_", " ") + "</div>";
+        }).join("")
+      : '<div class="td-recent-item">No sessions for this student yet.</div>';
+  }
+
+  function loadNotesMap() {
+    try {
+      var parsed = JSON.parse(localStorage.getItem(NOTES_KEY) || "{}");
+      return parsed && typeof parsed === "object" ? parsed : {};
+    } catch (_e) {
+      return {};
+    }
+  }
+
+  function hydrateNotes(studentId) {
+    if (!el.notesInput) return;
+    var notes = loadNotesMap();
+    el.notesInput.value = String(notes[String(studentId || "")] || "");
+  }
+
+  function persistNotes(studentId, value) {
+    var key = String(studentId || "").trim();
+    if (!key) return;
+    var notes = loadNotesMap();
+    notes[key] = String(value || "").slice(0, 400);
+    try { localStorage.setItem(NOTES_KEY, JSON.stringify(notes)); } catch (_e) {}
+  }
+
+  function tinySpark(values) {
+    var pts = Array.isArray(values) && values.length ? values : [50, 52, 54, 53, 55, 56, 57];
+    var max = Math.max.apply(Math, pts);
+    var min = Math.min.apply(Math, pts);
+    var span = Math.max(1, max - min);
+    var d = pts.map(function (v, idx) {
+      var x = Math.round((idx / Math.max(1, pts.length - 1)) * 54);
+      var y = Math.round(16 - ((v - min) / span) * 12);
+      return (idx ? "L" : "M") + x + " " + y;
+    }).join(" ");
+    return '<svg viewBox="0 0 54 16" class="td-chip-spark"><path d="' + d + '"></path></svg>';
+  }
+
+  function renderEvidenceChips(summary) {
+    if (!summary || !summary.summaryRows || !summary.summaryRows.length) {
       el.evidenceChips.innerHTML = '<span class="td-chip">No recent evidence yet</span>';
       return;
     }
-    el.evidenceChips.innerHTML = chips.map(function (chip) {
-      return '<span class="td-chip"><strong>' + chip.label + ':</strong> ' + chip.value + '</span>';
+    var labelByModule = {
+      wordquest: "Decoding",
+      reading_lab: "Fluency",
+      sentence_surgery: "Sentence",
+      writing_studio: "Writing"
+    };
+    el.evidenceChips.innerHTML = summary.summaryRows.map(function (row) {
+      var label = labelByModule[row.module] || row.module;
+      return '<span class="td-chip"><strong>' + label + ":</strong> " + row.avg + tinySpark(row.spark) + '</span>';
     }).join("");
   }
 
@@ -229,6 +292,16 @@
     Evidence.upsertStudent({ id: id, name: name });
     refreshCaseload();
     selectStudent(id);
+  }
+
+  function startSessionFromSelection() {
+    var sid = state.selectedId || "";
+    if (!sid) {
+      setCoachLine("Pick a student first, then launch a session.");
+      return;
+    }
+    var summary = Evidence.getStudentSummary(sid);
+    window.location.href = summary.nextMove.interventionHref;
   }
 
   function setupCoachRibbon() {
@@ -298,7 +371,7 @@
   function bindEvents() {
     el.search.addEventListener("input", function () { filterCaseload(el.search.value || ""); });
     el.importExport.addEventListener("click", handleImportExport);
-    el.addStudent.addEventListener("click", addStudentQuick);
+    el.newSession.addEventListener("click", startSessionFromSelection);
     el.settings.addEventListener("click", function () { setCoachLine("Settings are local-only on this device."); });
 
     el.exportJson.addEventListener("click", function () {
@@ -313,6 +386,19 @@
       if (navigator.clipboard) navigator.clipboard.writeText(csv).catch(function () {});
       setCoachLine("Copied roster CSV.");
     });
+    el.copySummary.addEventListener("click", function () {
+      var sid = state.selectedId || "";
+      if (!sid) return;
+      var summary = Evidence.getStudentSummary(sid);
+      var line = summary.student.name + " (" + sid + ") · " + summary.nextMove.focus + " · " + summary.nextMove.line;
+      if (navigator.clipboard) navigator.clipboard.writeText(line).catch(function () {});
+      setCoachLine("Copied student summary to clipboard.");
+    });
+    if (el.notesInput) {
+      el.notesInput.addEventListener("input", function () {
+        persistNotes(state.selectedId, el.notesInput.value);
+      });
+    }
 
     el.emptyActions.forEach(function (button) {
       button.addEventListener("click", function () {
@@ -334,5 +420,5 @@
   refreshCaseload();
   bindEvents();
   setupCoachRibbon();
-  selectStudent(state.caseload[0] && state.caseload[0].id || "");
+  selectStudent("");
 })();

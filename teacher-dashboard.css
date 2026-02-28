@@ -203,27 +203,43 @@ body.teacher-dashboard {
   background: color-mix(in oklab, var(--surface-2) 68%, transparent);
   padding: 4px 8px;
   font-size: var(--meta);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   animation: tdTick 190ms var(--motion-ease);
 }
+.td-chip-spark { width: 56px; height: 16px; display: inline-block; }
+.td-chip-spark path { fill: none; stroke: var(--accent); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 @keyframes tdTick { from { transform: scale(1.02); opacity: 0.85; } to { transform: scale(1); opacity: 1; } }
 
 .td-artifacts { display: grid; gap: 6px; margin-top: 10px; }
 .td-artifacts h3 { margin: 0; font-size: 0.9rem; }
 .td-artifacts a { color: color-mix(in oklab, var(--accent) 75%, white 25%); text-decoration: none; font-size: var(--meta); }
+.td-notes { display: grid; gap: 6px; margin-top: 8px; }
+.td-notes span { color: var(--muted); font-size: var(--meta); }
+.td-notes textarea {
+  border-radius: var(--radius-2);
+  border: 1px solid color-mix(in oklab, var(--border-subtle) 70%, transparent);
+  background: color-mix(in oklab, var(--surface-2) 68%, transparent);
+  color: var(--text-strong);
+  padding: 8px;
+  resize: none;
+  font: inherit;
+  font-size: 0.86rem;
+}
 .td-share { margin-top: 10px; display: grid; gap: 8px; }
 
 .hidden { display: none !important; }
 
 .td-coach-ribbon {
   position: fixed;
-  right: 50%;
+  right: 14px;
   top: 84px;
-  transform: translateX(50%);
   z-index: 40;
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  max-width: min(560px, calc(100vw - 22px));
+  max-width: min(420px, calc(100vw - 22px));
   padding: 7px 10px;
   border-radius: 999px;
   border: 1px solid color-mix(in oklab, var(--border-subtle) 76%, transparent);
