@@ -14076,13 +14076,17 @@
       const clueUseScore = payloadMeta.helpUsed ? 0.8 : 0.25;
       if (window.CSEvidence && typeof window.CSEvidence.appendSession === 'function') {
         window.CSEvidence.appendSession(studentId, 'wordquest', {
+          attemptLengthSec: Math.max(0, Number(signals.durSec || 0)),
           totalGuesses: guessCount,
           solveSuccess: !!signals.solved,
           timeToFirstCorrectLetter: timeToFirstGuess,
+          firstMissTimingMs: Math.max(0, Math.round(Number(signals.timeToFirstMissSec || 0) * 1000)),
+          hintUsage: payloadMeta.helpUsed ? 1 : 0,
           vowelConfusionProxy: Number((1 - Math.min(1, Number(signals.vowelRatio || 0))).toFixed(3)),
           wrongSlotRepeat: repeatedInvalidLetterPlacementCount,
           newInfoPerGuess: Number(patternAdherence.toFixed(3)),
-          streaks: Number(signals.streak || 0)
+          streaks: Number(signals.streak || 0),
+          completionState: signals.solved ? 'solved' : 'ended'
         });
       }
     } catch {}
