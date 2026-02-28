@@ -33,7 +33,9 @@
 
     <section class="td-body">
       <aside class="td-left td-surface">
-        <h2>Today</h2>
+        <h2>Search-first</h2>
+        <div id="td-recent-students" class="td-recent-row"></div>
+        <div id="td-recent-sessions" class="td-recent-list"></div>
         <div id="td-no-caseload" class="td-empty hidden">
           <p>No caseload yet.</p>
           <div class="td-empty-actions">
@@ -57,6 +59,11 @@
         </div>
 
         <div id="td-center-selected" class="td-stage-selected hidden">
+          <article class="td-next-step-card">
+            <p class="td-label">Recommended Next Step</p>
+            <h3 id="td-next-step-title">Start intervention</h3>
+            <p id="td-next-step-sub" class="td-reco-line"></p>
+          </article>
           <div class="td-selected-head">
             <div>
               <p id="td-student-label" class="td-label"></p>
@@ -72,6 +79,12 @@
           <div class="td-cta-row">
             <button id="td-quick-check" class="td-btn td-btn-primary" type="button">Run 90-sec Quick Check</button>
             <button id="td-start-intervention" class="td-btn td-btn-accent" type="button">Start Intervention</button>
+          </div>
+          <div class="td-quick-launch-row">
+            <button class="td-top-btn" data-quick="word-quest">Word Quest</button>
+            <button class="td-top-btn" data-quick="reading-lab">Reading Lab</button>
+            <button class="td-top-btn" data-quick="sentence-surgery">Sentence Surgery</button>
+            <button class="td-top-btn" data-quick="writing-studio">Writing Studio</button>
           </div>
         </div>
       </section>

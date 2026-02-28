@@ -15,8 +15,12 @@
     search: document.getElementById("td-search-input"),
     noCaseload: document.getElementById("td-no-caseload"),
     list: document.getElementById("td-caseload-list"),
+    recentStudents: document.getElementById("td-recent-students"),
+    recentSessions: document.getElementById("td-recent-sessions"),
     centerEmpty: document.getElementById("td-center-empty"),
     centerSelected: document.getElementById("td-center-selected"),
+    nextStepTitle: document.getElementById("td-next-step-title"),
+    nextStepSub: document.getElementById("td-next-step-sub"),
     studentLabel: document.getElementById("td-student-label"),
     focusTitle: document.getElementById("td-focus-title"),
     recoLine: document.getElementById("td-reco-line"),
@@ -32,6 +36,7 @@
     importExport: document.getElementById("td-import-export"),
     addStudent: document.getElementById("td-add-student"),
     settings: document.getElementById("td-settings"),
+    quickButtons: Array.prototype.slice.call(document.querySelectorAll("[data-quick]")),
     emptyActions: Array.prototype.slice.call(document.querySelectorAll("[data-empty-action]")),
     coachRibbon: document.getElementById("td-coach-ribbon"),
     coachLine: document.getElementById("td-coach-line"),
@@ -70,7 +75,25 @@
   function refreshCaseload() {
     state.caseload = Evidence.listCaseload();
     filterCaseload(el.search.value || "");
+    renderRecentPanels();
     el.noCaseload.classList.toggle("hidden", state.caseload.length > 0);
+  }
+
+  function renderRecentPanels() {
+    var recent = state.caseload.slice(0, 5);
+    el.recentStudents.innerHTML = recent.map(function (row) {
+      return '<button type="button" class="td-recent-pill" data-recent-id="' + row.id + '">' + row.name + '</button>';
+    }).join("");
+    Array.prototype.forEach.call(el.recentStudents.querySelectorAll("[data-recent-id]"), function (node) {
+      node.addEventListener("click", function () { selectStudent(node.getAttribute("data-recent-id") || ""); });
+    });
+
+    var sessions = (Evidence.load().sessions || []).slice(-4).reverse();
+    el.recentSessions.innerHTML = sessions.length
+      ? sessions.map(function (session) {
+          return '<div class="td-recent-item">' + session.studentId + " - " + String(session.module || "").replace("_", " ") + "</div>";
+        }).join("")
+      : '<div class="td-recent-item">No recent sessions yet.</div>';
   }
 
   function filterCaseload(query) {
@@ -137,6 +160,8 @@
     el.studentLabel.textContent = summary.student.name + " · " + summary.student.id;
     el.focusTitle.textContent = summary.nextMove.focus + " Focus";
     el.recoLine.textContent = summary.nextMove.line;
+    el.nextStepTitle.textContent = summary.nextMove.focus + " - Start now";
+    el.nextStepSub.textContent = summary.nextMove.line;
     el.last7Summary.textContent = "Last 7 sessions · " + summary.last7Sparkline.join(" / ");
     el.sparkline.innerHTML = '<path d="' + buildSparkPath(summary.last7Sparkline) + '" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>';
 
@@ -146,6 +171,16 @@
       setTimeout(function () { el.startIntervention.classList.remove("td-btn-once"); }, 260);
       window.location.href = summary.nextMove.interventionHref;
     };
+    el.quickButtons.forEach(function (button) {
+      button.onclick = function () {
+        var key = button.getAttribute("data-quick");
+        var sid = encodeURIComponent(summary.student.id);
+        if (key === "word-quest") window.location.href = "word-quest.html?student=" + sid + "&mode=quickcheck";
+        else if (key === "reading-lab") window.location.href = "reading-lab.html?student=" + sid + "&seed=demo";
+        else if (key === "sentence-surgery") window.location.href = "sentence-surgery.html?student=" + sid + "&seed=demo";
+        else window.location.href = "writing-studio.html?student=" + sid;
+      };
+    });
 
     renderEvidenceChips(summary.evidenceChips);
     setCoachLine(summary.nextMove.line);
