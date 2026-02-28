@@ -8,9 +8,7 @@
   <script src="build-stamp.js?v=20260228d"></script>
   <title>Cornerstone MTSS</title>
   <link rel="icon" href="./favicon.ico" sizes="any">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Nunito:wght@800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style/tokens.css?v=20260301a">
   <link rel="stylesheet" href="style/components.css?v=20260228h">
   <link rel="stylesheet" href="hero-v2.css?v=20260227b">
   <link rel="stylesheet" href="style/home-lock.css?v=20260228a">
@@ -39,14 +37,14 @@
       justify-content: space-between;
       min-height: 42px;
       color: #ecf4fc;
-      font-family: "Nunito", "Atkinson Hyperlegible", sans-serif;
+      font-family: var(--font-ui);
       font-size: clamp(0.95rem, 1.4vw, 1.12rem);
       letter-spacing: 0.02em;
     }
     .home-header a {
       color: #9bdcff;
       text-decoration: none;
-      font-family: "Atkinson Hyperlegible", sans-serif;
+      font-family: var(--font-ui);
       font-size: 0.82rem;
       font-weight: 700;
     }
