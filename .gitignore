@@ -16,6 +16,9 @@ playwright-report/
 # audio generation outputs (keep tracked only when intentionally committing packs)
 audio/ava/**/tmp/
 audio/**/.cache/
+audio/ava/current/
+audio/ava/v2*/
+audio/ava/v2r*/
 
 # logs
 npm-debug.log*
