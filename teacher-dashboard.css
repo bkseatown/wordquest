@@ -1,5 +1,86 @@
 @import url("./style/tokens.css");
 
+/* ==================================================
+   PHASE 5 — TYPOGRAPHY + VISUAL DEPTH FOUNDATION
+   ================================================== */
+
+:root {
+  --font-display: "Inter", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  --font-body: "Inter", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+
+  --text-strong: #F5F7FA;
+  --text-soft: #AEB8C6;
+
+  --radius-lg: 18px;
+  --elev-soft: 0 10px 30px rgba(0, 0, 0, 0.25);
+  --elev-strong: 0 16px 40px rgba(0, 0, 0, 0.35);
+}
+
+body {
+  font-family: var(--font-body);
+  color: var(--text-strong);
+  letter-spacing: -0.01em;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1, .hero-title {
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  font-size: clamp(2.2rem, 3vw, 3rem);
+}
+
+h2 {
+  font-weight: 600;
+  font-size: 1.4rem;
+}
+
+.card, .panel {
+  border-radius: var(--radius-lg);
+  backdrop-filter: blur(12px);
+  box-shadow: var(--elev-soft);
+  transition: transform .25s ease, box-shadow .25s ease;
+}
+
+.card:hover, .panel:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--elev-strong);
+}
+
+button.primary, .btn-primary {
+  border-radius: 999px;
+  font-weight: 600;
+  padding: 14px 28px;
+  box-shadow: var(--elev-soft);
+  transition: all .2s ease;
+}
+
+button.primary:hover,
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--elev-strong);
+}
+
+button.secondary, .btn-secondary {
+  border-radius: 999px;
+  font-weight: 500;
+  opacity: 0.92;
+}
+
+.student-item {
+  border-radius: 16px;
+  transition: background .2s ease, transform .2s ease;
+}
+
+.student-item:hover {
+  transform: translateX(4px);
+}
+
+.sparkline {
+  stroke-width: 3;
+  filter: drop-shadow(0 0 8px rgba(120, 180, 255, 0.4));
+}
+
 * { box-sizing: border-box; }
 html, body { height: 100%; }
 
