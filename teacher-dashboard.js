@@ -35,6 +35,7 @@
     copyCsv: document.getElementById("td-copy-csv"),
     copySummary: document.getElementById("td-copy-summary"),
     importExport: document.getElementById("td-import-export"),
+    adminDemo: document.getElementById("td-admin-demo"),
     newSession: document.getElementById("td-new-session"),
     settings: document.getElementById("td-settings"),
     sessionList: document.getElementById("td-session-list"),
@@ -372,6 +373,9 @@
     el.search.addEventListener("input", function () { filterCaseload(el.search.value || ""); });
     el.importExport.addEventListener("click", handleImportExport);
     el.newSession.addEventListener("click", startSessionFromSelection);
+    if (el.adminDemo) {
+      el.adminDemo.addEventListener("click", runAdminDemo);
+    }
     el.settings.addEventListener("click", function () { setCoachLine("Settings are local-only on this device."); });
 
     el.exportJson.addEventListener("click", function () {
@@ -412,6 +416,27 @@
         }
       });
     });
+  }
+
+  function runAdminDemo() {
+    var targetId = "stu_ava";
+    var hasAva = state.caseload.some(function (row) { return String(row.id || "").toLowerCase() === targetId; });
+    if (!hasAva) {
+      targetId = "SAS7A-03";
+    }
+    el.search.value = "Ava";
+    filterCaseload("Ava");
+    selectStudent(targetId);
+    setCoachLine("Admin demo: search, next step, then launch aligned activity.");
+    var card = document.querySelector(".td-next-step-card");
+    if (card) {
+      card.classList.remove("pulse-outline");
+      setTimeout(function () { card.classList.add("pulse-outline"); }, 20);
+      setTimeout(function () { card.classList.remove("pulse-outline"); }, 1900);
+    }
+    if (el.rightContent) {
+      el.rightContent.classList.remove("hidden");
+    }
   }
 
   Evidence.init();

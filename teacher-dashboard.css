@@ -222,6 +222,23 @@ body.teacher-dashboard {
 .td-btn-ghost.btn-quiet {
   border: 1px solid color-mix(in oklab, var(--border-subtle) 70%, transparent);
 }
+
+.pulse-outline { position: relative; }
+.pulse-outline::after {
+  content: "";
+  position: absolute;
+  inset: -6px;
+  border-radius: calc(var(--r-card) + 8px);
+  box-shadow: 0 0 0 2px rgba(107, 181, 233, 0.28);
+  opacity: 0;
+  pointer-events: none;
+  animation: pulseGlow 1600ms var(--ease) 1;
+}
+@keyframes pulseGlow {
+  0% { opacity: 0; transform: scale(0.99); }
+  35% { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(1.01); }
+}
 .td-btn-once { animation: tdPulse 220ms ease-out 1; }
 @keyframes tdPulse { 0% { transform: scale(1); } 40% { transform: scale(1.02); } 100% { transform: scale(1); } }
 
@@ -304,4 +321,8 @@ body.teacher-dashboard {
 html[data-motion="reduced"] * {
   animation: none !important;
   transition: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pulse-outline::after { animation: none; }
 }
