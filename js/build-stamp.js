@@ -1,7 +1,11 @@
 (function buildStampGlobal() {
-  var stamp = "local-1772292474214";
-  var sha = "";
-  var payload = { stamp: stamp, sha: sha, builtAt: "2026-02-28T15:27:54.216Z" };
-  if (typeof window !== "undefined") window.__BUILD__ = payload;
+  var buildId = "20260301g";
+  var gitSha = "";
+  var time = "2026-03-01T02:08:27.992Z";
+  var payload = { buildId: buildId, stamp: buildId, version: buildId, gitSha: gitSha, sha: gitSha, time: time, builtAt: time };
+  if (typeof window !== "undefined") {
+    window.__BUILD__ = payload;
+    window.CS_BUILD = Object.assign({}, window.CS_BUILD || {}, payload);
+  }
   if (typeof self !== "undefined") self.__CS_BUILD__ = payload;
 })();

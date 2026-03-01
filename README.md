@@ -83,6 +83,7 @@ WordQuest is a classroom-friendly word game built for strong literacy practice w
 - Service worker is registered from `/Users/robertwilliamknaus/Desktop/WordQuest/js/app.js` and defined in `/Users/robertwilliamknaus/Desktop/WordQuest/sw.js`.
 - Audio path inventory is generated to `/Users/robertwilliamknaus/Desktop/WordQuest/data/audio-manifest.json`.
 - Full library offline is browser-storage dependent; app shell and previously used audio are prioritized.
+- If you see an old build, click the build badge in the lower-right corner, then click `Force update now`.
 
 ## Music Track Pipeline
 - Drop licensed or self-made files into:
