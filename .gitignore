@@ -24,3 +24,6 @@ audio/ava/v2r*/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# local Codex phase notes
+CODEX_PHASE_*.txt

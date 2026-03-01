@@ -1,5 +1,14 @@
 const fs = require('fs');
 const path = require('path');
+const TARGET_PAGES = [
+  'index.html',
+  'teacher-dashboard.html',
+  'reading-lab.html',
+  'sentence-surgery.html',
+  'writing-studio.html',
+  'word-quest.html',
+  'numeracy.html'
+];
 
 function nowIso() {
   return new Date().toISOString();
@@ -92,18 +101,13 @@ function cacheBustAssetUrl(url, buildId) {
 }
 
 function patchHtmlAssetVersions(targetDir, buildId) {
-  const targets = [
-    'index.html',
-    'teacher-dashboard.html',
-    'reading-lab.html',
-    'sentence-surgery.html',
-    'writing-studio.html',
-    'word-quest.html',
-    'numeracy.html'
-  ];
-  targets.forEach((name) => {
+  const filesTouched = [];
+  TARGET_PAGES.forEach((name) => {
     const filePath = path.join(targetDir, name);
-    if (!fs.existsSync(filePath)) return;
+    if (!fs.existsSync(filePath)) {
+      if (name === 'numeracy.html') return;
+      throw new Error(`[stamp-build-version] required page missing: ${name}`);
+    }
     const src = fs.readFileSync(filePath, 'utf8');
     const withBuildMeta = maybeSetBuildMeta(src, buildId);
     const next = withBuildMeta.replace(/(src|href)=["']([^"']+)["']/g, (full, attr, url) => {
@@ -112,8 +116,14 @@ function patchHtmlAssetVersions(targetDir, buildId) {
     });
     if (next !== src) {
       fs.writeFileSync(filePath, next, 'utf8');
+      filesTouched.push(name);
     }
   });
+  const unexpected = filesTouched.filter((name) => !TARGET_PAGES.includes(name));
+  if (unexpected.length) {
+    throw new Error(`[stamp-build-version] refusing unexpected html writes: ${unexpected.join(', ')}`);
+  }
+  process.stdout.write(`[stamp-build-version] filesTouched=[${filesTouched.join(', ')}]\n`);
 }
 
 function maybePatchServiceWorker(rootDir, buildId) {
@@ -130,27 +140,16 @@ function main() {
   const sha = shortSha(named.get('--sha') || process.env.GITHUB_SHA || process.env.COMMIT_SHA || '');
   const buildId = resolveBuildId(positional, named);
 
-  const versionJsonPath = path.join(targetDir, 'version.json');
-  const versionPayload = {
-    name: 'Cornerstone MTSS',
-    sha: sha,
-    v: buildId,
-    cacheBuster: buildId,
-    builtAt: nowIso()
-  };
-  writeFileSafe(versionJsonPath, JSON.stringify(versionPayload, null, 2) + '\n');
   writeFileSafe(path.join(targetDir, 'build.json'), JSON.stringify({
     buildId,
     gitSha: sha,
     time: nowIso()
   }, null, 2) + '\n');
-  writeFileSafe(path.join(targetDir, 'build-version.txt'), buildId + '\n');
 
   const stamp = buildStampJs(buildId, sha);
   writeFileSafe(path.join(targetDir, 'build-stamp.js'), stamp);
   writeFileSafe(path.join(targetDir, 'js', 'build-stamp.js'), stamp);
 
-  maybePatchServiceWorker(targetDir, buildId);
   patchHtmlAssetVersions(targetDir, buildId);
 
   process.stdout.write(`[stamp-build-version] target=${targetDir} build=${buildId} sha=${sha || 'n/a'}\n`);
