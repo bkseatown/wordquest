@@ -34,7 +34,7 @@
     </header>
 
     <section class="td-body">
-      <aside class="td-left td-surface card">
+      <aside class="td-left td-surface card td-support-rail">
         <h2>Search-first</h2>
         <div id="td-recent-students" class="td-recent-row"></div>
         <div id="td-recent-sessions" class="td-recent-list"></div>
@@ -49,7 +49,7 @@
         <div id="td-caseload-list" class="td-caseload-list"></div>
       </aside>
 
-      <section class="td-center td-surface card" id="td-center-stage" aria-live="polite">
+      <section class="td-center td-surface card td-primary-stage" id="td-center-stage" aria-live="polite">
         <div id="td-center-empty" class="td-stage-empty">
           <h2>Search or pick a student</h2>
           <p>In under 3 seconds: who to support, what to do next, and where to launch.</p>
@@ -91,7 +91,7 @@
         </div>
       </section>
 
-      <aside class="td-right td-surface card">
+      <aside class="td-right td-surface card td-secondary-rail">
         <h2>Evidence + Tools</h2>
         <div id="td-right-empty" class="td-empty">Select a student to view evidence chips and artifacts.</div>
         <div id="td-right-content" class="hidden">
@@ -100,15 +100,21 @@
             <h3>Recent sessions</h3>
             <div id="td-session-list"></div>
           </div>
-          <label class="td-notes">
-            <span>Notes</span>
-            <textarea id="td-notes-input" rows="3" placeholder="Add notes for intervention follow-up..."></textarea>
-          </label>
-          <div class="td-share">
-            <button id="td-export-json" class="td-btn td-btn-ghost btn btn-quiet" type="button">Export JSON</button>
-            <button id="td-copy-csv" class="td-btn td-btn-ghost btn btn-quiet" type="button">Copy CSV</button>
-            <button id="td-copy-summary" class="td-btn td-btn-ghost btn btn-quiet" type="button">Copy summary</button>
-          </div>
+          <details class="td-details" open>
+            <summary>Notes</summary>
+            <label class="td-notes">
+              <span>Intervention follow-up</span>
+              <textarea id="td-notes-input" rows="3" placeholder="Add notes for intervention follow-up..."></textarea>
+            </label>
+          </details>
+          <details class="td-details">
+            <summary>Export + Share</summary>
+            <div class="td-share">
+              <button id="td-export-json" class="td-btn td-btn-ghost btn btn-quiet" type="button">Export JSON</button>
+              <button id="td-copy-csv" class="td-btn td-btn-ghost btn btn-quiet" type="button">Copy CSV</button>
+              <button id="td-copy-summary" class="td-btn td-btn-ghost btn btn-quiet" type="button">Copy summary</button>
+            </div>
+          </details>
         </div>
       </aside>
     </section>

@@ -362,11 +362,40 @@
     var line = String(text || "").slice(0, 140);
     if (el.coachLine.textContent === line) return;
     el.coachLine.textContent = line;
+    if (el.coachRibbon) {
+      el.coachRibbon.classList.remove("is-fresh");
+      setTimeout(function () { el.coachRibbon.classList.add("is-fresh"); }, 0);
+      setTimeout(function () { el.coachRibbon.classList.remove("is-fresh"); }, 260);
+    }
     if (el.coachChip) {
       el.coachChip.classList.remove("is-fresh");
       setTimeout(function () { el.coachChip.classList.add("is-fresh"); }, 0);
       setTimeout(function () { el.coachChip.classList.remove("is-fresh"); }, 260);
     }
+  }
+
+  function runTokenProbeOnce() {
+    var devMode = false;
+    try {
+      var configEnv = String(window.CS_CONFIG && window.CS_CONFIG.environment || "").toLowerCase();
+      var url = new URL(window.location.href);
+      devMode = configEnv === "dev" || url.searchParams.get("cs_allow_dev") === "1";
+    } catch (_e) {}
+    if (!devMode) return;
+    try {
+      var root = getComputedStyle(document.documentElement);
+      var body = getComputedStyle(document.body);
+      console.log("[Token Probe]", {
+        fontSans: root.getPropertyValue("--font-sans").trim(),
+        bg0: root.getPropertyValue("--bg-0").trim(),
+        surface1: root.getPropertyValue("--surface-1").trim(),
+        text1: root.getPropertyValue("--text-1").trim(),
+        border1: root.getPropertyValue("--border-1").trim(),
+        accent: root.getPropertyValue("--accent").trim(),
+        computedBodyBg: body.backgroundColor,
+        computedBodyFont: body.fontFamily
+      });
+    } catch (_probeError) {}
   }
 
   function bindEvents() {
@@ -445,5 +474,6 @@
   refreshCaseload();
   bindEvents();
   setupCoachRibbon();
+  runTokenProbeOnce();
   selectStudent("");
 })();

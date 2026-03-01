@@ -1,110 +1,129 @@
-/* style/tokens.css — Cornerstone MTSS UI tokens (v1) */
-:root{
+/* Cornerstone MTSS shared tokens */
+:root {
   /* Typography */
-  --font-sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
-  --font-serif: ui-serif, Georgia, "Times New Roman", Times, serif;
-
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "SF Pro Display", "Inter", "Segoe UI", Roboto, Arial, sans-serif;
+  --font-serif: ui-serif, Georgia, "Times New Roman", serif;
   --fs-0: 12px;
   --fs-1: 14px;
   --fs-2: 16px;
   --fs-3: 18px;
   --fs-4: 22px;
   --fs-5: 32px;
-
   --lh-tight: 1.15;
   --lh: 1.35;
   --lh-loose: 1.55;
-
   --w-regular: 400;
   --w-medium: 500;
   --w-semibold: 600;
   --w-bold: 700;
 
-  /* Numerals: make 0 readable; avoid slash-zero fonts */
-  --numeric: normal;
-
-  /* Surfaces */
-  --bg: #0f1a26;
-  --panel: rgba(255,255,255,0.06);
-  --panel-2: rgba(255,255,255,0.08);
-  --stroke: rgba(255,255,255,0.10);
-  --stroke-2: rgba(255,255,255,0.16);
-
-  /* Text */
-  --text: rgba(255,255,255,0.92);
-  --muted: rgba(255,255,255,0.70);
-  --quiet: rgba(255,255,255,0.55);
-
-  /* Accents */
+  /* Primary dashboard token names */
+  --bg-0: #0f1925;
+  --surface-1: rgba(255, 255, 255, 0.06);
+  --surface-2: rgba(255, 255, 255, 0.09);
+  --text-1: rgba(245, 248, 252, 0.95);
+  --text-2: rgba(189, 203, 221, 0.86);
+  --text-3: rgba(162, 177, 197, 0.68);
+  --border-1: rgba(255, 255, 255, 0.12);
   --accent: #7fc6ff;
   --accent-2: #9fe3d0;
-  --warn: #f4c465;
-  --bad: #ff7f8f;
-
-  /* Radii + shadow */
-  --r-lg: 18px;
-  --r-md: 14px;
-  --r-sm: 10px;
-  --shadow: 0 18px 50px rgba(0,0,0,0.35);
-
-  /* Motion */
-  --ease: cubic-bezier(.2,.8,.2,1);
+  --shadow-1: 0 18px 40px rgba(0, 0, 0, 0.30);
+  --shadow-2: 0 28px 60px rgba(0, 0, 0, 0.38);
+  --radius-lg: 18px;
+  --radius-md: 14px;
+  --radius-sm: 10px;
+  --ease: cubic-bezier(.2, .8, .2, 1);
   --t-fast: 140ms;
-  --t: 220ms;
+  --t-med: 220ms;
+
+  /* Backward-compat aliases used across existing CSS */
+  --bg: var(--bg-0);
+  --panel: var(--surface-1);
+  --panel-2: var(--surface-2);
+  --stroke: var(--border-1);
+  --stroke-2: rgba(255, 255, 255, 0.18);
+  --text: var(--text-1);
+  --muted: var(--text-2);
+  --quiet: var(--text-3);
+  --shadow: var(--shadow-1);
+  --r-lg: var(--radius-lg);
+  --r-md: var(--radius-md);
+  --r-sm: var(--radius-sm);
+  --t: var(--t-med);
+
+  --font-family: var(--font-sans);
+  --h1: var(--fs-5);
+  --h2: var(--fs-4);
+  --h3: var(--fs-3);
+  --body: var(--fs-1);
+  --meta: var(--fs-0);
+  --line-tight: var(--lh-tight);
+  --line-body: var(--lh-loose);
+  --bg1: var(--surface-1);
+  --bg2: var(--surface-2);
+  --text0: var(--text-1);
+  --accent2: var(--accent-2);
+  --r-card: var(--radius-lg);
+  --r-btn: 16px;
+  --shadow-sm: 0 8px 18px rgba(0, 0, 0, 0.24);
+  --shadow-md: var(--shadow-1);
+  --shadow-lg: var(--shadow-2);
+  --shadow-soft: var(--shadow-sm);
+  --shadow-medium: var(--shadow-1);
+  --radius-1: 8px;
+  --radius-2: 12px;
+  --radius-3: 16px;
+  --radius-4: 20px;
+  --radius-round: 999px;
+  --space-1: 6px;
+  --space-2: 10px;
+  --space-3: 14px;
+  --space-4: 18px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 44px;
+  --motion-fast: var(--t-fast);
+  --motion-med: var(--t-med);
+  --motion-ease: var(--ease);
+  --border-subtle: var(--border-1);
+  --border-strong: rgba(255, 255, 255, 0.18);
+  --text-strong: var(--text-1);
+  --bg-900: var(--bg-0);
+  --bg-850: #152334;
 }
 
-/* Base reset-ish */
-html, body{
+html, body, button, input, select, textarea {
   font-family: var(--font-sans);
-  font-variant-numeric: var(--numeric);
-  color: var(--text);
+  color: var(--text-1);
+  font-variant-numeric: normal;
+  font-feature-settings: "zero" 0;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
-h1,h2,h3{
+h1, h2, h3 {
+  margin: 0;
   letter-spacing: -0.02em;
 }
 
-.cs-title{
-  font-size: var(--fs-5);
-  line-height: var(--lh-tight);
-  font-weight: var(--w-bold);
-}
-
-.cs-subtitle{
-  font-size: var(--fs-2);
-  line-height: var(--lh);
-  color: var(--muted);
-}
-
-.cs-card{
-  background: var(--panel);
-  border: 1px solid var(--stroke);
-  border-radius: var(--r-lg);
-  box-shadow: var(--shadow);
-}
-
-.cs-btn{
+.cs-btn,
+.btn {
   border-radius: 999px;
-  border: 1px solid var(--stroke-2);
-  background: rgba(255,255,255,0.10);
-  color: var(--text);
-  transition: transform var(--t-fast) var(--ease), filter var(--t-fast) var(--ease), background var(--t-fast) var(--ease);
-}
-.cs-btn:hover{ transform: translateY(-1px); filter: brightness(1.04); }
-.cs-btn:active{ transform: translateY(0px) scale(0.99); }
-
-.cs-btn-primary{
-  background: linear-gradient(90deg, rgba(127,198,255,0.95), rgba(159,227,208,0.70));
-  border: 1px solid rgba(255,255,255,0.18);
-  color: rgba(10,20,30,0.92);
-  font-weight: var(--w-semibold);
+  border: 1px solid var(--border-1);
+  background: rgba(255, 255, 255, 0.10);
+  color: var(--text-1);
+  transition: transform var(--t-fast) var(--ease), box-shadow var(--t-fast) var(--ease), background var(--t-fast) var(--ease);
 }
 
-.cs-muted{ color: var(--muted); }
-.cs-quiet{ color: var(--quiet); }
+.cs-btn:hover,
+.btn:hover {
+  transform: translateY(-1px);
+}
 
-/* Accessible focus */
-:focus-visible{
-  outline: 2px solid rgba(127,198,255,0.75);
-  outline-offset: 3px;
+html[data-motion="reduced"] *,
+html[data-motion="reduced"] *::before,
+html[data-motion="reduced"] *::after {
+  animation-duration: 1ms !important;
+  animation-iteration-count: 1 !important;
+  transition: none !important;
 }

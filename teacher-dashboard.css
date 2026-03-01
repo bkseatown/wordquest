@@ -1,109 +1,25 @@
-@import url("./style/tokens.css");
-
-/* ==================================================
-   PHASE 5 — TYPOGRAPHY + VISUAL DEPTH FOUNDATION
-   ================================================== */
-
-:root {
-  --font-display: "Inter", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-  --font-body: "Inter", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-
-  --text-strong: #F5F7FA;
-  --text-soft: #AEB8C6;
-
-  --radius-lg: 18px;
-  --elev-soft: 0 10px 30px rgba(0, 0, 0, 0.25);
-  --elev-strong: 0 16px 40px rgba(0, 0, 0, 0.35);
-}
-
-body {
-  font-family: var(--font-body);
-  color: var(--text-strong);
-  letter-spacing: -0.01em;
-  -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
-}
-
-h1, .hero-title {
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  font-size: clamp(2.2rem, 3vw, 3rem);
-}
-
-h2 {
-  font-weight: 600;
-  font-size: 1.4rem;
-}
-
-.card, .panel {
-  border-radius: var(--radius-lg);
-  backdrop-filter: blur(12px);
-  box-shadow: var(--elev-soft);
-  transition: transform .25s ease, box-shadow .25s ease;
-}
-
-.card:hover, .panel:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--elev-strong);
-}
-
-button.primary, .btn-primary {
-  border-radius: 999px;
-  font-weight: 600;
-  padding: 14px 28px;
-  box-shadow: var(--elev-soft);
-  transition: all .2s ease;
-}
-
-button.primary:hover,
-.btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--elev-strong);
-}
-
-button.secondary, .btn-secondary {
-  border-radius: 999px;
-  font-weight: 500;
-  opacity: 0.92;
-}
-
-.student-item {
-  border-radius: 16px;
-  transition: background .2s ease, transform .2s ease;
-}
-
-.student-item:hover {
-  transform: translateX(4px);
-}
-
-.sparkline {
-  stroke-width: 3;
-  filter: drop-shadow(0 0 8px rgba(120, 180, 255, 0.4));
-}
-
 * { box-sizing: border-box; }
 html, body { height: 100%; }
 
 body.teacher-dashboard {
   margin: 0;
   overflow: hidden;
-  background:
-    radial-gradient(circle at 16% 8%, rgba(92, 209, 255, 0.1), transparent 38%),
-    radial-gradient(circle at 82% 18%, rgba(110, 231, 183, 0.08), transparent 34%),
-    linear-gradient(155deg, #0d1927 0%, #12263a 48%, #0f1b2a 100%);
-  color: var(--text-strong);
-  font-family: var(--font-family);
+  background: radial-gradient(circle at 18% 8%, rgba(127, 198, 255, 0.12), transparent 36%),
+    radial-gradient(circle at 84% 16%, rgba(159, 227, 208, 0.09), transparent 35%),
+    var(--bg-0);
+  color: var(--text-1);
+  font-family: var(--font-sans);
   font-size: var(--body);
   line-height: var(--line-body);
   letter-spacing: -0.01em;
-  font-variant-numeric: lining-nums tabular-nums;
+  font-variant-numeric: normal;
   font-feature-settings: "zero" 0;
 }
 
 .card {
-  background: var(--bg1);
+  background: var(--surface-1);
   border-radius: var(--r-card);
-  box-shadow: inset 0 0 0 1px var(--stroke);
+  box-shadow: inset 0 0 0 1px var(--border-1), var(--shadow-1);
   backdrop-filter: blur(14px);
 }
 
@@ -184,7 +100,9 @@ body.teacher-dashboard {
   font: inherit;
   font-size: var(--meta);
   cursor: pointer;
+  transition: transform 140ms var(--ease), box-shadow 140ms var(--ease), background 140ms var(--ease);
 }
+.td-top-btn:hover { transform: translateY(-2px); box-shadow: var(--shadow-sm); }
 .td-coach-chip { border-color: color-mix(in oklab, var(--accent) 58%, transparent); }
 .td-coach-chip.is-fresh { animation: tdCoachPulse 220ms ease-out 1; }
 @keyframes tdCoachPulse { 0% { transform: scale(1); } 45% { transform: scale(1.04); } 100% { transform: scale(1); } }
@@ -202,12 +120,21 @@ body.teacher-dashboard {
   min-height: 0;
   display: grid;
   grid-template-columns: 0.95fr 1.6fr 1fr;
-  gap: 10px;
+  gap: 12px;
   overflow: hidden;
 }
 
 .td-left, .td-center, .td-right { min-height: 0; padding: 12px; overflow: hidden; }
-.td-left h2, .td-center h2, .td-right h2 { margin: 0 0 10px; font-size: var(--h3); }
+.td-left h2, .td-center h2, .td-right h2 { margin: 0 0 10px; font-size: 1.02rem; font-weight: 600; color: var(--text-2); }
+.td-primary-stage {
+  background: linear-gradient(160deg, color-mix(in srgb, var(--surface-2) 86%, transparent), color-mix(in srgb, var(--surface-1) 72%, #0a141f 28%));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 25%, var(--border-1) 75%), var(--shadow-2);
+}
+.td-secondary-rail,
+.td-support-rail {
+  background: color-mix(in srgb, var(--surface-1) 90%, #0d1722 10%);
+  box-shadow: inset 0 0 0 1px var(--border-1), var(--shadow-1);
+}
 .td-recent-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
 .td-recent-pill {
   border-radius: 999px;
@@ -259,26 +186,35 @@ body.teacher-dashboard {
 .td-stage-selected { display: grid; gap: 12px; animation: tdStageIn 210ms var(--motion-ease); }
 .td-next-step-card {
   border-radius: var(--radius-3);
-  border: 1px solid color-mix(in oklab, var(--accent) 40%, transparent);
-  background: linear-gradient(140deg, color-mix(in oklab, var(--accent) 16%, transparent), color-mix(in oklab, var(--surface-1) 80%, transparent));
-  padding: 10px 12px;
-  box-shadow: var(--shadow-soft);
+  border: 1px solid color-mix(in srgb, var(--accent) 36%, transparent);
+  background: linear-gradient(132deg, color-mix(in srgb, var(--accent) 18%, transparent), color-mix(in srgb, var(--surface-1) 88%, #0f1a25 12%));
+  padding: 12px 14px;
+  box-shadow: var(--shadow-1);
 }
-.td-next-step-card h3 { margin: 2px 0 0; font-size: 1.1rem; }
+.td-next-step-card h3 { margin: 2px 0 0; font-size: 1.26rem; font-weight: 700; color: var(--text-1); }
 @keyframes tdStageIn {
   from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
 .td-selected-head { display: flex; justify-content: space-between; gap: 14px; align-items: flex-start; }
-.td-label { margin: 0; color: var(--muted); font-size: var(--meta); }
-.td-reco-line { margin: 8px 0 0; font-size: 1.03rem; }
+.td-label { margin: 0; color: var(--text-2); font-size: var(--meta); }
+.td-reco-line { margin: 8px 0 0; font-size: 1.08rem; color: var(--text-1); }
 .td-mini-chart { width: 220px; max-width: 44%; }
 #td-sparkline { width: 100%; height: 48px; display: block; }
 
 .td-cta-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .td-quick-launch-row { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 8px; }
-.td-quick-launch-row .td-top-btn { padding: 8px; font-size: 0.78rem; }
+.td-quick-launch-row .td-top-btn {
+  padding: 8px;
+  font-size: 0.78rem;
+  transition: transform 140ms var(--ease), box-shadow 140ms var(--ease), background 140ms var(--ease);
+}
+.td-quick-launch-row .td-top-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+  background: color-mix(in srgb, var(--surface-2) 84%, transparent);
+}
 .td-btn {
   font: inherit;
   font-weight: 720;
@@ -355,6 +291,21 @@ body.teacher-dashboard {
   font-size: 0.86rem;
 }
 .td-share { margin-top: 10px; display: grid; gap: 8px; }
+.td-details {
+  margin-top: 10px;
+  border: 1px solid color-mix(in srgb, var(--border-1) 90%, transparent);
+  border-radius: var(--radius-2);
+  background: color-mix(in srgb, var(--surface-1) 84%, transparent);
+  padding: 8px 10px;
+}
+.td-details summary {
+  cursor: pointer;
+  list-style: none;
+  font-size: var(--meta);
+  color: var(--text-2);
+  font-weight: 600;
+}
+.td-details summary::-webkit-details-marker { display: none; }
 
 .hidden { display: none !important; }
 
@@ -372,10 +323,16 @@ body.teacher-dashboard {
   border: 1px solid color-mix(in oklab, var(--border-subtle) 76%, transparent);
   background: color-mix(in oklab, var(--surface-1) 92%, rgba(12, 24, 36, 0.9));
   box-shadow: var(--shadow-medium);
+  transform: translateY(0);
+  transition: transform 150ms var(--ease), opacity 150ms var(--ease), box-shadow 150ms var(--ease);
 }
 .td-coach-ribbon button { border: 0; background: transparent; color: var(--text-strong); cursor: pointer; }
 .td-coach-title { font-weight: 700; }
 .td-coach-line { color: var(--muted); font-size: var(--meta); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.td-coach-ribbon.is-fresh {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-2);
+}
 .td-coach-ribbon.is-collapsed .td-coach-line,
 .td-coach-ribbon.is-collapsed #td-coach-play,
 .td-coach-ribbon.is-collapsed #td-coach-mute { display: none; }
