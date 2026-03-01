@@ -5,11 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <base href="./">
   <title>Cornerstone MTSS - Teacher Dashboard</title>
-  <script src="./config.js"></script>
-  <script src="./build-stamp.js?v=20260301a"></script>
+  <script src="./config.js?v=20260301g"></script>
   <link rel="icon" href="./favicon.ico" sizes="any">
-  <link rel="stylesheet" href="./style/tokens.css?v=20260301b">
-  <link rel="stylesheet" href="./teacher-dashboard.css?v=20260301b">
+  <link rel="stylesheet" href="./style/tokens.css?v=20260301g">
+  <link rel="stylesheet" href="./teacher-dashboard.css?v=20260301g">
 </head>
 <body class="teacher-dashboard">
   <main class="td-shell" id="td-shell">
@@ -128,9 +127,12 @@
     <button id="td-coach-mute" type="button" aria-label="Mute coach">🔈</button>
   </div>
 
-  <script src="./storage-schema.js?v=20260301a" defer></script>
-  <script src="./js/caseload-store.js?v=20260301a" defer></script>
-  <script src="./js/evidence-store.js?v=20260301a" defer></script>
-  <script src="./teacher-dashboard.js?v=20260301a" defer></script>
+  <script src="./build-stamp.js?v=20260301g"></script>
+  <script src="./js/build-badge.js?v=20260301g"></script>
+  <script>window.CSBuildBadge && window.CSBuildBadge.init && window.CSBuildBadge.init();</script>
+  <script src="./storage-schema.js?v=20260301g" defer></script>
+  <script src="./js/caseload-store.js?v=20260301g" defer></script>
+  <script src="./js/evidence-store.js?v=20260301g" defer></script>
+  <script src="./teacher-dashboard.js?v=20260301g" defer></script>
 </body>
 </html>
