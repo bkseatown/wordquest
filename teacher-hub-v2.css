@@ -249,7 +249,7 @@ body.th2-page {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start; /* center caused focus card to overflow above viewport */
   padding: 32px 40px;
   min-height: 100dvh;
 }
@@ -1293,3 +1293,136 @@ body.th2-page {
 }
 
 .th2-lnav-unit-link:hover { text-decoration: underline; color: var(--text-secondary); }
+
+/* ── UFLI & IM badge colors ──────────────────────────────── */
+.th2-lnav-badge--ufli {
+  background: color-mix(in oklab, #b45309 14%, transparent);
+  color: #92400e;
+}
+
+.th2-lnav-badge--im {
+  background: color-mix(in oklab, #16a34a 14%, transparent);
+  color: #166534;
+}
+
+/* ── UFLI & IM card accents ──────────────────────────────── */
+.th2-lnav--ufli {
+  border-left: 3px solid color-mix(in oklab, #b45309 55%, transparent);
+}
+
+.th2-lnav--im {
+  border-left: 3px solid color-mix(in oklab, #16a34a 55%, transparent);
+}
+
+/* ── UFLI lesson focus text ──────────────────────────────── */
+.th2-lnav-lesson-focus {
+  font: 400 10px/1.3 var(--font-ui, system-ui);
+  color: var(--text-muted);
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 200px;
+  margin-right: auto;
+}
+
+/* ── Set-position button ─────────────────────────────────── */
+.th2-lnav-setpos-btn {
+  font: 400 10px/1 var(--font-ui, system-ui);
+  color: var(--text-muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 3px;
+  transition: background 0.12s, color 0.12s;
+  flex-shrink: 0;
+}
+.th2-lnav-setpos-btn:hover {
+  background: var(--surface-2, #f1f0ee);
+  color: var(--text-secondary);
+}
+
+/* ── Set-position inline form ────────────────────────────── */
+.th2-lnav-setpos-form {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+  padding-top: 4px;
+  width: 100%;
+}
+
+.th2-lnav-setpos-label {
+  font: 500 10px/1 var(--font-ui, system-ui);
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.th2-lnav-setpos-select {
+  font: 400 11px/1.2 var(--font-ui, system-ui);
+  color: var(--text-primary);
+  background: var(--surface-1, #fff);
+  border: 1px solid var(--border, #d5d2cc);
+  border-radius: 4px;
+  padding: 2px 4px;
+  max-width: 180px;
+  cursor: pointer;
+}
+
+.th2-lnav-setpos-num {
+  font: 400 11px/1.2 var(--font-ui, system-ui);
+  color: var(--text-primary);
+  background: var(--surface-1, #fff);
+  border: 1px solid var(--border, #d5d2cc);
+  border-radius: 4px;
+  padding: 2px 4px;
+  width: 52px;
+  text-align: center;
+}
+
+.th2-lnav-setpos-save {
+  font: 600 10.5px/1 var(--font-ui, system-ui);
+  color: #fff;
+  background: var(--accent, #2b5da8);
+  border: none;
+  border-radius: 4px;
+  padding: 3px 8px;
+  cursor: pointer;
+  transition: opacity 0.12s;
+}
+.th2-lnav-setpos-save:hover { opacity: 0.88; }
+
+.th2-lnav-setpos-cancel {
+  font: 400 11px/1 var(--font-ui, system-ui);
+  color: var(--text-muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 3px;
+  transition: background 0.12s;
+}
+.th2-lnav-setpos-cancel:hover { background: var(--surface-2, #f1f0ee); }
+
+/* ── F&P reading level badge ─────────────────────────────── */
+.th2-fp-badge {
+  display: inline-flex;
+  align-items: center;
+  font: 700 9.5px/1 var(--font-ui, system-ui);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #7c3aed;
+  background: color-mix(in oklab, #7c3aed 12%, transparent);
+  border: 1px solid color-mix(in oklab, #7c3aed 30%, transparent);
+  border-radius: 4px;
+  padding: 2px 5px;
+  cursor: pointer;
+  transition: background 0.12s, border-color 0.12s;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+.th2-fp-badge:hover {
+  background: color-mix(in oklab, #7c3aed 20%, transparent);
+  border-color: color-mix(in oklab, #7c3aed 50%, transparent);
+}

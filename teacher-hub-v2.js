@@ -393,6 +393,49 @@
    * data/iswordstudy-map.json — embedded to avoid fetch
    * round-trips in this static app.
    */
+
+  /* Module-domain hints for demo / sparse-evidence students.
+   * Keyed by student id. Value must match matchCurriculumGoal keywords.
+   * These are used as fallback when the plan engine doesn't infer a module. */
+  var MODULE_HINT_BY_STUDENT = {
+    "demo-noah": "Numeracy",
+    "demo-zoe":  "Phonics",
+    "demo-liam": "Phonics"
+  };
+
+  /* ── F&P (Fountas & Pinnell) reading level badge ──────────
+   * Stored in localStorage["cs.hub.fp.{studentId}"] as a
+   * single letter A–Z (or null).  Demo students get realistic
+   * seed levels so the badge appears without data entry.
+   */
+  var FP_DEMO_LEVELS = {
+    "demo-ava":  "M",   // G3 mid-year on-grade
+    "demo-liam": "G",   // G2 slightly below
+    "demo-maya": "N",   // G3 on/above grade
+    "demo-zoe":  "C"    // G1 early emergent
+    /* demo-noah: numeracy focus — no F&P badge */
+  };
+  var FP_VALID = /^[A-Za-z]$/;
+
+  function getFpLevel(studentId) {
+    var lsKey = "cs.hub.fp." + studentId;
+    var stored = localStorage.getItem(lsKey);
+    if (stored !== null) return stored || null;   // "" means "cleared"
+    var demo = FP_DEMO_LEVELS[studentId] || null;
+    if (demo) localStorage.setItem(lsKey, demo);  // seed once
+    return demo;
+  }
+
+  function setFpLevel(studentId, level) {
+    localStorage.setItem("cs.hub.fp." + studentId, level ? String(level).toUpperCase().slice(0, 1) : "");
+  }
+
+  function renderFpBadge(studentId) {
+    var level = getFpLevel(studentId);
+    if (!level) return "";
+    return '<button class="th2-fp-badge" data-fp-student="' + escapeHtml(studentId) + '" title="F&P Reading Level — click to update" type="button">F&amp;P ' + escapeHtml(level) + '</button>';
+  }
+
   var FISHTANK_GRADES = {
     "K":  { label: "Kindergarten", slug: "kindergarten",
             units: [
@@ -550,6 +593,115 @@
       ]}
   };
 
+  /* ── UFLI Foundations inline data (K–2 phonics) ─────────
+   * 128 lessons in 13 range-groups. Range URLs are stable
+   * on the UFLI toolbox; individual lesson deep links 404.
+   */
+  var UFLI_GROUPS = [
+    { id:"A", label:"Alphabet",                  start:1,   end:34,  focus:"Letter formation, sound-symbol correspondences, initial blending" },
+    { id:"B", label:"CVC & Consonant Blends",    start:35,  end:41,  focus:"Short vowels a/i/o/u/e, consonant blends" },
+    { id:"C", label:"Consonant Digraphs",        start:42,  end:53,  focus:"FLOSS rule, ck, sh, th, ch, wh, ph, ng, nk" },
+    { id:"D", label:"VCe — Silent E",            start:54,  end:62,  focus:"Long vowel-consonant-e patterns" },
+    { id:"E", label:"Reading Longer Words",      start:63,  end:68,  focus:"-es, -ed, -ing, open/closed syllables, compound words" },
+    { id:"F", label:"Special Patterns",          start:69,  end:76,  focus:"tch, dge, short vowel exceptions, final -y, -le" },
+    { id:"G", label:"R-Controlled Vowels",       start:77,  end:83,  focus:"ar, or, ore, er, ir, ur, w+or" },
+    { id:"H", label:"Long Vowel Teams",          start:84,  end:88,  focus:"ai/ay, ee/ea/ey, oa/ow/oe, ie" },
+    { id:"I", label:"Vowel Teams 2",             start:89,  end:94,  focus:"oo (book/moon), ew/ui/ue, aw/au" },
+    { id:"J", label:"Diphthongs & Silent Letters",start:95,  end:98,  focus:"Diphthongs, kn-, wr-, -mb" },
+    { id:"K", label:"Suffixes & Prefixes",       start:99,  end:106, focus:"-es, -ed, -ing, -er, -est, -ly, -less, -ful, -ion" },
+    { id:"L", label:"Advanced Morphology",       start:107, end:118, focus:"Advanced morphological patterns, complex word structures" },
+    { id:"M", label:"Extended Affixes",          start:119, end:128, focus:"Additional prefixes/suffixes, morphological mastery" }
+  ];
+  var UFLI_BASE = "https://ufli.education.ufl.edu/foundations/toolbox/";
+  var UFLI_TOTAL = 128;
+
+  function ufliGroupForLesson(n) {
+    for (var i = 0; i < UFLI_GROUPS.length; i++) {
+      if (n >= UFLI_GROUPS[i].start && n <= UFLI_GROUPS[i].end) return UFLI_GROUPS[i];
+    }
+    return UFLI_GROUPS[UFLI_GROUPS.length - 1];
+  }
+
+  /* ── Illustrative Mathematics K–5 inline data ───────────
+   * Confirmed URL pattern (live verified):
+   * im.kendallhunt.com/K5/teachers/{gradeSlug}/unit-{u}/lesson-{l}/preparation.html
+   */
+  var IM_GRADES = {
+    "K":  { label:"Kindergarten", slug:"kindergarten",
+            units: [
+              { u:1, title:"Math in Our World",                       lessonCount:17 },
+              { u:2, title:"Numbers 1–10",                            lessonCount:22 },
+              { u:3, title:"Flat Shapes All Around Us",               lessonCount:15 },
+              { u:4, title:"Understanding Addition and Subtraction",  lessonCount:18 },
+              { u:5, title:"Composing and Decomposing Numbers to 10", lessonCount:15 },
+              { u:6, title:"Numbers 0–20",                            lessonCount:13 },
+              { u:7, title:"Solid Shapes All Around Us",              lessonCount:16 },
+              { u:8, title:"Putting It All Together",                 lessonCount:21 }
+            ]},
+    "1":  { label:"Grade 1", slug:"grade-1",
+            units: [
+              { u:1, title:"Adding, Subtracting, and Working with Data",   lessonCount:15 },
+              { u:2, title:"Addition and Subtraction Story Problems",       lessonCount:22 },
+              { u:3, title:"Adding and Subtracting Within 20",             lessonCount:28 },
+              { u:4, title:"Numbers to 99",                                lessonCount:23 },
+              { u:5, title:"Adding Within 100",                            lessonCount:14 },
+              { u:6, title:"Length Measurements Within 120 Units",         lessonCount:17 },
+              { u:7, title:"Geometry and Time",                            lessonCount:17 },
+              { u:8, title:"Putting It All Together",                      lessonCount:10 }
+            ]},
+    "2":  { label:"Grade 2", slug:"grade-2",
+            units: [
+              { u:1, title:"Adding, Subtracting, and Working with Data",   lessonCount:18 },
+              { u:2, title:"Adding and Subtracting within 100",            lessonCount:16 },
+              { u:3, title:"Measuring Length",                             lessonCount:18 },
+              { u:4, title:"Addition and Subtraction on the Number Line",  lessonCount:15 },
+              { u:5, title:"Numbers to 1,000",                             lessonCount:14 },
+              { u:6, title:"Geometry, Time, and Money",                    lessonCount:21 },
+              { u:7, title:"Adding and Subtracting within 1,000",          lessonCount:18 },
+              { u:8, title:"Equal Groups",                                 lessonCount:13 },
+              { u:9, title:"Putting It All Together",                      lessonCount:13 }
+            ]},
+    "3":  { label:"Grade 3", slug:"grade-3",
+            units: [
+              { u:1, title:"Introducing Multiplication",                             lessonCount:21 },
+              { u:2, title:"Area and Multiplication",                                lessonCount:15 },
+              { u:3, title:"Wrapping Up Addition and Subtraction Within 1,000",      lessonCount:21 },
+              { u:4, title:"Relating Multiplication to Division",                    lessonCount:22 },
+              { u:5, title:"Fractions as Numbers",                                   lessonCount:18 },
+              { u:6, title:"Measuring Length, Time, Liquid Volume, and Weight",      lessonCount:16 },
+              { u:7, title:"Two-dimensional Shapes and Perimeter",                   lessonCount:15 },
+              { u:8, title:"Putting It All Together",                                lessonCount:15 }
+            ]},
+    "4":  { label:"Grade 4", slug:"grade-4",
+            units: [
+              { u:1, title:"Factors and Multiples",                                  lessonCount:8  },
+              { u:2, title:"Fraction Equivalence and Comparison",                    lessonCount:17 },
+              { u:3, title:"Extending Operations to Fractions",                      lessonCount:20 },
+              { u:4, title:"From Hundredths to Hundred-thousands",                   lessonCount:23 },
+              { u:5, title:"Multiplicative Comparison and Measurement",              lessonCount:18 },
+              { u:6, title:"Multiplying and Dividing Multi-digit Numbers",           lessonCount:25 },
+              { u:7, title:"Angles and Angle Measurement",                           lessonCount:16 },
+              { u:8, title:"Properties of Two-dimensional Shapes",                   lessonCount:10 },
+              { u:9, title:"Putting It All Together",                                lessonCount:12 }
+            ]},
+    "5":  { label:"Grade 5", slug:"grade-5",
+            units: [
+              { u:1, title:"Finding Volume",                                                        lessonCount:12 },
+              { u:2, title:"Fractions as Quotients and Fraction Multiplication",                    lessonCount:17 },
+              { u:3, title:"Multiplying and Dividing Fractions",                                    lessonCount:20 },
+              { u:4, title:"Wrapping Up Multiplication and Division with Multi-Digit Numbers",      lessonCount:21 },
+              { u:5, title:"Place Value Patterns and Decimal Operations",                           lessonCount:26 },
+              { u:6, title:"More Decimal and Fraction Operations",                                  lessonCount:21 },
+              { u:7, title:"Shapes on the Coordinate Plane",                                        lessonCount:13 },
+              { u:8, title:"Putting It All Together",                                               lessonCount:18 }
+            ]}
+  };
+  var IM_BASE = "https://im.kendallhunt.com/K5/teachers/";
+
+  function buildIMUrl(gradeSlug, unitN, lessonN) {
+    return IM_BASE + gradeSlug + "/unit-" + unitN + "/lesson-" + lessonN + "/preparation.html";
+  }
+
   /* ── Lesson navigator — localStorage state ────────────── */
   function lsNavKey(currId, grade)    { return "cs.lessonNav." + currId + "." + grade; }
   function getLessonNavState(currId, grade) {
@@ -618,6 +770,7 @@
       '  </div>',
       '  <div class="th2-lnav-unit-link-row">',
       '    <a class="th2-lnav-unit-link" href="' + escapeHtml(unitUrl) + '" target="_blank" rel="noopener">Open full unit</a>',
+      '    <button class="th2-lnav-setpos-btn" data-lnav-setpos type="button" title="Set current position">📍 Set position</button>',
       '  </div>',
       '</div>'
     ].join("\n");
@@ -666,9 +819,146 @@
       '  </div>',
       '  <div class="th2-lnav-unit-link-row">',
       '    <a class="th2-lnav-unit-link" href="' + escapeHtml(sem.pageUrl) + '" target="_blank" rel="noopener">Open semester page</a>',
+      '    <button class="th2-lnav-setpos-btn" data-lnav-setpos type="button" title="Set current position">📍 Set position</button>',
       '  </div>',
       '</div>'
     ].join("\n");
+  }
+
+  /* ── Render: UFLI Foundations navigator ──────────────────
+   * Lesson-level URLs 404; links to the range-group toolbox page.
+   */
+  function renderUFLINav(gradeKey) {
+    /* UFLI is for K–2; grade key is used only for localStorage */
+    var state   = getLessonNavState("ufli", gradeKey) || { lessonN: 1 };
+    var lessonN = Math.max(1, Math.min(state.lessonN || 1, UFLI_TOTAL));
+    var group   = ufliGroupForLesson(lessonN);
+    var groupUrl = UFLI_BASE + group.start + "-" + group.end + "/";
+    var prevOk  = lessonN > 1;
+    var nextOk  = lessonN < UFLI_TOTAL;
+
+    return [
+      '<div class="th2-lnav th2-lnav--ufli" data-lnav-curr="ufli" data-lnav-grade="' + escapeHtml(gradeKey) + '">',
+      '  <div class="th2-lnav-header">',
+      '    <span class="th2-lnav-badge th2-lnav-badge--ufli">UFLI Foundations</span>',
+      '    <span class="th2-lnav-grade">K–2 Phonics</span>',
+      '    <div class="th2-lnav-unit-nav">',
+      '      <span class="th2-lnav-unit-label" title="' + escapeHtml(group.focus) + '">' + escapeHtml(group.label) + '</span>',
+      '    </div>',
+      '  </div>',
+      '  <div class="th2-lnav-body">',
+      '    <button class="th2-lnav-btn" data-lnav-dir="-1" title="Previous lesson"' + (prevOk ? '' : ' disabled') + '>‹</button>',
+      '    <div class="th2-lnav-lesson">',
+      '      <a class="th2-lnav-lesson-link" href="' + escapeHtml(groupUrl) + '" target="_blank" rel="noopener">Lesson ' + lessonN + '</a>',
+      '      <span class="th2-lnav-lesson-of">of ' + UFLI_TOTAL + '</span>',
+      '    </div>',
+      '    <button class="th2-lnav-btn" data-lnav-dir="1" title="Next lesson"' + (nextOk ? '' : ' disabled') + '>›</button>',
+      '  </div>',
+      '  <div class="th2-lnav-unit-link-row">',
+      '    <span class="th2-lnav-lesson-focus">' + escapeHtml(group.focus) + '</span>',
+      '    <button class="th2-lnav-setpos-btn" data-lnav-setpos type="button" title="Set current lesson">📍 Set position</button>',
+      '  </div>',
+      '</div>'
+    ].join("\n");
+  }
+
+  /* ── Render: Illustrative Math navigator ─────────────────
+   * Confirmed URL: im.kendallhunt.com/K5/teachers/{gradeSlug}/unit-{u}/lesson-{l}/preparation.html
+   */
+  function renderIMNav(gradeKey) {
+    var imGrade = IM_GRADES[gradeKey];
+    if (!imGrade || !imGrade.units || !imGrade.units.length) return "";
+
+    var state    = getLessonNavState("illustrative-math", gradeKey) || { unitIdx: 0, lessonN: 1 };
+    var unitIdx  = Math.max(0, Math.min(state.unitIdx || 0, imGrade.units.length - 1));
+    var unit     = imGrade.units[unitIdx];
+    var lessonN  = Math.max(1, Math.min(state.lessonN || 1, unit.lessonCount));
+    var lessonUrl = buildIMUrl(imGrade.slug, unit.u, lessonN);
+    var unitUrl   = IM_BASE + imGrade.slug + "/unit-" + unit.u + "/lessons.html";
+
+    var prevUnitOk = unitIdx > 0;
+    var nextUnitOk = unitIdx < imGrade.units.length - 1;
+    var prevLsnOk  = lessonN > 1;
+    var nextLsnOk  = lessonN < unit.lessonCount;
+
+    return [
+      '<div class="th2-lnav th2-lnav--im" data-lnav-curr="illustrative-math" data-lnav-grade="' + escapeHtml(gradeKey) + '">',
+      '  <div class="th2-lnav-header">',
+      '    <span class="th2-lnav-badge th2-lnav-badge--im">IM Math K–5</span>',
+      '    <span class="th2-lnav-grade">' + escapeHtml(imGrade.label) + '</span>',
+      '    <div class="th2-lnav-unit-nav">',
+      '      <button class="th2-lnav-unit-btn" data-lnav-unit-dir="-1" title="Previous unit"' + (prevUnitOk ? '' : ' disabled') + '>‹</button>',
+      '      <span class="th2-lnav-unit-label">Unit ' + unit.u + ': ' + escapeHtml(unit.title) + '</span>',
+      '      <button class="th2-lnav-unit-btn" data-lnav-unit-dir="1" title="Next unit"' + (nextUnitOk ? '' : ' disabled') + '>›</button>',
+      '    </div>',
+      '  </div>',
+      '  <div class="th2-lnav-body">',
+      '    <button class="th2-lnav-btn" data-lnav-dir="-1" title="Previous lesson"' + (prevLsnOk ? '' : ' disabled') + '>‹</button>',
+      '    <div class="th2-lnav-lesson">',
+      '      <a class="th2-lnav-lesson-link" href="' + escapeHtml(lessonUrl) + '" target="_blank" rel="noopener">Lesson ' + lessonN + '</a>',
+      '      <span class="th2-lnav-lesson-of">of ' + unit.lessonCount + '</span>',
+      '    </div>',
+      '    <button class="th2-lnav-btn" data-lnav-dir="1" title="Next lesson"' + (nextLsnOk ? '' : ' disabled') + '>›</button>',
+      '  </div>',
+      '  <div class="th2-lnav-unit-link-row">',
+      '    <a class="th2-lnav-unit-link" href="' + escapeHtml(unitUrl) + '" target="_blank" rel="noopener">Open unit</a>',
+      '    <button class="th2-lnav-setpos-btn" data-lnav-setpos type="button" title="Set current position">📍 Set position</button>',
+      '  </div>',
+      '</div>'
+    ].join("\n");
+  }
+
+  /* ── Set-position form builder ───────────────────────────
+   * Returns HTML for the inline form injected into the footer row
+   * when the teacher clicks "📍 Set position".
+   */
+  function buildSetPosFormHtml(currId, gradeKey) {
+    var html = ['<div class="th2-lnav-setpos-form" data-setpos-form>'];
+
+    if (currId === "fishtank") {
+      var ftGrade = FISHTANK_GRADES[gradeKey];
+      var cur = getLessonNavState("fishtank", gradeKey) || { unitIdx: 0, lessonN: 1 };
+      html.push('<select class="th2-lnav-setpos-select" data-setpos-unit>');
+      (ftGrade ? ftGrade.units : []).forEach(function (u, i) {
+        html.push('<option value="' + i + '"' + (i === (cur.unitIdx || 0) ? ' selected' : '') + '>Unit ' + u.seq + ': ' + escapeHtml(u.title) + '</option>');
+      });
+      html.push('</select>');
+      html.push('<label class="th2-lnav-setpos-label">Lesson</label>');
+      html.push('<input class="th2-lnav-setpos-num" data-setpos-lesson type="number" min="1" max="' + (ftGrade ? ftGrade.units[cur.unitIdx || 0].lessonCount : 99) + '" value="' + (cur.lessonN || 1) + '">');
+
+    } else if (currId === "iswordstudy") {
+      var iwGrade = ISWS_GRADES[gradeKey];
+      var curIW = getLessonNavState("iswordstudy", gradeKey) || { semIdx: 0, lessonIdx: 0 };
+      html.push('<select class="th2-lnav-setpos-select" data-setpos-sem>');
+      (iwGrade ? iwGrade.semesters : []).forEach(function (s, i) {
+        html.push('<option value="' + i + '"' + (i === (curIW.semIdx || 0) ? ' selected' : '') + '>' + escapeHtml(s.label) + '</option>');
+      });
+      html.push('</select>');
+      var curSemLessons = iwGrade ? (iwGrade.semesters[curIW.semIdx || 0].lessons || []).length : 14;
+      html.push('<label class="th2-lnav-setpos-label">Lesson</label>');
+      html.push('<input class="th2-lnav-setpos-num" data-setpos-lesson type="number" min="1" max="' + curSemLessons + '" value="' + ((curIW.lessonIdx || 0) + 1) + '">');
+
+    } else if (currId === "ufli") {
+      var curUF = getLessonNavState("ufli", gradeKey) || { lessonN: 1 };
+      html.push('<label class="th2-lnav-setpos-label">Lesson (1–128)</label>');
+      html.push('<input class="th2-lnav-setpos-num" data-setpos-lesson type="number" min="1" max="128" value="' + (curUF.lessonN || 1) + '">');
+
+    } else if (currId === "illustrative-math") {
+      var imGr = IM_GRADES[gradeKey];
+      var curIM = getLessonNavState("illustrative-math", gradeKey) || { unitIdx: 0, lessonN: 1 };
+      html.push('<select class="th2-lnav-setpos-select" data-setpos-unit>');
+      (imGr ? imGr.units : []).forEach(function (u, i) {
+        html.push('<option value="' + i + '"' + (i === (curIM.unitIdx || 0) ? ' selected' : '') + '>Unit ' + u.u + ': ' + escapeHtml(u.title) + '</option>');
+      });
+      html.push('</select>');
+      html.push('<label class="th2-lnav-setpos-label">Lesson</label>');
+      html.push('<input class="th2-lnav-setpos-num" data-setpos-lesson type="number" min="1" max="' + (imGr ? imGr.units[curIM.unitIdx || 0].lessonCount : 99) + '" value="' + (curIM.lessonN || 1) + '">');
+    }
+
+    html.push('<button class="th2-lnav-setpos-save" data-setpos-save type="button">Save</button>');
+    html.push('<button class="th2-lnav-setpos-cancel" data-setpos-cancel type="button">✕</button>');
+    html.push('</div>');
+    return html.join("");
   }
 
   /* ── Bind lesson navigator events ────────────────────────
@@ -684,29 +974,36 @@
 
       /* Helper: re-render this specific nav widget */
       function rerender() {
-        var html = currId === "fishtank"
-          ? renderFishtankNav(gradeKey)
-          : renderISWSNav(gradeKey);
+        var html;
+        if      (currId === "fishtank")          html = renderFishtankNav(gradeKey);
+        else if (currId === "iswordstudy")        html = renderISWSNav(gradeKey);
+        else if (currId === "ufli")               html = renderUFLINav(gradeKey);
+        else if (currId === "illustrative-math")  html = renderIMNav(gradeKey);
         if (!html) return;
         var tmp = document.createElement("div");
         tmp.innerHTML = html;
         var newEl = tmp.firstElementChild;
         if (newEl && navEl.parentNode) {
           navEl.parentNode.replaceChild(newEl, navEl);
-          /* Re-bind on the replacement */
           bindLessonNavEvents(container);
         }
       }
 
-      /* Fishtank: unit prev/next ‹ › */
+      /* Fishtank + IM: unit prev/next ‹ › */
       navEl.querySelectorAll("[data-lnav-unit-dir]").forEach(function (btn) {
         btn.addEventListener("click", function () {
-          var dir    = parseInt(btn.getAttribute("data-lnav-unit-dir"), 10) || 0;
-          var state  = getLessonNavState("fishtank", gradeKey) || { unitIdx: 0, lessonN: 1 };
-          var ftGrade = FISHTANK_GRADES[gradeKey];
-          if (!ftGrade) return;
-          var newIdx = Math.max(0, Math.min((state.unitIdx || 0) + dir, ftGrade.units.length - 1));
-          setLessonNavState("fishtank", gradeKey, { unitIdx: newIdx, lessonN: 1 });
+          var dir = parseInt(btn.getAttribute("data-lnav-unit-dir"), 10) || 0;
+          if (currId === "fishtank") {
+            var ftGrade = FISHTANK_GRADES[gradeKey];
+            if (!ftGrade) return;
+            var st = getLessonNavState("fishtank", gradeKey) || { unitIdx: 0, lessonN: 1 };
+            setLessonNavState("fishtank", gradeKey, { unitIdx: Math.max(0, Math.min((st.unitIdx || 0) + dir, ftGrade.units.length - 1)), lessonN: 1 });
+          } else if (currId === "illustrative-math") {
+            var imGr = IM_GRADES[gradeKey];
+            if (!imGr) return;
+            var stIM = getLessonNavState("illustrative-math", gradeKey) || { unitIdx: 0, lessonN: 1 };
+            setLessonNavState("illustrative-math", gradeKey, { unitIdx: Math.max(0, Math.min((stIM.unitIdx || 0) + dir, imGr.units.length - 1)), lessonN: 1 });
+          }
           rerender();
         });
       });
@@ -718,13 +1015,12 @@
           var grade = ISWS_GRADES[gradeKey];
           if (!grade) return;
           var state = getLessonNavState("iswordstudy", gradeKey) || { semIdx: 0, lessonIdx: 0 };
-          var newSem = Math.max(0, Math.min((state.semIdx || 0) + dir, grade.semesters.length - 1));
-          setLessonNavState("iswordstudy", gradeKey, { semIdx: newSem, lessonIdx: 0 });
+          setLessonNavState("iswordstudy", gradeKey, { semIdx: Math.max(0, Math.min((state.semIdx || 0) + dir, grade.semesters.length - 1)), lessonIdx: 0 });
           rerender();
         });
       });
 
-      /* Lesson prev/next ‹ › */
+      /* Lesson prev/next ‹ › — all curricula */
       navEl.querySelectorAll("[data-lnav-dir]").forEach(function (btn) {
         btn.addEventListener("click", function () {
           var dir = parseInt(btn.getAttribute("data-lnav-dir"), 10) || 0;
@@ -734,21 +1030,72 @@
             if (!ftGrade) return;
             var st = getLessonNavState("fishtank", gradeKey) || { unitIdx: 0, lessonN: 1 };
             var unitIdx = Math.max(0, Math.min(st.unitIdx || 0, ftGrade.units.length - 1));
-            var unit = ftGrade.units[unitIdx];
-            var newN = Math.max(1, Math.min((st.lessonN || 1) + dir, unit.lessonCount));
-            setLessonNavState("fishtank", gradeKey, { unitIdx: unitIdx, lessonN: newN });
-          } else {
+            setLessonNavState("fishtank", gradeKey, { unitIdx: unitIdx, lessonN: Math.max(1, Math.min((st.lessonN || 1) + dir, ftGrade.units[unitIdx].lessonCount)) });
+
+          } else if (currId === "iswordstudy") {
             var gData = ISWS_GRADES[gradeKey];
             if (!gData) return;
             var st2 = getLessonNavState("iswordstudy", gradeKey) || { semIdx: 0, lessonIdx: 0 };
             var semIdx = Math.max(0, Math.min(st2.semIdx || 0, gData.semesters.length - 1));
             var lessons = gData.semesters[semIdx].lessons || [];
-            var newIdx = Math.max(0, Math.min((st2.lessonIdx || 0) + dir, lessons.length - 1));
-            setLessonNavState("iswordstudy", gradeKey, { semIdx: semIdx, lessonIdx: newIdx });
+            setLessonNavState("iswordstudy", gradeKey, { semIdx: semIdx, lessonIdx: Math.max(0, Math.min((st2.lessonIdx || 0) + dir, lessons.length - 1)) });
+
+          } else if (currId === "ufli") {
+            var stUF = getLessonNavState("ufli", gradeKey) || { lessonN: 1 };
+            setLessonNavState("ufli", gradeKey, { lessonN: Math.max(1, Math.min((stUF.lessonN || 1) + dir, UFLI_TOTAL)) });
+
+          } else if (currId === "illustrative-math") {
+            var imGr2 = IM_GRADES[gradeKey];
+            if (!imGr2) return;
+            var stIM2 = getLessonNavState("illustrative-math", gradeKey) || { unitIdx: 0, lessonN: 1 };
+            var uIdx2 = Math.max(0, Math.min(stIM2.unitIdx || 0, imGr2.units.length - 1));
+            setLessonNavState("illustrative-math", gradeKey, { unitIdx: uIdx2, lessonN: Math.max(1, Math.min((stIM2.lessonN || 1) + dir, imGr2.units[uIdx2].lessonCount)) });
           }
           rerender();
         });
       });
+
+      /* Set-position button — show inline form */
+      var setposBtn = navEl.querySelector("[data-lnav-setpos]");
+      if (setposBtn) {
+        setposBtn.addEventListener("click", function () {
+          var footerRow = navEl.querySelector(".th2-lnav-unit-link-row");
+          if (!footerRow) return;
+          footerRow.innerHTML = buildSetPosFormHtml(currId, gradeKey);
+
+          /* Save */
+          var saveBtn = footerRow.querySelector("[data-setpos-save]");
+          if (saveBtn) {
+            saveBtn.addEventListener("click", function () {
+              var unitSel  = footerRow.querySelector("[data-setpos-unit]");
+              var semSel   = footerRow.querySelector("[data-setpos-sem]");
+              var lessonIn = footerRow.querySelector("[data-setpos-lesson]");
+              var uIdx  = unitSel  ? parseInt(unitSel.value,  10) : 0;
+              var sIdx  = semSel   ? parseInt(semSel.value,   10) : 0;
+              var lVal  = lessonIn ? parseInt(lessonIn.value, 10) : 1;
+              if (isNaN(uIdx))  uIdx = 0;
+              if (isNaN(sIdx))  sIdx = 0;
+              if (isNaN(lVal) || lVal < 1) lVal = 1;
+
+              if (currId === "fishtank") {
+                setLessonNavState("fishtank", gradeKey, { unitIdx: uIdx, lessonN: lVal });
+              } else if (currId === "iswordstudy") {
+                setLessonNavState("iswordstudy", gradeKey, { semIdx: sIdx, lessonIdx: lVal - 1 });
+              } else if (currId === "ufli") {
+                setLessonNavState("ufli", gradeKey, { lessonN: lVal });
+              } else if (currId === "illustrative-math") {
+                setLessonNavState("illustrative-math", gradeKey, { unitIdx: uIdx, lessonN: lVal });
+              }
+              rerender();
+            });
+          }
+          /* Cancel */
+          var cancelBtn = footerRow.querySelector("[data-setpos-cancel]");
+          if (cancelBtn) {
+            cancelBtn.addEventListener("click", function () { rerender(); });
+          }
+        });
+      }
     });
   }
 
@@ -757,29 +1104,29 @@
     var goal = matchCurriculumGoal(recTitle, module);
     var smartTrunc = goal.smart.length > 120 ? goal.smart.slice(0, 117) + "…" : goal.smart;
 
-    var gradeKey = fishtankGradeKey(gradeBand);
+    var gradeKey  = fishtankGradeKey(gradeBand);
+    var grade0to2 = gradeKey === "K" || gradeKey === "0" || gradeKey === "1" || gradeKey === "2";
     var grade3to5 = gradeKey === "3" || gradeKey === "4" || gradeKey === "5";
+    var isNumera  = goal.domain.indexOf("numer") >= 0;
+    var isDecod   = goal.domain.indexOf("decod") >= 0 || goal.domain.indexOf("phon") >= 0;
+    var isSpell   = goal.domain.indexOf("spell") >= 0 || goal.domain.indexOf("morphol") >= 0;
+    var isELA     = !isNumera;
 
-    /* Determine which navigators to show based on domain + grade */
-    var showFishtank = !!gradeKey && (
-      goal.domain.indexOf("literacy") >= 0 ||
-      goal.domain.indexOf("fluency")  >= 0 ||
-      goal.domain.indexOf("compreh")  >= 0
-    );
-    var showISWS = grade3to5 && (
-      goal.domain.indexOf("spelling")  >= 0 ||
-      goal.domain.indexOf("morphol")   >= 0 ||
-      goal.domain.indexOf("decoding")  >= 0 ||
-      goal.domain.indexOf("vocabular") >= 0
-    );
+    /* Determine which navigators to show */
+    var showFishtank = !!gradeKey && isELA;
+    var showISWS     = grade3to5  && (isSpell || isDecod);
+    var showUFLI     = !!gradeKey && (isDecod || (grade0to2 && isELA));
+    var showIM       = !!gradeKey && isNumera && !!IM_GRADES[gradeKey];
 
     var navsHtml = [
+      showIM       ? renderIMNav(gradeKey)       : "",
       showFishtank ? renderFishtankNav(gradeKey) : "",
-      showISWS     ? renderISWSNav(gradeKey)      : ""
+      showISWS     ? renderISWSNav(gradeKey)     : "",
+      showUFLI     ? renderUFLINav(gradeKey)     : ""
     ].filter(Boolean).join("\n");
 
-    /* If neither nav triggered (e.g. numeracy), show generic Fishtank fallback for ELA grades */
-    if (!navsHtml && gradeKey && goal.domain.indexOf("numera") < 0) {
+    /* Fallback — always show at least Fishtank for ELA-capable grades */
+    if (!navsHtml && gradeKey && !isNumera) {
       navsHtml = renderFishtankNav(gradeKey);
     }
 
@@ -1042,12 +1389,15 @@
   /* ── Demo mode ─────────────────────────────────────────── */
 
   function ensureDemoCaseload() {
+    /* needDomain drives curriculum-section fallback when the plan engine
+       can't infer a module from sparse demo evidence. Values must match
+       the keyword lists in matchCurriculumGoal (e.g. "Numeracy", "Phonics"). */
     var demos = [
-      { id: "demo-ava",  name: "Ava M.",   gradeBand: "G3", grade: "G3" },
-      { id: "demo-liam", name: "Liam T.",  gradeBand: "G2", grade: "G2" },
-      { id: "demo-maya", name: "Maya R.",  gradeBand: "G3", grade: "G3" },
-      { id: "demo-noah", name: "Noah K.",  gradeBand: "G4", grade: "G4" },
-      { id: "demo-zoe",  name: "Zoe W.",   gradeBand: "G1", grade: "G1" }
+      { id: "demo-ava",  name: "Ava M.",   gradeBand: "G3", grade: "G3", needDomain: "Reading" },
+      { id: "demo-liam", name: "Liam T.",  gradeBand: "G2", grade: "G2", needDomain: "Phonics" },
+      { id: "demo-maya", name: "Maya R.",  gradeBand: "G3", grade: "G3", needDomain: "Reading" },
+      { id: "demo-noah", name: "Noah K.",  gradeBand: "G4", grade: "G4", needDomain: "Numeracy" },
+      { id: "demo-zoe",  name: "Zoe W.",   gradeBand: "G1", grade: "G1", needDomain: "Phonics" }
     ];
     demos.forEach(function (s) {
       if (typeof Evidence.upsertStudent === "function") {
@@ -1174,6 +1524,7 @@
       '      <div class="th2-focus-name-row">',
       '        <h2 class="th2-focus-name">' + escapeHtml(student.name || "Student") + '</h2>',
       '        <span class="th2-focus-tier" data-tier="' + tier + '">Tier ' + tier + '</span>',
+      renderFpBadge(studentId),
       '      </div>',
       (nameMeta ? '      <span class="th2-focus-name-meta">' + nameMeta + '</span>' : ''),
       '    </div>',
@@ -1193,10 +1544,12 @@
       '  <p class="th2-rec-reason">' + escapeHtml(recReason) + '</p>',
       '</div>',
 
-      /* Curriculum alignment — mapped from recommendation */
+      /* Curriculum alignment — mapped from recommendation.
+         Fall back to MODULE_HINT_BY_STUDENT when the plan engine hasn't
+         produced a specific launch.module (common in demo / sparse data). */
       renderCurriculumSection(
         recTitle,
-        launch && launch.module ? String(launch.module) : "",
+        (launch && launch.module ? String(launch.module) : "") || String(MODULE_HINT_BY_STUDENT[studentId] || ""),
         student.gradeBand || student.grade || ""
       ),
 
@@ -1403,6 +1756,26 @@
     btn.disabled = true;
     var status = document.getElementById("th2-log-status");
     if (status) status.textContent = relativeDate(Date.now());
+  });
+
+  // F&P badge — click to update reading level inline
+  document.addEventListener("click", function (e) {
+    var badge = e.target.closest && e.target.closest(".th2-fp-badge");
+    if (!badge) return;
+    var sid = badge.getAttribute("data-fp-student") || "";
+    if (!sid) return;
+    var current = getFpLevel(sid) || "";
+    var raw = window.prompt("Enter F&P reading level (A–Z) for this student:", current);
+    if (raw === null) return;                        // cancelled
+    var level = String(raw).trim().toUpperCase().slice(0, 1);
+    if (level && !FP_VALID.test(level)) {
+      window.alert("Please enter a single letter A–Z.");
+      return;
+    }
+    setFpLevel(sid, level);
+    // Re-render badge in place
+    badge.textContent = level ? "F&P " + level : "";
+    if (!level) badge.style.display = "none";
   });
 
   // Drawer close button
