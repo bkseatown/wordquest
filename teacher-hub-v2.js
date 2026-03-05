@@ -388,114 +388,400 @@
     return best || GOAL_BANK[0];
   }
 
-  /* ── Fishtank ELA alignment ─────────────────────────────
-   * Condensed inline copy of data/fishtank-ela-map.json
-   * (embedded to avoid a fetch round-trip in this static app)
+  /* ── Curriculum alignment data ──────────────────────────
+   * Inline copies of data/fishtank-ela-map.json and
+   * data/iswordstudy-map.json — embedded to avoid fetch
+   * round-trips in this static app.
    */
   var FISHTANK_GRADES = {
     "K":  { label: "Kindergarten", slug: "kindergarten",
             units: [
-              { seq:1, title:"Welcome to School",           anchor:"Community & Belonging"   },
-              { seq:2, title:"Noticing Patterns in Stories",anchor:"Literary Analysis"        },
-              { seq:3, title:"Celebrating Fall",            anchor:"Informational / Science"  },
-              { seq:4, title:"Falling in Love with Authors",anchor:"Author Study"             },
-              { seq:5, title:"Winter Wonderland",           anchor:"Informational / Seasons"  },
-              { seq:6, title:"What is Justice?",            anchor:"Social Studies / Civics"  },
-              { seq:7, title:"Exploring Life Cycles",       anchor:"Science / Informational"  },
-              { seq:8, title:"Reduce, Reuse, Recycle",      anchor:"Environment / Argument"   }
+              { seq:1, slug:"welcome-to-school",              lessonCount:17, title:"Welcome to School",            anchor:"Community & Belonging"    },
+              { seq:2, slug:"noticing-patterns-in-stories",   lessonCount:15, title:"Noticing Patterns in Stories", anchor:"Literary Analysis"         },
+              { seq:3, slug:"celebrating-fall",               lessonCount:14, title:"Celebrating Fall",             anchor:"Informational / Science"   },
+              { seq:4, slug:"falling-in-love-with-authors",   lessonCount:15, title:"Falling in Love with Authors", anchor:"Author Study"              },
+              { seq:5, slug:"winter-wonderland",              lessonCount:12, title:"Winter Wonderland",            anchor:"Informational / Seasons"   },
+              { seq:6, slug:"what-is-justice",                lessonCount:16, title:"What is Justice?",             anchor:"Social Studies / Civics"   },
+              { seq:7, slug:"exploring-life-cycles",          lessonCount:18, title:"Exploring Life Cycles",        anchor:"Science / Informational"   },
+              { seq:8, slug:"reduce-reuse-recycle",           lessonCount:14, title:"Reduce, Reuse, Recycle",       anchor:"Environment / Argument"    }
             ]},
     "1":  { label: "Grade 1", slug: "1st-grade",
             units: [
-              { seq:1, title:"Being a Good Friend",         anchor:"Social Skills / Narrative"},
-              { seq:2, title:"The Seven Continents",        anchor:"Social Studies / Info"    },
-              { seq:3, title:"Folktales Around the World",  anchor:"Literary Analysis"        },
-              { seq:4, title:"Amazing Animals",             anchor:"Science / Informational"  },
-              { seq:5, title:"Love Makes a Family",         anchor:"Community / Narrative"    },
-              { seq:6, title:"Inspiring Artists & Musicians",anchor:"Arts / Biography"        },
-              { seq:7, title:"Making Old Stories New",      anchor:"Narrative / Retelling"    },
-              { seq:8, title:"Movements for Equality",      anchor:"Social Studies / Civics"  },
-              { seq:9, title:"The Power of Reading",        anchor:"Literacy / Narrative"     },
-              { seq:10,title:"Ancient Egypt",               anchor:"History / Informational"  }
+              { seq:1,  slug:"being-a-good-friend",           lessonCount:20, title:"Being a Good Friend",          anchor:"Social Skills / Narrative"  },
+              { seq:2,  slug:"the-seven-continents",          lessonCount:18, title:"The Seven Continents",          anchor:"Social Studies / Info"      },
+              { seq:3,  slug:"folktales-around-the-world",    lessonCount:22, title:"Folktales Around the World",    anchor:"Literary Analysis"          },
+              { seq:4,  slug:"amazing-animals",               lessonCount:20, title:"Amazing Animals",               anchor:"Science / Informational"    },
+              { seq:5,  slug:"love-makes-a-family",           lessonCount:16, title:"Love Makes a Family",           anchor:"Community / Narrative"      },
+              { seq:6,  slug:"inspiring-artists-and-musicians",lessonCount:18,title:"Inspiring Artists & Musicians", anchor:"Arts / Biography"           },
+              { seq:7,  slug:"making-old-stories-new",        lessonCount:20, title:"Making Old Stories New",        anchor:"Narrative / Retelling"      },
+              { seq:8,  slug:"movements-for-equality",        lessonCount:18, title:"Movements for Equality",        anchor:"Social Studies / Civics"    },
+              { seq:9,  slug:"the-power-of-reading",          lessonCount:16, title:"The Power of Reading",          anchor:"Literacy / Narrative"       },
+              { seq:10, slug:"ancient-egypt",                 lessonCount:20, title:"Ancient Egypt",                 anchor:"History / Informational"    }
             ]},
     "2":  { label: "Grade 2", slug: "2nd-grade",
             units: [
-              { seq:1, title:"Exploring Habitats",          anchor:"Science / Informational"  },
-              { seq:2, title:"Awesome Insects",             anchor:"Science / Informational"  },
-              { seq:3, title:"Stories of Immigration",      anchor:"Social Studies / Narrative"},
-              { seq:4, title:"People Who Changed the World",anchor:"Biography / History"      },
-              { seq:5, title:"Inside the Human Body",       anchor:"Science / Informational"  }
+              { seq:1, slug:"exploring-habitats",             lessonCount:22, title:"Exploring Habitats",            anchor:"Science / Informational"    },
+              { seq:2, slug:"awesome-insects",                lessonCount:20, title:"Awesome Insects",               anchor:"Science / Informational"    },
+              { seq:3, slug:"stories-of-immigration",         lessonCount:24, title:"Stories of Immigration",        anchor:"Social Studies / Narrative" },
+              { seq:4, slug:"people-who-changed-the-world",   lessonCount:20, title:"People Who Changed the World",  anchor:"Biography / History"        },
+              { seq:5, slug:"inside-the-human-body",          lessonCount:22, title:"Inside the Human Body",         anchor:"Science / Informational"    }
             ]},
     "3":  { label: "Grade 3", slug: "3rd-grade",
             units: [
-              { seq:1, title:"Garvey's Choice",             anchor:"Identity / Novel Study",  coreText:"Garvey's Choice"     },
-              { seq:2, title:"Charlotte's Web",             anchor:"Friendship / Novel Study", coreText:"Charlotte's Web"    },
-              { seq:3, title:"Dyamonde Daniel",             anchor:"Community / Novel Study",  coreText:"Dyamonde Daniel"    },
-              { seq:4, title:"Ecosystems",                  anchor:"Science / Informational"                                 },
-              { seq:5, title:"American Indians",            anchor:"History / Informational"                                 }
+              { seq:1, slug:"garveys-choice",                 lessonCount:26, title:"Garvey's Choice",               anchor:"Identity / Novel Study",  coreText:"Garvey's Choice"                      },
+              { seq:2, slug:"charlottes-web",                 lessonCount:30, title:"Charlotte's Web",               anchor:"Friendship / Novel Study", coreText:"Charlotte's Web"                     },
+              { seq:3, slug:"dyamonde-daniel",                lessonCount:24, title:"Dyamonde Daniel",               anchor:"Community / Novel Study",  coreText:"Dyamonde Daniel series"              },
+              { seq:4, slug:"ecosystems",                     lessonCount:20, title:"Ecosystems",                    anchor:"Science / Informational"                                                   },
+              { seq:5, slug:"american-indians",               lessonCount:22, title:"American Indians",              anchor:"History / Informational"                                                   }
             ]},
     "4":  { label: "Grade 4", slug: "4th-grade",
             units: [
-              { seq:1, title:"Taking a Stand",              anchor:"Character / Novel Study",  coreText:"Shiloh"                          },
-              { seq:2, title:"Finding Fortune",             anchor:"Adventure / Novel Study",  coreText:"Where the Mountain Meets the Moon"},
-              { seq:3, title:"Believing in Yourself",       anchor:"Resilience / Novel Study", coreText:"The Wild Book"                   },
-              { seq:4, title:"Interpreting Perspectives",   anchor:"Mythology / Analysis",     coreText:"Greek Myths"                     },
-              { seq:5, title:"Learning Differently",        anchor:"LD Awareness / Novel",     coreText:"Joey Pigza Swallowed the Key"    },
-              { seq:6, title:"Discovering Self",            anchor:"Identity / Novel Study",   coreText:"Bud, Not Buddy"                  }
+              { seq:1, slug:"taking-a-stand",                 lessonCount:27, title:"Taking a Stand",                anchor:"Character / Novel Study",  coreText:"Shiloh"                               },
+              { seq:2, slug:"finding-fortune",                lessonCount:26, title:"Finding Fortune",               anchor:"Adventure / Novel Study",  coreText:"Where the Mountain Meets the Moon"    },
+              { seq:3, slug:"believing-in-yourself",          lessonCount:24, title:"Believing in Yourself",         anchor:"Resilience / Novel Study", coreText:"The Wild Book"                        },
+              { seq:4, slug:"interpreting-perspectives",      lessonCount:22, title:"Interpreting Perspectives",     anchor:"Mythology / Analysis",     coreText:"Greek Myths"                          },
+              { seq:5, slug:"learning-differently",           lessonCount:24, title:"Learning Differently",          anchor:"LD Awareness / Novel",     coreText:"Joey Pigza Swallowed the Key"         },
+              { seq:6, slug:"discovering-self",               lessonCount:26, title:"Discovering Self",              anchor:"Identity / Novel Study",   coreText:"Bud, Not Buddy"                       }
             ]},
     "5":  { label: "Grade 5", slug: "5th-grade",
             units: [
-              { seq:1, title:"Building Community",          anchor:"Community / Novel Study",  coreText:"Seedfolks"                        },
-              { seq:2, title:"Exploring Human Rights",      anchor:"Global Issues / Novel",    coreText:"The Breadwinner"                  },
-              { seq:3, title:"Protecting the Earth",        anchor:"Environment / Argument",   coreText:"Plastic Pollution"                },
-              { seq:4, title:"Young Heroes",                anchor:"Civil Rights / History",   coreText:"Children of the Civil Rights Movement"},
-              { seq:5, title:"Friendship Across Boundaries",anchor:"Identity / Novel Study",   coreText:"Return to Sender"                 }
+              { seq:1, slug:"building-community",             lessonCount:24, title:"Building Community",            anchor:"Community / Novel Study",  coreText:"Seedfolks"                            },
+              { seq:2, slug:"exploring-human-rights",         lessonCount:28, title:"Exploring Human Rights",        anchor:"Global Issues / Novel",    coreText:"The Breadwinner"                      },
+              { seq:3, slug:"protecting-the-earth",           lessonCount:20, title:"Protecting the Earth",          anchor:"Environment / Argument",   coreText:"Plastic Pollution"                    },
+              { seq:4, slug:"young-heroes",                   lessonCount:22, title:"Young Heroes",                  anchor:"Civil Rights / History",   coreText:"Children of the Civil Rights Movement"},
+              { seq:5, slug:"friendship-across-boundaries",   lessonCount:24, title:"Friendship Across Boundaries",  anchor:"Identity / Novel Study",   coreText:"Return to Sender"                     }
             ]}
   };
+  var FT_BASE = "https://www.fishtanklearning.org/curriculum/ela/";
 
+  /* ── IS Word Study inline data (SAS G3–5) ─────────────── */
+  var ISWS_GRADES = {
+    "3": { label: "Grade 3",
+      semesters: [
+        { id:"G3-S1", label:"Semester 1", pageUrl:"https://iswordstudy.wordpress.com/grade-3/quarter-1/", lessons: [
+          { n:1,  title:"Word Origins 1 – The Story of English",        docUrl:"https://iswordstudy.wordpress.com/wp-content/uploads/2011/01/word-origins-1-the-story-of-english3.doc" },
+          { n:2,  title:"Word Origins 2 – Word Webs",                   docUrl:"https://iswordstudy.wordpress.com/wp-content/uploads/2011/01/word-origins-2-word-webs3.doc" },
+          { n:3,  title:"Vowels & Consonants 1 – Vowels",               docUrl:"https://iswordstudy.wordpress.com/wp-content/uploads/2011/01/vowels-and-consonants-1-vowels4.doc" },
+          { n:4,  title:"Vowels & Consonants 2 – Long & Short Vowels",  docUrl:"https://iswordstudy.wordpress.com/wp-content/uploads/2011/01/vowels-and-consonants-2-long-and-short-vowels3.doc" },
+          { n:5,  title:"Vowels & Consonants 3 – Making Long Vowels",   docUrl:"https://iswordstudy.wordpress.com/wp-content/uploads/2011/01/vowels-and-consonants-3-making-long-vowels2.doc" },
+          { n:6,  title:"Vowels & Consonants 4 – Jobs of the Silent -e",docUrl:"https://iswordstudy.wordpress.com/wp-content/uploads/2011/01/vowels-and-consonants-4-jobs-the-silent-e2.doc" },
+          { n:7,  title:"Vowels & Consonants 5 – More Long Vowels",     docUrl:"https://iswordstudy.wordpress.com/wp-content/uploads/2011/01/vowels-and-consonants-5-more-long-vowels2.doc" },
+          { n:8,  title:"Vowels & Consonants 6 – k, ck, ch, or tch",   docUrl:"https://iswordstudy.wordpress.com/wp-content/uploads/2011/01/vowels-and-consonants-6-c-ck-ch-or-tch2.doc" },
+          { n:9,  title:"Vowels & Consonants 7 – wh Words & them/they/their", docUrl:"https://iswordstudy.wordpress.com/wp-content/uploads/2011/01/vowels-and-consonants-7-wh-words-and-the-words-them-they-and-their4.doc" },
+          { n:10, title:"Vowels & Consonants 8 & 9 – Homophones",       docUrl:"https://iswordstudy.wordpress.com/wp-content/uploads/2011/01/vowels-and-consonants-8-and-9-homophones2.doc" },
+          { n:12, title:"Vowels & Consonants 10 – Base Words Ending f, l, s", docUrl:"https://iswordstudy.wordpress.com/wp-content/uploads/2011/01/vowels-and-consonants-10-base-words-ending-in-f-l-s2.doc" },
+          { n:13, title:"Semester 1 – Review Assessment",               docUrl:"https://iswordstudy.wordpress.com/wp-content/uploads/2011/01/semester-1-review-assessment.docx", isAssessment:true }
+        ]},
+        { id:"G3-S2", label:"Semester 2", pageUrl:"https://iswordstudy.wordpress.com/grade-3/quarter-3/", lessons: [
+          { n:1,  title:"Building Words 1 – The Basic Blocks",          docUrl:"https://iswordstudy.wordpress.com/wp-content/uploads/2011/01/semester-2-1-building-blocks.doc" },
+          { n:2,  title:"Building Words 2 – Spelling Out",              docUrl:"https://iswordstudy.wordpress.com/wp-content/uploads/2011/01/building-words-2-spelling-out1.doc" },
+          { n:3,  title:"Building Words 3 – A Closer Look at Prefixes", docUrl:"https://iswordstudy.wordpress.com/wp-content/uploads/2011/01/building-words-3-a-closer-look-at-prefixes1.doc" },
+          { n:4,  title:"Building Words 4 – A Closer Look at Suffixes", docUrl:"https://iswordstudy.wordpress.com/wp-content/uploads/2011/01/building-words-4-a-closer-look-at-suffixes1.doc" },
+          { n:5,  title:"Building Words 5 – The Vowel Suffix -ing",     docUrl:"https://iswordstudy.wordpress.com/wp-content/uploads/2011/01/building-words-5-the-scoop-on-the-vowel-suffix-ing2.doc" },
+          { n:6,  title:"Building Words 6 – The Suffix -ed",            docUrl:"https://iswordstudy.wordpress.com/wp-content/uploads/2011/01/building-words-6-the-suffix-ed3.doc" },
+          { n:7,  title:"Building Words 7 – Compound Words",            docUrl:"https://iswordstudy.wordpress.com/wp-content/uploads/2011/01/building-words-7-compound-words1.doc" },
+          { n:8,  title:"Building Words 8 – Base Words Ending in y",    docUrl:"https://iswordstudy.wordpress.com/wp-content/uploads/2011/01/building-words-8-base-words-ending-in-y1.doc" },
+          { n:9,  title:"Building Words 9 – Plurals",                   docUrl:"https://iswordstudy.wordpress.com/wp-content/uploads/2011/01/building-words-9-plurals1.doc" },
+          { n:10, title:"Building Words 10 – Suffixes -est or -ist",    docUrl:"https://iswordstudy.wordpress.com/wp-content/uploads/2011/01/building-words-10-suffiixes-est-or-ist2.doc" },
+          { n:11, title:"Building Words 11 – w and x",                  docUrl:"https://iswordstudy.wordpress.com/wp-content/uploads/2011/01/building-words-11-w-and-x1.doc" },
+          { n:12, title:"Building Words 12 – Using a Matrix",           docUrl:"https://iswordstudy.wordpress.com/wp-content/uploads/2011/01/building-words-12-using-a-matrix1.doc" },
+          { n:13, title:"Building Words 13 – Using Matrices",           docUrl:"https://iswordstudy.wordpress.com/wp-content/uploads/2011/01/building-words-13-using-matrices3.doc" },
+          { n:14, title:"Building Words 14 – Assessment & Review",      docUrl:"https://iswordstudy.wordpress.com/wp-content/uploads/2011/01/assessment-reveiw2.docx", isAssessment:true }
+        ]}
+      ]},
+    "4": { label: "Grade 4",
+      semesters: [
+        { id:"G4-S1", label:"Semester 1", pageUrl:"https://iswordstudy.wordpress.com/grade-4/quarter-1-2/", lessons: [
+          { n:1,  title:"Word Origins 1 & 2 – The Story of English",    docUrl:"https://iswordstudy.wordpress.com/wp-content/uploads/2011/01/word-orgins-1-and-2-the-story-of-english1.doc" },
+          { n:3,  title:"Word Origins 3 – Word Webs",                   docUrl:"https://iswordstudy.wordpress.com/wp-content/uploads/2011/01/word-orgins-3-word-webs1.doc" },
+          { n:4,  title:"Vowels & Consonants 1 – Vowels",               docUrl:"https://iswordstudy.wordpress.com/wp-content/uploads/2011/01/vowels-and-consonants-1-vowels-1.doc" },
+          { n:5,  title:"Vowels & Consonants 2 – Long Vowels",          docUrl:"https://iswordstudy.wordpress.com/wp-content/uploads/2011/01/vowels-and-consonants-2-long-vowels.doc" },
+          { n:6,  title:"Vowels & Consonants 3 – Long and Short ea",    docUrl:"https://iswordstudy.wordpress.com/wp-content/uploads/2011/01/vowels-and-consonants-3-long-and-short-ea.doc" },
+          { n:7,  title:"Vowels & Consonants 4 – dge or ge",            docUrl:"https://iswordstudy.wordpress.com/wp-content/uploads/2011/01/vowel-and-consonants-4-dge-or-ge.doc" },
+          { n:8,  title:"Vowels & Consonants 5 – Phonology of -f",      docUrl:"https://iswordstudy.wordpress.com/wp-content/uploads/2011/01/vowel-and-consonants-5-phonology-of-f.doc" },
+          { n:9,  title:"Vowels & Consonants 6 & 7 – Homophones",       docUrl:"https://iswordstudy.wordpress.com/wp-content/uploads/2011/01/vowels-and-consonants-6-7-homophones.doc" },
+          { n:11, title:"Vowels & Consonants 8 & 9 – Schwa",            docUrl:"https://iswordstudy.wordpress.com/wp-content/uploads/2011/01/vowels-and-consonants-8-9-schwa.doc" },
+          { n:13, title:"Vowels & Consonants Review",                   docUrl:null }
+        ]},
+        { id:"G4-S2", label:"Semester 2", pageUrl:"https://iswordstudy.wordpress.com/grade-4/quarter-3/", lessons: [
+          { n:1,  title:"Building Words 1 – The Building Blocks",        docUrl:"https://iswordstudy.wordpress.com/wp-content/uploads/2011/01/building-words-1-the-building-blocks.doc" },
+          { n:2,  title:"Building Words 2 – Consonant Suffixes",         docUrl:"https://iswordstudy.wordpress.com/wp-content/uploads/2011/01/building-words-2-building-with-consonant-suffixes1.doc" },
+          { n:3,  title:"Building Words 3 – Building with Prefixes",     docUrl:"https://iswordstudy.wordpress.com/wp-content/uploads/2011/01/building-words-3-building-with-prefixes1.doc" },
+          { n:4,  title:"Building Words 4 – Vowel Suffixes",             docUrl:"https://iswordstudy.wordpress.com/wp-content/uploads/2011/01/word-building-4-building-with-vowel-suffixes3.doc" },
+          { n:5,  title:"Building Words 5 – Using a Matrix",             docUrl:"https://iswordstudy.wordpress.com/wp-content/uploads/2011/01/word-building-5-using-a-matrix.doc" },
+          { n:6,  title:"Building Words 6 – Base Words in Y & Suffix Checker", docUrl:"https://iswordstudy.wordpress.com/wp-content/uploads/2011/01/building-words-6-base-words-ending-in-y-and-learning-to-use-a-suffix-checker.doc" },
+          { n:7,  title:"Building Words 7 – Suffixing to Polysyllables", docUrl:"https://iswordstudy.wordpress.com/wp-content/uploads/2011/01/building-words-7-suffixing-to-polysyllables.doc" },
+          { n:8,  title:"Building Words 8 – Vowel Suffixes -ion, -ian, -ity", docUrl:"https://iswordstudy.wordpress.com/wp-content/uploads/2011/01/building-words-8-suffixes-ion-ian-ity1.doc" },
+          { n:9,  title:"Building Words 9 – Compound Words",             docUrl:"https://iswordstudy.wordpress.com/wp-content/uploads/2011/01/building-words-9-compound-words.doc" },
+          { n:10, title:"Building Words 10 & 11 – Plurals 1 and 2",      docUrl:"https://iswordstudy.wordpress.com/wp-content/uploads/2011/01/word-building-10-11-plurals-1-and-2.doc" },
+          { n:12, title:"Building Words 12 – Suffix -t instead of -ed",  docUrl:"https://iswordstudy.wordpress.com/wp-content/uploads/2011/01/building-words12-when-to-use-suffix-t-instead-of-ed.doc" },
+          { n:13, title:"Building Words 13 – Learning from Prefix dis-", docUrl:"https://iswordstudy.wordpress.com/wp-content/uploads/2011/01/building-words-13-learning-from-the-prefix-dis.docx" },
+          { n:14, title:"Building Words 14 – Assessment & Review",       docUrl:"https://iswordstudy.wordpress.com/wp-content/uploads/2011/01/building-words-14-assessments-review.docx", isAssessment:true }
+        ]}
+      ]},
+    "5": { label: "Grade 5",
+      semesters: [
+        { id:"G5-S1", label:"Semester 1", pageUrl:"https://iswordstudy.wordpress.com/grade-5/quarter-1/", lessons: [
+          { n:1,  title:"Word Origins 1 – Origins of the English Language",docUrl:"https://iswordstudy.wordpress.com/wp-content/uploads/2011/01/word-origins-1-origins-of-english-language.doc" },
+          { n:2,  title:"Word Origins 2 – Origins of the English Language",docUrl:"https://iswordstudy.wordpress.com/wp-content/uploads/2011/01/word-origins-2-origins-of-english-language.doc" },
+          { n:3,  title:"Word Origins 3 – New Words",                    docUrl:"https://iswordstudy.wordpress.com/wp-content/uploads/2011/01/word-origins-3-new-words1.doc" },
+          { n:4,  title:"Word Origins 4 – Word Webs and Matrices",        docUrl:"https://iswordstudy.wordpress.com/wp-content/uploads/2011/01/word-origins-4-word-webs-and-matrices.doc" },
+          { n:5,  title:"Word Origins 5 – Word Ladders",                  docUrl:"https://iswordstudy.wordpress.com/wp-content/uploads/2011/01/word-origins-5-word-ladders.doc" },
+          { n:6,  title:"Vowels & Consonants 1 – Vowel Review",           docUrl:"https://iswordstudy.wordpress.com/wp-content/uploads/2011/01/vowels-and-consonants-1-vowel-review.doc" },
+          { n:7,  title:"Vowels & Consonants 2 – Long Vowels Review",     docUrl:"https://iswordstudy.wordpress.com/wp-content/uploads/2011/01/vowels-and-consonants-2-long-vowels-review.doc" },
+          { n:8,  title:"Vowels & Consonants 3 & 4 – Schwa",              docUrl:"https://iswordstudy.wordpress.com/wp-content/uploads/2011/01/vowels-and-consonants-3-4-schwa.doc" },
+          { n:10, title:"Vowels & Consonants 5 – Homophones",             docUrl:"https://iswordstudy.wordpress.com/wp-content/uploads/2011/01/vowels-and-consonants-5-homophones1.doc" },
+          { n:11, title:"Vowels & Consonants 6 – Homographs",             docUrl:"https://iswordstudy.wordpress.com/wp-content/uploads/2011/01/vowels-and-consonants-6-homographs.doc" },
+          { n:12, title:"Vowels & Consonants 7 – Portmanteau Words",      docUrl:"https://iswordstudy.wordpress.com/wp-content/uploads/2011/01/vowels-and-consonants-7-portmanteau-words-gr-5.doc" },
+          { n:13, title:"Semester 1 – Review Assessment",                 docUrl:"https://iswordstudy.wordpress.com/wp-content/uploads/2011/01/semester-1-end-of-unit-assessment.docx", isAssessment:true }
+        ]},
+        { id:"G5-S2", label:"Semester 2", pageUrl:"https://iswordstudy.wordpress.com/grade-5/quarter-3/", lessons: [
+          { n:1,  title:"Word Building 1 & 2 – The Building Blocks",      docUrl:"https://iswordstudy.wordpress.com/wp-content/uploads/2011/01/word-building-1-2-the-building-blocks.doc" },
+          { n:3,  title:"Word Building 3 – Using a Matrix",               docUrl:"https://iswordstudy.wordpress.com/wp-content/uploads/2011/01/word-building-3-using-a-matrix.doc" },
+          { n:4,  title:"Word Building 4, 5 & 6 – Prefixes",              docUrl:"https://iswordstudy.wordpress.com/wp-content/uploads/2011/01/word-building-45-6-prefixes1.docx" },
+          { n:7,  title:"Word Building 7 – Suffixing to Polysyllabic Base",docUrl:"https://iswordstudy.wordpress.com/wp-content/uploads/2011/01/word-building-7-suffixing-to-polysyllabic-base.doc" },
+          { n:8,  title:"Word Building 8 – Base Ending in -y & Suffix Checker",docUrl:"https://iswordstudy.wordpress.com/wp-content/uploads/2011/01/word-building-8-ending-in-y-and-learning-to-use-a-suffix-checker.doc" },
+          { n:9,  title:"Word Building 9 – Suffix -or vs. -er",           docUrl:"https://iswordstudy.wordpress.com/wp-content/uploads/2011/01/word-building-9-when-to-use-the-suffix-or-instead-of-er.doc" },
+          { n:10, title:"Word Building 10 – Suffix -able or -ible",       docUrl:"https://iswordstudy.wordpress.com/wp-content/uploads/2011/01/word-building-10-when-to-use-the-suffix-able-or-ible.doc" },
+          { n:11, title:"Word Building 11 – Plurals",                     docUrl:"https://iswordstudy.wordpress.com/wp-content/uploads/2011/01/word-building-11-plurals.doc" },
+          { n:12, title:"Word Building 12 – Plurals 2",                   docUrl:"https://iswordstudy.wordpress.com/wp-content/uploads/2011/01/word-building-12-plurals-2.doc" },
+          { n:13, title:"Assessment & Review",                            docUrl:null, isAssessment:true }
+        ]}
+      ]}
+  };
+
+  /* ── Lesson navigator — localStorage state ────────────── */
+  function lsNavKey(currId, grade)    { return "cs.lessonNav." + currId + "." + grade; }
+  function getLessonNavState(currId, grade) {
+    try {
+      var raw = localStorage.getItem(lsNavKey(currId, grade));
+      return raw ? JSON.parse(raw) : null;
+    } catch (_e) { return null; }
+  }
+  function setLessonNavState(currId, grade, state) {
+    try { localStorage.setItem(lsNavKey(currId, grade), JSON.stringify(state)); } catch (_e) {}
+  }
+
+  /* ── Lesson URL builders ──────────────────────────────── */
   function fishtankGradeKey(gradeBand) {
     if (!gradeBand) return null;
     var s = String(gradeBand).toUpperCase().replace(/\s/g, "");
-    /* Handles: G1, Grade1, 1, K, GK, KG */
     if (s === "K" || s === "GK" || s === "KG" || s === "G0") return "K";
     var m = s.match(/(\d)/);
     return m ? m[1] : null;
   }
 
-  function matchFishtankUnit(gradeKey, goal) {
-    var grade = FISHTANK_GRADES[gradeKey];
-    if (!grade || !grade.units || !grade.units.length) return null;
-    /* For narrative/fluency goals pick current-quarter unit (seq 1 for now) */
-    /* Future: could match by current school term */
-    return grade.units[0];
+  function buildFishtankLessonUrl(gradeSlug, unitSlug, lessonN) {
+    return FT_BASE + gradeSlug + "/" + unitSlug + "/lesson-" + lessonN + "/";
   }
 
+  /* ── Render: Fishtank lesson navigator ───────────────────
+   * Returns HTML string; data-* attrs used for JS binding.
+   */
+  function renderFishtankNav(gradeKey) {
+    var ftGrade = FISHTANK_GRADES[gradeKey];
+    if (!ftGrade || !ftGrade.units || !ftGrade.units.length) return "";
+
+    var state = getLessonNavState("fishtank", gradeKey) || { unitIdx: 0, lessonN: 1 };
+    var unitIdx  = Math.max(0, Math.min(state.unitIdx  || 0, ftGrade.units.length - 1));
+    var unit     = ftGrade.units[unitIdx];
+    var lessonN  = Math.max(1, Math.min(state.lessonN || 1, unit.lessonCount));
+    var lessonUrl = buildFishtankLessonUrl(ftGrade.slug, unit.slug, lessonN);
+    var unitUrl   = FT_BASE + ftGrade.slug + "/" + unit.slug + "/";
+    var coreText  = unit.coreText && unit.coreText !== unit.title ? " — " + unit.coreText : "";
+
+    var prevUnitOk = unitIdx > 0;
+    var nextUnitOk = unitIdx < ftGrade.units.length - 1;
+    var prevLsnOk  = lessonN > 1;
+    var nextLsnOk  = lessonN < unit.lessonCount;
+
+    return [
+      '<div class="th2-lnav" data-lnav-curr="fishtank" data-lnav-grade="' + escapeHtml(gradeKey) + '">',
+      '  <div class="th2-lnav-header">',
+      '    <span class="th2-lnav-badge th2-lnav-badge--fishtank">Fishtank ELA</span>',
+      '    <span class="th2-lnav-grade">' + escapeHtml(ftGrade.label) + '</span>',
+      '    <div class="th2-lnav-unit-nav">',
+      '      <button class="th2-lnav-unit-btn" data-lnav-unit-dir="-1" title="Previous unit"' + (prevUnitOk ? '' : ' disabled') + '>‹</button>',
+      '      <span class="th2-lnav-unit-label" title="' + escapeHtml(unit.anchor) + '">' + escapeHtml(unit.title) + escapeHtml(coreText) + '</span>',
+      '      <button class="th2-lnav-unit-btn" data-lnav-unit-dir="1" title="Next unit"' + (nextUnitOk ? '' : ' disabled') + '>›</button>',
+      '    </div>',
+      '  </div>',
+      '  <div class="th2-lnav-body">',
+      '    <button class="th2-lnav-btn" data-lnav-dir="-1" title="Previous lesson"' + (prevLsnOk ? '' : ' disabled') + '>‹</button>',
+      '    <div class="th2-lnav-lesson">',
+      '      <a class="th2-lnav-lesson-link" href="' + escapeHtml(lessonUrl) + '" target="_blank" rel="noopener">',
+      '        Lesson ' + lessonN,
+      '      </a>',
+      '      <span class="th2-lnav-lesson-of">of ' + unit.lessonCount + '</span>',
+      '    </div>',
+      '    <button class="th2-lnav-btn" data-lnav-dir="1" title="Next lesson"' + (nextLsnOk ? '' : ' disabled') + '>›</button>',
+      '  </div>',
+      '  <div class="th2-lnav-unit-link-row">',
+      '    <a class="th2-lnav-unit-link" href="' + escapeHtml(unitUrl) + '" target="_blank" rel="noopener">Open full unit</a>',
+      '  </div>',
+      '</div>'
+    ].join("\n");
+  }
+
+  /* ── Render: IS Word Study lesson navigator ───────────── */
+  function renderISWSNav(gradeKey) {
+    var grade = ISWS_GRADES[gradeKey];
+    if (!grade || !grade.semesters || !grade.semesters.length) return "";
+
+    var state   = getLessonNavState("iswordstudy", gradeKey) || { semIdx: 0, lessonIdx: 0 };
+    var semIdx  = Math.max(0, Math.min(state.semIdx || 0, grade.semesters.length - 1));
+    var sem     = grade.semesters[semIdx];
+    var lessons = sem.lessons || [];
+    var lessonIdx = Math.max(0, Math.min(state.lessonIdx || 0, lessons.length - 1));
+    var lesson  = lessons[lessonIdx] || {};
+    var docUrl  = lesson.docUrl || sem.pageUrl;
+
+    var prevSemOk = semIdx > 0;
+    var nextSemOk = semIdx < grade.semesters.length - 1;
+    var prevLsnOk = lessonIdx > 0;
+    var nextLsnOk = lessonIdx < lessons.length - 1;
+    var titleShort = lesson.title && lesson.title.length > 52
+      ? lesson.title.slice(0, 49) + "…" : (lesson.title || "");
+
+    return [
+      '<div class="th2-lnav th2-lnav--isws" data-lnav-curr="iswordstudy" data-lnav-grade="' + escapeHtml(gradeKey) + '">',
+      '  <div class="th2-lnav-header">',
+      '    <span class="th2-lnav-badge th2-lnav-badge--isws">IS Word Study</span>',
+      '    <span class="th2-lnav-grade">' + escapeHtml(grade.label) + '</span>',
+      '    <div class="th2-lnav-unit-nav">',
+      '      <button class="th2-lnav-unit-btn" data-lnav-sem-dir="-1" title="Previous semester"' + (prevSemOk ? '' : ' disabled') + '>‹</button>',
+      '      <span class="th2-lnav-unit-label">' + escapeHtml(sem.label) + '</span>',
+      '      <button class="th2-lnav-unit-btn" data-lnav-sem-dir="1" title="Next semester"' + (nextSemOk ? '' : ' disabled') + '>›</button>',
+      '    </div>',
+      '  </div>',
+      '  <div class="th2-lnav-body">',
+      '    <button class="th2-lnav-btn" data-lnav-dir="-1" title="Previous lesson"' + (prevLsnOk ? '' : ' disabled') + '>‹</button>',
+      '    <div class="th2-lnav-lesson">',
+      '      <span class="th2-lnav-lesson-num">Lesson ' + (lessonIdx + 1) + ' of ' + lessons.length + '</span>',
+      '      ' + (docUrl
+          ? '<a class="th2-lnav-lesson-link" href="' + escapeHtml(docUrl) + '" target="_blank" rel="noopener">' + escapeHtml(titleShort) + '</a>'
+          : '<span class="th2-lnav-lesson-nohref">' + escapeHtml(titleShort) + '</span>'),
+      '    </div>',
+      '    <button class="th2-lnav-btn" data-lnav-dir="1" title="Next lesson"' + (nextLsnOk ? '' : ' disabled') + '>›</button>',
+      '  </div>',
+      '  <div class="th2-lnav-unit-link-row">',
+      '    <a class="th2-lnav-unit-link" href="' + escapeHtml(sem.pageUrl) + '" target="_blank" rel="noopener">Open semester page</a>',
+      '  </div>',
+      '</div>'
+    ].join("\n");
+  }
+
+  /* ── Bind lesson navigator events ────────────────────────
+   * Called after focusCard innerHTML is set.
+   * Each .th2-lnav widget re-renders in-place on nav clicks.
+   */
+  function bindLessonNavEvents(container) {
+    if (!container) return;
+
+    container.querySelectorAll(".th2-lnav").forEach(function (navEl) {
+      var currId  = navEl.getAttribute("data-lnav-curr")  || "";
+      var gradeKey = navEl.getAttribute("data-lnav-grade") || "";
+
+      /* Helper: re-render this specific nav widget */
+      function rerender() {
+        var html = currId === "fishtank"
+          ? renderFishtankNav(gradeKey)
+          : renderISWSNav(gradeKey);
+        if (!html) return;
+        var tmp = document.createElement("div");
+        tmp.innerHTML = html;
+        var newEl = tmp.firstElementChild;
+        if (newEl && navEl.parentNode) {
+          navEl.parentNode.replaceChild(newEl, navEl);
+          /* Re-bind on the replacement */
+          bindLessonNavEvents(container);
+        }
+      }
+
+      /* Fishtank: unit prev/next ‹ › */
+      navEl.querySelectorAll("[data-lnav-unit-dir]").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          var dir    = parseInt(btn.getAttribute("data-lnav-unit-dir"), 10) || 0;
+          var state  = getLessonNavState("fishtank", gradeKey) || { unitIdx: 0, lessonN: 1 };
+          var ftGrade = FISHTANK_GRADES[gradeKey];
+          if (!ftGrade) return;
+          var newIdx = Math.max(0, Math.min((state.unitIdx || 0) + dir, ftGrade.units.length - 1));
+          setLessonNavState("fishtank", gradeKey, { unitIdx: newIdx, lessonN: 1 });
+          rerender();
+        });
+      });
+
+      /* IS Word Study: semester prev/next */
+      navEl.querySelectorAll("[data-lnav-sem-dir]").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          var dir   = parseInt(btn.getAttribute("data-lnav-sem-dir"), 10) || 0;
+          var grade = ISWS_GRADES[gradeKey];
+          if (!grade) return;
+          var state = getLessonNavState("iswordstudy", gradeKey) || { semIdx: 0, lessonIdx: 0 };
+          var newSem = Math.max(0, Math.min((state.semIdx || 0) + dir, grade.semesters.length - 1));
+          setLessonNavState("iswordstudy", gradeKey, { semIdx: newSem, lessonIdx: 0 });
+          rerender();
+        });
+      });
+
+      /* Lesson prev/next ‹ › */
+      navEl.querySelectorAll("[data-lnav-dir]").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          var dir = parseInt(btn.getAttribute("data-lnav-dir"), 10) || 0;
+
+          if (currId === "fishtank") {
+            var ftGrade = FISHTANK_GRADES[gradeKey];
+            if (!ftGrade) return;
+            var st = getLessonNavState("fishtank", gradeKey) || { unitIdx: 0, lessonN: 1 };
+            var unitIdx = Math.max(0, Math.min(st.unitIdx || 0, ftGrade.units.length - 1));
+            var unit = ftGrade.units[unitIdx];
+            var newN = Math.max(1, Math.min((st.lessonN || 1) + dir, unit.lessonCount));
+            setLessonNavState("fishtank", gradeKey, { unitIdx: unitIdx, lessonN: newN });
+          } else {
+            var gData = ISWS_GRADES[gradeKey];
+            if (!gData) return;
+            var st2 = getLessonNavState("iswordstudy", gradeKey) || { semIdx: 0, lessonIdx: 0 };
+            var semIdx = Math.max(0, Math.min(st2.semIdx || 0, gData.semesters.length - 1));
+            var lessons = gData.semesters[semIdx].lessons || [];
+            var newIdx = Math.max(0, Math.min((st2.lessonIdx || 0) + dir, lessons.length - 1));
+            setLessonNavState("iswordstudy", gradeKey, { semIdx: semIdx, lessonIdx: newIdx });
+          }
+          rerender();
+        });
+      });
+    });
+  }
+
+  /* ── Main curriculum alignment card ─────────────────────── */
   function renderCurriculumSection(recTitle, module, gradeBand) {
     var goal = matchCurriculumGoal(recTitle, module);
     var smartTrunc = goal.smart.length > 120 ? goal.smart.slice(0, 117) + "…" : goal.smart;
 
-    /* Fishtank ELA unit lookup */
     var gradeKey = fishtankGradeKey(gradeBand);
-    var ftGrade  = gradeKey ? FISHTANK_GRADES[gradeKey] : null;
-    var ftUnit   = ftGrade  ? matchFishtankUnit(gradeKey, goal) : null;
-    var ftUrl    = ftGrade
-      ? "https://www.fishtanklearning.org/curriculum/ela/" + ftGrade.slug + "/"
-      : "https://www.fishtanklearning.org/curriculum/ela/";
+    var grade3to5 = gradeKey === "3" || gradeKey === "4" || gradeKey === "5";
 
-    var ftCoreTextDiffers = ftUnit && ftUnit.coreText && ftUnit.coreText !== ftUnit.title;
-    var fishtankHtml = ftUnit
-      ? [
-          '<div class="th2-curriculum-fishtank">',
-          '  <span class="th2-curriculum-fishtank-label">Fishtank ELA · ' + escapeHtml(ftGrade.label) + '</span>',
-          '  <div class="th2-curriculum-fishtank-unit">',
-          '    <a class="th2-curriculum-fishtank-link" href="' + ftUrl + '" target="_blank" rel="noopener">',
-          '      ' + escapeHtml(ftUnit.title),
-          (ftCoreTextDiffers ? ' <span class="th2-curriculum-fishtank-text">— ' + escapeHtml(ftUnit.coreText) + '</span>' : ''),
-          '    </a>',
-          '    <span class="th2-curriculum-fishtank-anchor">' + escapeHtml(ftUnit.anchor) + '</span>',
-          '  </div>',
-          '</div>'
-        ].join("\n")
-      : "";
+    /* Determine which navigators to show based on domain + grade */
+    var showFishtank = !!gradeKey && (
+      goal.domain.indexOf("literacy") >= 0 ||
+      goal.domain.indexOf("fluency")  >= 0 ||
+      goal.domain.indexOf("compreh")  >= 0
+    );
+    var showISWS = grade3to5 && (
+      goal.domain.indexOf("spelling")  >= 0 ||
+      goal.domain.indexOf("morphol")   >= 0 ||
+      goal.domain.indexOf("decoding")  >= 0 ||
+      goal.domain.indexOf("vocabular") >= 0
+    );
+
+    var navsHtml = [
+      showFishtank ? renderFishtankNav(gradeKey) : "",
+      showISWS     ? renderISWSNav(gradeKey)      : ""
+    ].filter(Boolean).join("\n");
+
+    /* If neither nav triggered (e.g. numeracy), show generic Fishtank fallback for ELA grades */
+    if (!navsHtml && gradeKey && goal.domain.indexOf("numera") < 0) {
+      navsHtml = renderFishtankNav(gradeKey);
+    }
 
     return [
       '<div class="th2-curriculum">',
@@ -511,7 +797,7 @@
       '  <p class="th2-curriculum-monitor">',
       '    <span class="th2-curriculum-monitor-label">Progress monitoring:</span> ' + escapeHtml(goal.monitor),
       '  </p>',
-      fishtankHtml,
+      navsHtml,
       '</div>'
     ].join("\n");
   }
@@ -931,6 +1217,9 @@
       /* Support panel — auto-surfaces below actions */
       renderSupportPanel(studentId)
     ].join("\n");
+
+    /* Wire lesson navigator prev/next buttons */
+    bindLessonNavEvents(el.focusCard);
 
     showFocusCard();
   }
