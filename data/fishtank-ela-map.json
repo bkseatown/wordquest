@@ -1,0 +1,94 @@
+{
+  "version": "fishtank.ela.K5.v1",
+  "source": "https://www.fishtanklearning.org/curriculum/ela/",
+  "license": "CC BY-NC-SA 4.0 — Fishtank Learning",
+  "note": "Singapore American School uses Fishtank ELA K-5 as its core ELA program. Units mapped by grade for MTSS curriculum alignment.",
+  "grades": {
+    "K": {
+      "label": "Kindergarten",
+      "urlSlug": "kindergarten",
+      "units": [
+        { "id": "K-1", "seq": 1, "title": "Welcome to School",                   "anchor": "Community & Belonging",     "domain": "narrative" },
+        { "id": "K-2", "seq": 2, "title": "Noticing Patterns in Stories",         "anchor": "Literary Analysis",         "domain": "narrative" },
+        { "id": "K-3", "seq": 3, "title": "Celebrating Fall",                     "anchor": "Informational / Science",   "domain": "informational" },
+        { "id": "K-4", "seq": 4, "title": "Falling in Love with Authors",         "anchor": "Author Study",              "domain": "narrative" },
+        { "id": "K-5", "seq": 5, "title": "Winter Wonderland",                    "anchor": "Informational / Seasons",   "domain": "informational" },
+        { "id": "K-6", "seq": 6, "title": "What is Justice?",                     "anchor": "Social Studies / Civics",   "domain": "informational" },
+        { "id": "K-7", "seq": 7, "title": "Exploring Life Cycles",                "anchor": "Science / Informational",   "domain": "informational" },
+        { "id": "K-8", "seq": 8, "title": "Reduce, Reuse, Recycle",              "anchor": "Environment / Argument",    "domain": "argument" }
+      ]
+    },
+    "1": {
+      "label": "Grade 1",
+      "urlSlug": "1st-grade",
+      "units": [
+        { "id": "1-1",  "seq": 1,  "title": "Being a Good Friend",               "anchor": "Social Skills / Narrative", "domain": "narrative" },
+        { "id": "1-2",  "seq": 2,  "title": "The Seven Continents",              "anchor": "Social Studies / Info",     "domain": "informational" },
+        { "id": "1-3",  "seq": 3,  "title": "Folktales Around the World",        "anchor": "Literary Analysis",         "domain": "narrative" },
+        { "id": "1-4",  "seq": 4,  "title": "Amazing Animals",                   "anchor": "Science / Informational",   "domain": "informational" },
+        { "id": "1-5",  "seq": 5,  "title": "Love Makes a Family",               "anchor": "Community / Narrative",     "domain": "narrative" },
+        { "id": "1-6",  "seq": 6,  "title": "Inspiring Artists & Musicians",     "anchor": "Arts / Biography",          "domain": "informational" },
+        { "id": "1-7",  "seq": 7,  "title": "Making Old Stories New",            "anchor": "Narrative / Retelling",     "domain": "narrative" },
+        { "id": "1-8",  "seq": 8,  "title": "Movements for Equality",            "anchor": "Social Studies / Civics",   "domain": "informational" },
+        { "id": "1-9",  "seq": 9,  "title": "The Power of Reading",              "anchor": "Literacy / Narrative",      "domain": "narrative" },
+        { "id": "1-10", "seq": 10, "title": "Ancient Egypt",                     "anchor": "History / Informational",   "domain": "informational" }
+      ]
+    },
+    "2": {
+      "label": "Grade 2",
+      "urlSlug": "2nd-grade",
+      "units": [
+        { "id": "2-1", "seq": 1, "title": "Exploring Habitats",                  "anchor": "Science / Informational",   "domain": "informational" },
+        { "id": "2-2", "seq": 2, "title": "Awesome Insects",                     "anchor": "Science / Informational",   "domain": "informational" },
+        { "id": "2-3", "seq": 3, "title": "Stories of Immigration",              "anchor": "Social Studies / Narrative","domain": "narrative" },
+        { "id": "2-4", "seq": 4, "title": "People Who Changed the World",        "anchor": "Biography / History",       "domain": "informational" },
+        { "id": "2-5", "seq": 5, "title": "Inside the Human Body",               "anchor": "Science / Informational",   "domain": "informational" }
+      ]
+    },
+    "3": {
+      "label": "Grade 3",
+      "urlSlug": "3rd-grade",
+      "units": [
+        { "id": "3-1", "seq": 1, "title": "Garvey's Choice",                     "anchor": "Identity / Novel Study",    "domain": "narrative",     "coreText": "Garvey's Choice" },
+        { "id": "3-2", "seq": 2, "title": "Charlotte's Web",                     "anchor": "Friendship / Novel Study",  "domain": "narrative",     "coreText": "Charlotte's Web" },
+        { "id": "3-3", "seq": 3, "title": "Dyamonde Daniel",                     "anchor": "Community / Novel Study",   "domain": "narrative",     "coreText": "Dyamonde Daniel series" },
+        { "id": "3-4", "seq": 4, "title": "Ecosystems",                          "anchor": "Science / Informational",   "domain": "informational" },
+        { "id": "3-5", "seq": 5, "title": "American Indians",                    "anchor": "History / Informational",   "domain": "informational" }
+      ]
+    },
+    "4": {
+      "label": "Grade 4",
+      "urlSlug": "4th-grade",
+      "units": [
+        { "id": "4-1", "seq": 1, "title": "Taking a Stand",                      "anchor": "Character / Novel Study",   "domain": "narrative",     "coreText": "Shiloh" },
+        { "id": "4-2", "seq": 2, "title": "Finding Fortune",                     "anchor": "Adventure / Novel Study",   "domain": "narrative",     "coreText": "Where the Mountain Meets the Moon" },
+        { "id": "4-3", "seq": 3, "title": "Believing in Yourself",               "anchor": "Resilience / Novel Study",  "domain": "narrative",     "coreText": "The Wild Book" },
+        { "id": "4-4", "seq": 4, "title": "Interpreting Perspectives",           "anchor": "Mythology / Analysis",      "domain": "narrative",     "coreText": "Greek Myths" },
+        { "id": "4-5", "seq": 5, "title": "Learning Differently",                "anchor": "LD Awareness / Novel",     "domain": "narrative",     "coreText": "Joey Pigza Swallowed the Key" },
+        { "id": "4-6", "seq": 6, "title": "Discovering Self",                    "anchor": "Identity / Novel Study",    "domain": "narrative",     "coreText": "Bud, Not Buddy" }
+      ]
+    },
+    "5": {
+      "label": "Grade 5",
+      "urlSlug": "5th-grade",
+      "units": [
+        { "id": "5-1", "seq": 1, "title": "Building Community",                  "anchor": "Community / Novel Study",   "domain": "narrative",     "coreText": "Seedfolks" },
+        { "id": "5-2", "seq": 2, "title": "Exploring Human Rights",              "anchor": "Global Issues / Novel",     "domain": "narrative",     "coreText": "The Breadwinner" },
+        { "id": "5-3", "seq": 3, "title": "Protecting the Earth",                "anchor": "Environment / Argument",    "domain": "argument",      "coreText": "Plastic Pollution" },
+        { "id": "5-4", "seq": 4, "title": "Young Heroes",                        "anchor": "Civil Rights / History",    "domain": "informational", "coreText": "Children of the Civil Rights Movement" },
+        { "id": "5-5", "seq": 5, "title": "Friendship Across Boundaries",        "anchor": "Identity / Novel Study",    "domain": "narrative",     "coreText": "Return to Sender" }
+      ]
+    }
+  },
+  "skillDomainMap": {
+    "literacy.decoding":       ["K","1","2"],
+    "literacy.fluency":        ["2","3","4","5"],
+    "literacy.comprehension":  ["1","2","3","4","5"],
+    "literacy.spelling":       ["2","3","4","5"],
+    "literacy.vocabulary":     ["1","2","3","4","5"],
+    "literacy.writing":        ["2","3","4","5"],
+    "literacy.narrative":      ["1","2","3","4","5"],
+    "literacy.informational":  ["2","3","4","5"],
+    "literacy.argument":       ["3","4","5"]
+  }
+}

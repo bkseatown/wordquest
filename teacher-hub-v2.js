@@ -388,10 +388,114 @@
     return best || GOAL_BANK[0];
   }
 
+  /* ── Fishtank ELA alignment ─────────────────────────────
+   * Condensed inline copy of data/fishtank-ela-map.json
+   * (embedded to avoid a fetch round-trip in this static app)
+   */
+  var FISHTANK_GRADES = {
+    "K":  { label: "Kindergarten", slug: "kindergarten",
+            units: [
+              { seq:1, title:"Welcome to School",           anchor:"Community & Belonging"   },
+              { seq:2, title:"Noticing Patterns in Stories",anchor:"Literary Analysis"        },
+              { seq:3, title:"Celebrating Fall",            anchor:"Informational / Science"  },
+              { seq:4, title:"Falling in Love with Authors",anchor:"Author Study"             },
+              { seq:5, title:"Winter Wonderland",           anchor:"Informational / Seasons"  },
+              { seq:6, title:"What is Justice?",            anchor:"Social Studies / Civics"  },
+              { seq:7, title:"Exploring Life Cycles",       anchor:"Science / Informational"  },
+              { seq:8, title:"Reduce, Reuse, Recycle",      anchor:"Environment / Argument"   }
+            ]},
+    "1":  { label: "Grade 1", slug: "1st-grade",
+            units: [
+              { seq:1, title:"Being a Good Friend",         anchor:"Social Skills / Narrative"},
+              { seq:2, title:"The Seven Continents",        anchor:"Social Studies / Info"    },
+              { seq:3, title:"Folktales Around the World",  anchor:"Literary Analysis"        },
+              { seq:4, title:"Amazing Animals",             anchor:"Science / Informational"  },
+              { seq:5, title:"Love Makes a Family",         anchor:"Community / Narrative"    },
+              { seq:6, title:"Inspiring Artists & Musicians",anchor:"Arts / Biography"        },
+              { seq:7, title:"Making Old Stories New",      anchor:"Narrative / Retelling"    },
+              { seq:8, title:"Movements for Equality",      anchor:"Social Studies / Civics"  },
+              { seq:9, title:"The Power of Reading",        anchor:"Literacy / Narrative"     },
+              { seq:10,title:"Ancient Egypt",               anchor:"History / Informational"  }
+            ]},
+    "2":  { label: "Grade 2", slug: "2nd-grade",
+            units: [
+              { seq:1, title:"Exploring Habitats",          anchor:"Science / Informational"  },
+              { seq:2, title:"Awesome Insects",             anchor:"Science / Informational"  },
+              { seq:3, title:"Stories of Immigration",      anchor:"Social Studies / Narrative"},
+              { seq:4, title:"People Who Changed the World",anchor:"Biography / History"      },
+              { seq:5, title:"Inside the Human Body",       anchor:"Science / Informational"  }
+            ]},
+    "3":  { label: "Grade 3", slug: "3rd-grade",
+            units: [
+              { seq:1, title:"Garvey's Choice",             anchor:"Identity / Novel Study",  coreText:"Garvey's Choice"     },
+              { seq:2, title:"Charlotte's Web",             anchor:"Friendship / Novel Study", coreText:"Charlotte's Web"    },
+              { seq:3, title:"Dyamonde Daniel",             anchor:"Community / Novel Study",  coreText:"Dyamonde Daniel"    },
+              { seq:4, title:"Ecosystems",                  anchor:"Science / Informational"                                 },
+              { seq:5, title:"American Indians",            anchor:"History / Informational"                                 }
+            ]},
+    "4":  { label: "Grade 4", slug: "4th-grade",
+            units: [
+              { seq:1, title:"Taking a Stand",              anchor:"Character / Novel Study",  coreText:"Shiloh"                          },
+              { seq:2, title:"Finding Fortune",             anchor:"Adventure / Novel Study",  coreText:"Where the Mountain Meets the Moon"},
+              { seq:3, title:"Believing in Yourself",       anchor:"Resilience / Novel Study", coreText:"The Wild Book"                   },
+              { seq:4, title:"Interpreting Perspectives",   anchor:"Mythology / Analysis",     coreText:"Greek Myths"                     },
+              { seq:5, title:"Learning Differently",        anchor:"LD Awareness / Novel",     coreText:"Joey Pigza Swallowed the Key"    },
+              { seq:6, title:"Discovering Self",            anchor:"Identity / Novel Study",   coreText:"Bud, Not Buddy"                  }
+            ]},
+    "5":  { label: "Grade 5", slug: "5th-grade",
+            units: [
+              { seq:1, title:"Building Community",          anchor:"Community / Novel Study",  coreText:"Seedfolks"                        },
+              { seq:2, title:"Exploring Human Rights",      anchor:"Global Issues / Novel",    coreText:"The Breadwinner"                  },
+              { seq:3, title:"Protecting the Earth",        anchor:"Environment / Argument",   coreText:"Plastic Pollution"                },
+              { seq:4, title:"Young Heroes",                anchor:"Civil Rights / History",   coreText:"Children of the Civil Rights Movement"},
+              { seq:5, title:"Friendship Across Boundaries",anchor:"Identity / Novel Study",   coreText:"Return to Sender"                 }
+            ]}
+  };
+
+  function fishtankGradeKey(gradeBand) {
+    if (!gradeBand) return null;
+    var s = String(gradeBand).toUpperCase().replace(/\s/g, "");
+    /* Handles: G1, Grade1, 1, K, GK, KG */
+    if (s === "K" || s === "GK" || s === "KG" || s === "G0") return "K";
+    var m = s.match(/(\d)/);
+    return m ? m[1] : null;
+  }
+
+  function matchFishtankUnit(gradeKey, goal) {
+    var grade = FISHTANK_GRADES[gradeKey];
+    if (!grade || !grade.units || !grade.units.length) return null;
+    /* For narrative/fluency goals pick current-quarter unit (seq 1 for now) */
+    /* Future: could match by current school term */
+    return grade.units[0];
+  }
+
   function renderCurriculumSection(recTitle, module, gradeBand) {
     var goal = matchCurriculumGoal(recTitle, module);
-    var gradeLabel = gradeBand ? escapeHtml(gradeBand) : escapeHtml(goal.gradeBand);
     var smartTrunc = goal.smart.length > 120 ? goal.smart.slice(0, 117) + "…" : goal.smart;
+
+    /* Fishtank ELA unit lookup */
+    var gradeKey = fishtankGradeKey(gradeBand);
+    var ftGrade  = gradeKey ? FISHTANK_GRADES[gradeKey] : null;
+    var ftUnit   = ftGrade  ? matchFishtankUnit(gradeKey, goal) : null;
+    var ftUrl    = ftGrade
+      ? "https://www.fishtanklearning.org/curriculum/ela/" + ftGrade.slug + "/"
+      : "https://www.fishtanklearning.org/curriculum/ela/";
+
+    var ftCoreTextDiffers = ftUnit && ftUnit.coreText && ftUnit.coreText !== ftUnit.title;
+    var fishtankHtml = ftUnit
+      ? [
+          '<div class="th2-curriculum-fishtank">',
+          '  <span class="th2-curriculum-fishtank-label">Fishtank ELA · ' + escapeHtml(ftGrade.label) + '</span>',
+          '  <div class="th2-curriculum-fishtank-unit">',
+          '    <a class="th2-curriculum-fishtank-link" href="' + ftUrl + '" target="_blank" rel="noopener">',
+          '      ' + escapeHtml(ftUnit.title),
+          (ftCoreTextDiffers ? ' <span class="th2-curriculum-fishtank-text">— ' + escapeHtml(ftUnit.coreText) + '</span>' : ''),
+          '    </a>',
+          '    <span class="th2-curriculum-fishtank-anchor">' + escapeHtml(ftUnit.anchor) + '</span>',
+          '  </div>',
+          '</div>'
+        ].join("\n")
+      : "";
 
     return [
       '<div class="th2-curriculum">',
@@ -407,6 +511,7 @@
       '  <p class="th2-curriculum-monitor">',
       '    <span class="th2-curriculum-monitor-label">Progress monitoring:</span> ' + escapeHtml(goal.monitor),
       '  </p>',
+      fishtankHtml,
       '</div>'
     ].join("\n");
   }
