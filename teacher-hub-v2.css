@@ -4,13 +4,15 @@
 
 *, *::before, *::after { box-sizing: border-box; }
 
-/* ── Color-scheme lock: always render in light mode regardless of OS setting ── */
+/* ══════════════════════════════════════════════════════════
+   CORNERSTONE PALETTE — pinned, immune to OS dark mode
+   Three-layer depth: bg-slate → panel-white → card-white
+   ══════════════════════════════════════════════════════════ */
 html {
   color-scheme: only light;
   margin: 0;
   height: 100%;
-  /* Warm parchment base — locked, never shifts in dark mode */
-  background: #eeece7;
+  background: #b0c4da; /* fallback for body scroll overshoot */
 }
 
 html, body {
@@ -19,9 +21,27 @@ html, body {
 }
 
 body.th2-page {
-  /* Pinned warm off-white gradient — identical in light and dark OS mode */
-  background: linear-gradient(160deg, #ebebef 0%, #eeece7 48%, #f1efe9 100%);
-  color: #1c1a18;
+  /*
+   * Layer 1 — main background: cool slate-blue gradient.
+   * Clearly visible, non-white, creates depth for the white cards
+   * that sit on top. Stays identical in light AND dark OS mode.
+   */
+  background: linear-gradient(160deg, #c8d8ea 0%, #b8cce2 50%, #aec4dc 100%);
+
+  /*
+   * Token overrides — redefine for the Cornerstone palette.
+   * These cascade to every var() usage inside .th2-page without
+   * touching tokens.css (which the rest of the app uses).
+   */
+  --text-primary:   #0d1117;   /* near-black — max legibility on white cards */
+  --text-secondary: #3d4559;   /* dark slate — readable secondary labels     */
+  --text-muted:     #6b7591;   /* mid-slate  — placeholders, tertiary info   */
+  --surface-elev-1: #ffffff;   /* Layer 3 — cards float pure-white           */
+  --surface-elev-2: #d4e2f2;   /* tinted bg for inputs, hover, chips         */
+  --border-subtle:  #aec4dc;   /* visible blue-tinted border                 */
+  --accent:         #2b5da8;   /* brand blue — unchanged                     */
+
+  color: #0d1117;
   font-family: var(--font-ui, system-ui, -apple-system, sans-serif);
   font-size: 15px;
   line-height: 1.5;
@@ -43,9 +63,9 @@ body.th2-page {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  /* Pinned: warm white — never shifts in dark OS mode */
-  background: #fefcfa;
-  border-right: 1px solid #dedad4;
+  /* Layer 2 — lighter panel, cards sit white above it */
+  background: #dae6f4;
+  border-right: 1px solid #aec8e0;
 }
 
 /* ── Sidebar header ────────────────────────────────────── */
@@ -444,8 +464,8 @@ body.th2-page {
 /* ── Recommendation block ──────────────────────────────── */
 
 .th2-rec {
-  background: #fefcfa;
-  border: 1px solid #dedad4;
+  background: #ffffff;
+  border: 1px solid #c8d4e8;
   border-radius: 12px;
   padding: 20px;
   display: flex;
@@ -872,9 +892,8 @@ body.th2-page {
   bottom: 0;
   width: 380px;
   max-width: 92vw;
-  /* Pinned warm white — never shifts in dark OS mode */
-  background: #fefcfa;
-  border-left: 1px solid #dedad4;
+  background: #dae6f4;
+  border-left: 1px solid #aec8e0;
   box-shadow: -6px 0 32px rgba(0, 0, 0, 0.1);
   z-index: 50;
   transform: translateX(100%);
@@ -964,8 +983,8 @@ body.th2-page {
 /* ── Curriculum alignment section ──────────────────────── */
 
 .th2-curriculum {
-  background: #eef3fb;
-  border: 1px solid #c5d5ef;
+  background: #ffffff;
+  border: 1px solid #c8d4e8;
   border-radius: 12px;
   padding: 14px 16px;
 }
