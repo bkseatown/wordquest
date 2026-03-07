@@ -48,7 +48,8 @@
     checkinList: document.getElementById("sp-checkin-list"),
     googlePanel: document.getElementById("sp-google-panel"),
     reportsLink: document.getElementById("sp-reports-link"),
-    gamesLink: document.getElementById("sp-games-link")
+    gamesLink: document.getElementById("sp-games-link"),
+    backToHub: document.getElementById("sp-back-hub")
   };
 
   function esc(value) {
@@ -83,6 +84,9 @@
       var url = new URL(window.location.href);
       url.searchParams.set("student", state.studentId);
       window.history.replaceState({}, "", url.toString());
+    }
+    if (el.backToHub) {
+      el.backToHub.href = "./teacher-hub-v2.html?student=" + encodeURIComponent(state.studentId);
     }
     render();
   }
@@ -414,10 +418,39 @@
     });
   }
 
+  /* ── Tab switching ─────────────────────────────────────── */
+  var TAB_SESSION_KEY = "cs.sp.activeTab";
+
+  function activateTab(tabId) {
+    var tabs = document.querySelectorAll(".sp-tab-btn");
+    var panels = document.querySelectorAll(".sp-panel-section");
+    tabs.forEach(function (btn) {
+      var isActive = btn.getAttribute("data-tab") === tabId;
+      btn.classList.toggle("is-active", isActive);
+      btn.setAttribute("aria-selected", isActive ? "true" : "false");
+    });
+    panels.forEach(function (panel) {
+      panel.classList.toggle("is-active", panel.getAttribute("data-panel") === tabId);
+    });
+    try { sessionStorage.setItem(TAB_SESSION_KEY, tabId); } catch (_e) {}
+  }
+
+  function bindTabs() {
+    document.querySelectorAll(".sp-tab-btn").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        activateTab(btn.getAttribute("data-tab") || "overview");
+      });
+    });
+    var saved = "";
+    try { saved = sessionStorage.getItem(TAB_SESSION_KEY) || ""; } catch (_e) {}
+    activateTab(saved || "overview");
+  }
+
   function init() {
     loadCaseload();
     bindSearch();
     bindForms();
+    bindTabs();
     state.studentId = readStudentId() || (state.caseload[0] && state.caseload[0].id) || "";
     render();
     if (el.searchGhost) {

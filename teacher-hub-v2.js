@@ -3545,12 +3545,22 @@
     renderClassSnapshot();
   }
 
+  /* ── Sync sidebar footer Reports link with current student ── */
+  function updateReportsLink(studentId) {
+    var btn = document.getElementById("th2-reports-btn");
+    if (!btn) return;
+    btn.href = studentId
+      ? "reports.html?student=" + encodeURIComponent(studentId) + "&from=hub"
+      : "reports.html";
+  }
+
   /* ── HubState subscription → render ────────────────────── */
 
   hubState.subscribe(function (state) {
     var mode = state.context.mode || "caseload";
-    if (mode === "class") { showTodaysClasses(); return; }
+    if (mode === "class") { updateReportsLink(""); showTodaysClasses(); return; }
     var studentId = state.context.studentId || "";
+    updateReportsLink(studentId);
     if (!studentId) {
       showEmptyState();
       return;

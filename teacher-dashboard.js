@@ -1951,6 +1951,7 @@
   }
 
   function selectStudent(studentId) {
+    updateNavLinks(studentId);
     if (WorkspaceSelection && typeof WorkspaceSelection.selectStudent === "function") {
       WorkspaceSelection.selectStudent({
         studentId: studentId,
@@ -2617,6 +2618,18 @@
     var u = new URL(String(url || ""), window.location.href);
     if (sid) u.searchParams.set("student", sid);
     return u.pathname.replace(/^\//, "./") + (u.search || "");
+  }
+
+  function updateNavLinks(studentId) {
+    var sid = studentId || "";
+    var hubHref = sid ? "./teacher-hub-v2.html?student=" + encodeURIComponent(sid) : "./teacher-hub-v2.html";
+    var profileHref = sid ? "./student-profile.html?student=" + encodeURIComponent(sid) : "./student-profile.html";
+    var primary = document.getElementById("td-hub-cta");
+    var secondary = document.getElementById("td-hub-cta-secondary");
+    var profileLink = document.getElementById("td-profile-link");
+    if (primary) primary.href = hubHref;
+    if (secondary) secondary.href = hubHref;
+    if (profileLink) profileLink.href = profileHref;
   }
 
   function updateAuditMarkers() {

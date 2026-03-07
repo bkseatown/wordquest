@@ -9,7 +9,7 @@
   <link rel="icon" href="./favicon.ico" sizes="any">
   <link rel="stylesheet" href="./style/tokens.css?v=20260307d">
   <link rel="stylesheet" href="./style/typography.css?v=20260307d">
-  <link rel="stylesheet" href="./student-profile.css?v=20260307g">
+  <link rel="stylesheet" href="./student-profile.css?v=20260307h">
 </head>
 <body class="sp-page">
   <main class="sp-shell">
@@ -22,7 +22,7 @@
         <input id="sp-search-input" type="search" placeholder="Search student, support area, or goal..." autocomplete="off">
       </label>
       <div class="sp-header-actions">
-        <a class="sp-btn sp-btn-quiet" href="./teacher-hub-v2.html">Back to Hub</a>
+        <a id="sp-back-hub" class="sp-btn sp-btn-quiet" href="./teacher-hub-v2.html">Back to Hub</a>
         <a id="sp-reports-link" class="sp-btn sp-btn-quiet" href="./reports.html">View Reports</a>
         <a id="sp-games-link" class="sp-btn sp-btn-primary" href="./game-platform.html">Open Games</a>
       </div>
@@ -49,6 +49,14 @@
 
         <div id="sp-content" class="sp-content hidden">
           <section id="sp-hero" class="sp-hero"></section>
+
+          <nav class="sp-tabs" role="tablist" aria-label="Student profile sections">
+            <button class="sp-tab-btn is-active" data-tab="overview" role="tab" aria-selected="true" aria-controls="sp-panel-overview">Overview</button>
+            <button class="sp-tab-btn" data-tab="behavior" role="tab" aria-selected="false" aria-controls="sp-panel-behavior">Behavior Support</button>
+            <button class="sp-tab-btn" data-tab="communication" role="tab" aria-selected="false" aria-controls="sp-panel-communication">Communication</button>
+          </nav>
+
+          <div id="sp-panel-overview" data-panel="overview" class="sp-panel-section is-active" role="tabpanel">
           <section class="sp-section">
             <div class="sp-section-head">
               <div>
@@ -71,7 +79,9 @@
               </article>
             </div>
           </section>
+          </div>
 
+          <div id="sp-panel-behavior" data-panel="behavior" class="sp-panel-section" role="tabpanel">
           <section class="sp-section">
             <div class="sp-section-head">
               <div>
@@ -147,7 +157,9 @@
             </article>
             </div>
           </section>
+          </div>
 
+          <div id="sp-panel-communication" data-panel="communication" class="sp-panel-section" role="tabpanel">
           <section class="sp-section">
             <div class="sp-section-head">
               <div>
@@ -186,6 +198,7 @@
             </article>
             </div>
           </section>
+          </div>
         </div>
       </section>
     </section>
@@ -201,6 +214,6 @@
   <script src="./js/teacher/teacher-intelligence.js?v=20260307d"></script>
   <script src="./js/weekly-insight-generator.js?v=20260307d"></script>
   <script src="./js/student-profile-store.js?v=20260307g"></script>
-  <script src="./student-profile.js?v=20260307g"></script>
+  <script src="./student-profile.js?v=20260307h"></script>
 </body>
 </html>
